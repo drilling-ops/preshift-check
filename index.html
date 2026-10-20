@@ -1,0 +1,1132 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#FFFFFF">
+<title>Pre-Shift Check</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Pre-Shift">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Condensed:wght@600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Field-app look (sama dengan Drillsite Watch): satu langkah per layar, navigasi bawah. Font Plex jika online; offline pakai font sistem. */
+:root{
+  --bg:#F3F4F0;--surface:#FFFFFF;--sunk:#E8EAE3;--line:#D3D7CC;--fg:#1B221E;--muted:#5D675F;
+  --accent:#9A5B12;--accent-ink:#FFFFFF;--ok:#2F8F4E;--bad:#C4372C;--warn:#A86A00;
+  --okbg:#E7F3EA;--badbg:#FBECEA;--warnbg:#FBF1DF;
+  --fd:"IBM Plex Sans Condensed","Roboto Condensed","Arial Narrow",Arial,sans-serif;
+  --fb:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  --fm:"IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--fg);font:15px/1.45 var(--fb)}
+button{cursor:pointer}
+
+/* app bar */
+header.app{position:sticky;top:0;z-index:10;background:var(--surface);border-bottom:1px solid var(--line);padding:calc(10px + env(safe-area-inset-top)) 16px 0}
+.app .r1{display:flex;align-items:center;gap:10px;max-width:640px;margin:0 auto}
+.app h1{flex:1;margin:0;font:700 22px/1.15 var(--fd);letter-spacing:.01em}
+.app .r2{display:flex;align-items:center;gap:8px;margin:4px auto 0;max-width:640px}
+.app #sub{flex:1;min-width:0;font:12px var(--fm);color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ghost{font:600 13px var(--fb);color:var(--accent);background:none;border:1px solid var(--line);border-radius:4px;min-height:36px;padding:6px 12px}
+.pill{display:inline-flex;align-items:center;gap:6px;flex:none;font:600 12px var(--fb);padding:4px 10px;border-radius:999px;white-space:nowrap;--c:var(--muted);background:var(--sunk);color:var(--c)}
+.pill::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--c)}
+.pill.ok{--c:var(--ok);background:var(--okbg)}.pill.bad{--c:var(--bad);background:var(--badbg)}.pill.warnc{--c:var(--warn);background:var(--warnbg)}
+.steps{display:flex;gap:6px;overflow-x:auto;padding:10px 0 10px;margin:0 auto;max-width:640px;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+.steps::-webkit-scrollbar{display:none}
+.chip{flex:none;display:flex;align-items:center;gap:7px;border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:4px 12px 4px 4px;font:600 13px var(--fb);color:var(--muted);min-height:36px}
+.chip i{font-style:normal;width:26px;height:26px;border-radius:50%;display:grid;place-items:center;font:600 12px var(--fm);background:var(--sunk);color:var(--muted)}
+.chip.act{border-color:var(--fg);color:var(--fg)}
+.chip.act i{background:var(--fg);color:var(--surface)}
+.chip.done i{background:var(--ok);color:#fff}
+.chip.err i{background:var(--bad);color:#fff}
+.chip.wrn i{background:var(--warn);color:#fff}
+
+/* content */
+main{max-width:640px;margin:0 auto;padding:14px 16px 120px}
+main>section{display:none;background:var(--surface);border:1px solid var(--line);border-radius:6px;margin-bottom:12px}
+main>section.act{display:block}
+section>h2{margin:0;padding:16px 16px 2px;font:700 21px/1.2 var(--fd)}
+.lead{margin:0;padding:0 16px;font-size:13px;color:var(--muted)}
+.bd{padding:12px 16px 16px}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
+.row.one{grid-template-columns:1fr}
+.row.three{grid-template-columns:1fr 1fr 1fr}
+@media (max-width:480px){.row.three{grid-template-columns:1fr 1fr}.row.three>div:first-child{grid-column:1/-1}}
+label{display:block;font:600 12px var(--fb);color:var(--muted);margin-bottom:5px}
+label .tag{font:500 11px var(--fm);color:var(--muted);border:1px solid var(--line);border-radius:3px;padding:0 5px;margin-left:6px}
+input,select,textarea{width:100%;min-height:46px;padding:10px 12px;border:1px solid var(--line);border-radius:4px;background:var(--bg);font:16px var(--fb);color:var(--fg);-webkit-appearance:none;appearance:none}
+select{background-image:linear-gradient(45deg,transparent 50%,var(--muted) 50%),linear-gradient(135deg,var(--muted) 50%,transparent 50%);background-position:calc(100% - 18px) 50%,calc(100% - 13px) 50%;background-size:5px 5px;background-repeat:no-repeat;padding-right:32px}
+input:focus,select:focus,textarea:focus{outline:2px solid var(--accent);outline-offset:1px;border-color:var(--accent)}
+input[type=date]{min-height:46px}
+textarea{min-height:0;resize:vertical}
+select.neg{border-color:var(--bad);color:var(--bad);background-color:var(--badbg);font-weight:600}
+select.wrn{border-color:var(--warn);color:var(--warn);background-color:var(--warnbg);font-weight:600}
+input.lain,input.rem{margin-top:6px;display:none}
+input.lain.show,input.rem.show{display:block}
+input.rem{border-color:var(--bad);background:var(--badbg)}
+input.ro{background:var(--sunk);font:600 16px var(--fm);border-color:var(--line);pointer-events:none}
+input.wrnin{border-color:var(--warn);background:var(--warnbg)}
+.seg{display:flex;border:1px solid var(--line);border-radius:4px;overflow:hidden;background:var(--bg)}
+.seg button{flex:1;min-height:46px;padding:8px 4px;border:0;border-left:1px solid var(--line);background:transparent;font:600 14px var(--fb);color:var(--muted)}
+.seg button:first-child{border-left:0}
+.seg button.on{background:var(--fg);color:var(--surface)}
+.seg button.on.neg{background:var(--bad);color:#fff}
+.seg button.on.wrn{background:var(--warn);color:#fff}
+.sub{font:600 11px var(--fb);letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:16px 0 10px;padding-top:14px;border-top:1px solid var(--line)}
+.eq{padding:12px 0;border-top:1px solid var(--line)}
+.eq:first-child{border-top:0;padding-top:0}
+.eq.hide{display:none}
+.std{font-size:12px;color:var(--muted);background:var(--bg);border-left:3px solid var(--accent);padding:8px 10px;margin:0 0 12px}
+.hint{font-size:12px;color:var(--muted);margin:0}
+.note{display:none;font-size:12px;font-weight:600;color:var(--warn);background:var(--warnbg);border-left:3px solid var(--warn);padding:6px 8px;margin-top:6px}
+.note.show{display:block}
+details{border-top:1px solid var(--line)}
+details summary{padding:12px 16px;font:600 13px var(--fb);color:var(--fg);cursor:pointer}
+details .bd{padding-top:0}
+
+/* foto */
+.ph{display:grid;grid-template-columns:84px 1fr;gap:12px;align-items:center;padding:12px 0;border-top:1px solid var(--line)}
+.ph:first-child{border-top:0;padding-top:0}
+.ph.hide{display:none}
+.thumb{width:84px;height:84px;border:1px dashed var(--line);border-radius:4px;background:var(--bg) center/cover no-repeat;display:flex;align-items:center;justify-content:center;color:var(--muted);font:500 11px var(--fm);text-align:center}
+.ph b{font:600 14px var(--fb)}
+.ph .spec{font-size:12px;color:var(--muted)}
+.ph .meta{font:12px var(--fm);margin-top:4px}
+
+/* tanda tangan */
+canvas.sig{width:100%;height:170px;border:1px dashed var(--line);border-radius:4px;background:var(--surface);touch-action:none;display:block;background-image:linear-gradient(var(--line),var(--line));background-size:calc(100% - 40px) 1px;background-position:20px 75%;background-repeat:no-repeat}
+#sigImg{display:none;width:100%;height:170px;object-fit:contain;border:1px solid var(--ok);border-radius:4px;background:var(--surface)}
+.appr{font-size:13px;margin-top:10px;padding:10px 12px;border-radius:4px;font-weight:600;border-left:3px solid}
+.appr.ok{background:var(--okbg);color:var(--ok);border-color:var(--ok)}.appr.wait{background:var(--bg);color:var(--muted);border-color:var(--line)}
+
+/* tombol */
+.btn{display:inline-flex;align-items:center;justify-content:center;min-height:46px;padding:10px 14px;border:1px solid var(--line);border-radius:4px;background:var(--surface);color:var(--fg);font:600 14px var(--fb);text-align:center}
+.btn:active{background:var(--sunk)}
+.btn.pri{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.btn.pri.ready{box-shadow:inset 0 0 0 2px var(--surface),0 0 0 2px var(--ok)}
+.btn.sm{min-height:40px;padding:8px 12px;font-size:13px;margin-top:8px}
+.btn:disabled{opacity:.45}
+.btns{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+.btns .btn{flex:1 1 auto}
+.btn:focus-visible,.chip:focus-visible,.seg button:focus-visible,.ghost:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+/* masalah per langkah */
+.stepIss{display:none;margin:0 16px 16px;padding:10px 12px;border-radius:4px;font-size:13px;border-left:3px solid}
+.stepIss.show{display:block}
+.stepIss.bad{background:var(--badbg);color:var(--bad);border-color:var(--bad)}
+.stepIss.warn{background:var(--warnbg);color:var(--warn);border-color:var(--warn)}
+.stepIss ul{margin:4px 0 0;padding-left:18px}
+
+/* laporan */
+#out.demoOut{-webkit-user-select:none;user-select:none;background:repeating-linear-gradient(-30deg,#E6F2DF 0 40px,#F3E3DF 40px 80px)}
+#out{font:14px/1.45 var(--fb);background:#E6F2DF;border:0;border-radius:8px 8px 8px 2px;padding:12px 14px;min-height:320px;color:var(--fg)}
+.iss{margin:0 0 12px;padding-left:18px;font-size:13px}
+.iss li.fail,.iss li.miss{color:var(--bad)}
+.iss li.warn{color:var(--warn)}
+.ok{color:var(--ok)}.bad{color:var(--bad)}.warnc{color:var(--warn)}
+.demo{display:none;background:var(--warnbg);border-left:3px solid var(--warn);color:var(--warn);font-size:13px;padding:10px 12px;border-radius:4px;margin-bottom:12px}
+.demo.show{display:block}
+
+/* bottom nav */
+.bar{position:fixed;left:0;right:0;bottom:0;z-index:10;background:var(--surface);border-top:1px solid var(--line);padding:10px 16px calc(10px + env(safe-area-inset-bottom))}
+.bar .in{max-width:640px;margin:0 auto;display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:10px}
+.bar .btn{width:100%}
+#stepInfo{font:500 13px var(--fm);color:var(--muted);text-align:center;min-width:44px}
+
+.cfm{position:fixed;inset:0;background:rgba(27,34,30,.45);display:flex;align-items:flex-end;justify-content:center;padding:16px;z-index:20}
+.cfm .box{background:var(--surface);border-radius:8px;padding:18px 16px calc(16px + env(safe-area-inset-bottom));max-width:480px;width:100%}
+.cfm p{margin:0 0 6px;font-size:15px}
+.toast{position:fixed;left:50%;bottom:calc(84px + env(safe-area-inset-bottom));transform:translateX(-50%);width:max-content;max-width:calc(100% - 32px);text-align:center;background:var(--fg);color:var(--surface);padding:10px 14px;border-radius:4px;font-size:14px;display:none;z-index:30}
+</style>
+</head>
+<body>
+<header class="app">
+  <div class="r1"><h1>Pre-Shift Check</h1><button id="bDemo" class="ghost" type="button">Contoh</button></div>
+  <div class="r2"><div id="sub">Coring · isi sebelum run pertama</div><div class="pill" id="pill">—</div></div>
+  <nav class="steps" id="steps" aria-label="Langkah"></nav>
+</header>
+
+<main>
+<div class="demo show" id="ctxNote" style="display:none"></div>
+<div class="demo" id="demoNote">Mode contoh — data sengaja dibuat tidak normal &amp; semua foto/kartu bertanda CONTOH. Hanya Bagikan Foto + Teks yang aktif untuk uji coba. Tekan <b>Shift Baru</b> untuk mengosongkan sebelum dipakai.</div>
+
+<section>
+  <h2>Identitas Shift</h2><p class="lead">Rig, lubang &amp; personel shift ini.</p>
+  <div class="bd">
+    <div class="row">
+      <div><label>Rig</label><select id="rig"><option value="">— pilih —</option>
+        <option>RC 01</option><option>RC 02</option><option>RC 03</option><option>RC 04</option><option>RC 05</option><option>DR 01</option></select></div>
+      <div><label>Tanggal</label><input id="tgl" type="date"></div>
+    </div>
+    <div class="row">
+      <div><label>Shift</label><div class="seg" data-k="shift"></div></div>
+      <div><label>Depth awal shift (m)</label><input id="depth" inputmode="decimal"></div>
+    </div>
+    <div class="row one">
+      <div><label>Drillsite</label><input id="drillsite"></div>
+    </div>
+    <div class="row">
+      <div><label>Jenis lubang</label><select id="jenis"><option value="">— pilih —</option>
+        <option>Pilot Hole</option><option>Quality</option><option>Geotek</option><option>SPT</option></select></div>
+      <div><label>Ukuran lubang</label><select id="ukuran"><option value="">— pilih —</option>
+        <option>HQ3</option><option>PQ3</option><option>8 inch</option></select></div>
+    </div>
+    <div class="row one">
+      <div><label>Formasi</label><select id="formasi"><option value="">— pilih —</option><option>Solid</option><option>Broken/Brittle</option><option>Clay</option></select></div>
+    </div>
+    <div class="row one">
+      <div><label>SPV Drilling</label><select id="spvd" data-people="spvd"></select><input class="lain" id="spvdLain" placeholder="Nama SPV drilling"></div>
+    </div>
+    <div class="row one">
+      <div><label>Driller</label><select id="driller" data-people="driller"></select><input class="lain" id="drillerLain" placeholder="Nama driller"></div>
+    </div>
+    <div class="row one">
+      <div><label>Assistant Driller</label><select id="asst" data-people="asst"></select><input class="lain" id="asstLain" placeholder="Nama assistant driller"></div>
+    </div>
+    <div class="row one">
+      <div><label>Geologist</label><select id="geologist" data-people="geo"></select><input class="lain" id="geologistLain" placeholder="Nama geologist"></div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2>Kondisi Lubang</h2><p class="lead">Kondisi lubang saat serah terima shift.</p>
+  <div class="bd">
+    <div class="row one"><div><label>Kondisi lubang</label><div class="seg" data-k="kondisi"></div></div></div>
+  </div>
+</section>
+
+<section>
+  <h2>Drilling Equipment</h2><p class="lead">Kondisi tiap alat sebelum run pertama.</p>
+  <div class="bd" id="eqList"></div>
+</section>
+
+<section>
+  <h2>Mud</h2><p class="lead">Formula tangki &amp; hasil uji viscosity.</p>
+  <div class="bd">
+    <div class="row one">
+      <div><label>Vol. IBC tank (L)</label><select id="ibc"><option value="">— pilih —</option><option>1000</option><option value="others">Others</option></select>
+        <input class="lain" id="ibcLain" inputmode="numeric" placeholder="Volume (L)"></div>
+    </div>
+    <div class="row one">
+      <div><label>pH air</label><input id="phAir" inputmode="decimal"></div>
+    </div>
+    <div class="sub">Formula</div>
+    <div class="row">
+      <div><label>Bentonite/Gel (kg)</label><input id="bent" inputmode="decimal"></div>
+      <div><label>Trol (kg)</label><input id="trol" inputmode="decimal"></div>
+    </div>
+    <div class="row">
+      <div><label>Hi-Vis (kg)</label><input id="hivis" inputmode="decimal"></div>
+      <div><label>Soda Ash (kg)</label><input id="soda" inputmode="decimal"></div>
+    </div>
+    <div class="row">
+      <div><label>Plug (kg)</label><input id="plug" inputmode="decimal" placeholder="kosong = Nihil"><div class="note" id="plugNote">⚠️ Lubang waterloss — tambahkan plug &amp; isi jumlahnya</div></div>
+      <div><label>Others</label><input id="others" placeholder="mis. Polymer X 1 kg"></div>
+    </div>
+    <div class="std" id="stdBox"></div>
+    <div class="sub">Result</div>
+    <div class="row one">
+      <div><label id="visLbl">Viscosity (det/qt)</label><input id="vis" inputmode="decimal"></div>
+    </div>
+  </div>
+  <details id="tgtBox">
+    <summary>Rekomendasi viscosity (otomatis dari formasi &amp; ukuran lubang)</summary>
+    <div class="bd">
+      <div class="row"><div><label>Rekomendasi min (det/qt)</label><input id="tVisMin" class="ro" readonly tabindex="-1"></div><div><label>Rekomendasi maks (det/qt)</label><input id="tVisMax" class="ro" readonly tabindex="-1"></div></div>
+      <p class="hint" id="tgtHint">Terisi otomatis &amp; tidak bisa diubah di lapangan. Sumber: WIN-MAC-GFO-09-002 Mixing Mud — PQ 45–50, HQ 40–46 det/qt. Nilai dapat diperbarui sesuai evaluasi. Di luar rekomendasi = catatan ⚠️, keputusan lanjut coring oleh Rig Geologist.</p>
+    </div>
+  </details>
+</section>
+
+<section>
+  <h2>Foto Bukti</h2><p class="lead">Ambil langsung dari kamera. Waktu &amp; lokasi terekam otomatis.</p>
+  <div class="bd" id="phList"></div>
+</section>
+
+<section id="apprSec">
+  <h2>Approval Start Drilling</h2><p class="lead">Tanda tangan Rig Geologist setelah semua langkah siap.</p>
+  <div class="bd">
+    <div class="row one"><div><label>Rig Geologist</label><select id="spv" data-people="geo"></select><input class="lain" id="spvLain" placeholder="Nama rig geologist"></div></div>
+    <label>Tanda tangan Rig Geologist</label>
+    <canvas id="sig" class="sig"></canvas><img id="sigImg" alt="Tanda tangan">
+    <div class="btns">
+      <button class="btn" id="bSigClr" type="button">Hapus TTD</button>
+      <button class="btn pri" id="bApprove" type="button">Setujui Start Drilling</button>
+    </div>
+    <div class="appr wait" id="apprInfo"></div>
+  </div>
+</section>
+
+<section id="prev">
+  <h2>Kirim Laporan</h2><p class="lead">Pratinjau pesan WhatsApp &amp; simpan arsip.</p>
+  <div class="bd">
+    <ul class="iss" id="iss"></ul>
+    <div class="row one"><div><label>Tindakan / catatan (wajib jika TIDAK SIAP)</label><textarea id="catatan" rows="2"></textarea></div></div>
+    <textarea id="out" rows="28" readonly></textarea>
+    <div class="btns">
+      <button class="btn pri" id="bShare">Bagikan Foto + Teks</button>
+      <button class="btn" id="bWa">Kirim Teks ke WA</button>
+      <button class="btn" id="bCopy">Salin Teks</button>
+    </div>
+    <div class="btns">
+      <button class="btn" id="bSave">Simpan ke HP</button>
+      <button class="btn" id="bNew">Shift Baru</button>
+    </div>
+    <p class="hint" style="margin-top:8px">Simpan ke HP bekerja tanpa sinyal: kartu approval, foto ber-stamp &amp; teks laporan disimpan sebagai 1 file ZIP di folder Download.</p>
+  </div>
+</section>
+
+</main>
+
+<div class="bar"><div class="in"><button class="btn" id="bBack" type="button">Kembali</button><div id="stepInfo">1/7</div><button class="btn pri" id="bNext" type="button">Lanjut</button></div></div>
+<div class="toast" id="toast"></div>
+
+<script>
+(function(){
+"use strict";
+var $=function(id){return document.getElementById(id);};
+var BLN=['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep','Okt','Nov','Des'];
+function p2(n){return String(n).padStart(2,'0');}
+function fmtD(d){return p2(d.getDate())+'-'+BLN[d.getMonth()]+'-'+d.getFullYear();}
+function fmtT(d){return p2(d.getHours())+':'+p2(d.getMinutes());}
+function today(){var n=new Date();return n.getFullYear()+'-'+p2(n.getMonth()+1)+'-'+p2(n.getDate());}
+var LS={get:function(k,d){try{var v=localStorage.getItem(k);return v==null?d:JSON.parse(v);}catch(e){return d;}},
+        set:function(k,v){try{localStorage.setItem(k,JSON.stringify(v));}catch(e){}}};
+
+// ---------- master data (POB Control DBM & ICE, Okt-2026; resign dikeluarkan) ----------
+var PEOPLE={
+ spvd:[
+  ['SPV Drilling',['Fitri Bangke','Jon Palangan','Taufik Hidayat']]],
+ driller:[
+  ['Driller',['Adri','Ahmad Khasil','Dasta','Hamran','Hari Cahyono','Heri Bradata Agon','Ibnu Abas Yahya','Ibrahim','Muhammad Toat Siregar','Sahrul','Taufik Riduar']]],
+ asst:[
+  ['Assistant Driller',['Dadang','Dani Indrawan','Isma Wahyudiansyah','Kontrianus Sarong','Malik Fajar','Rehyan Hamidan','Rizal Wahyu Nurholik','Samir','Sebastianus Delmon','Yulius Aristo Harsa']]],
+ geo:[
+  ['Sr. Geologist',['Agustien Bakda Maulidiena','Budi Sulistyanto','Dedi Akhmadi Irawan','Didik Wahyudi']],
+  ['Geologist',['Achmad Andika Nugraha','Bagus Adiguna Apriliyanto','Bramsetyo Naryadi','Eko Kristianta','Ezra Theodavid Sinulingga','Fadhilon Rafykausar Aria Jaya','I Nyoman Agus Dharma Manggala','Krismon Carolus Ginting','Muhammad Iqbal Bima Sakti','Muhammad Taqiyuddin Rabbani','Reynaldo Indra Destama','Rohmad Bagus Abadi','Ryan Aprilian','Sunawar Sukowati','Willy Hikal']],
+  ['Geologist Ops',['Abdul Mukti','Cahyo Agus Febrisusanto','Kamarullah','Lutfan Eka Riyadi']]]
+};
+// WIN-MAC-GFO-09-002 Mixing Mud – IBC 1000 L (kg per tangki)
+var STD={
+ 'Solid':         {PQ:{bent:8, trol:2,hivis:.5,soda:.25},HQ:{bent:5, trol:2,hivis:.5,soda:.25}},
+ 'Broken/Brittle':{PQ:{bent:20,trol:2,hivis:.5,soda:.25},HQ:{bent:15,trol:2,hivis:.5,soda:.25}},
+ 'Clay':          {PQ:{bent:0, trol:2,hivis:.5,soda:.25},HQ:{bent:0, trol:2,hivis:.5,soda:.25}}
+};
+var VIS={
+ 'Solid':{PQ:[45,50],HQ:[40,46]},
+ 'Broken/Brittle':{PQ:[45,50],HQ:[40,46]},
+ 'Clay':{PQ:[45,50],HQ:[40,46]}
+};
+var MAT=[['bent','Bentonite/Gel'],['trol','Trol'],['hivis','Hi-Vis'],['soda','Soda Ash']];
+var TOL=0.2;
+
+// Drilling equipment
+var COND=['Normal','Perlu Penggantian Segera','Rusak'];
+var COND_SPLIT=['Normal','Perlu Perbaikan','Perlu Diganti','Rusak','Not Available'];
+var EQ=[
+ {id:'barrel',n:'Barrel',ph:1},
+ {id:'bit',n:'Bit',ph:2,bit:true},
+ {id:'latch',n:'Latch',ph:3},
+ {id:'lifter',n:'Core lifter',ph:2},
+ {id:'ccase',n:'Core case',ph:2},
+ {id:'split',n:'Split tube',ph:1,split:true},
+ {id:'spt',n:'SPT tools',ph:5,sptOnly:true},
+ {id:'uds',n:'UDS (Shelby tube)',ph:5,sptOnly:true}
+];
+var FAIL={'Rusak':1,'Not Available':1};
+var WARN={'Perlu Penggantian Segera':1,'Perlu Perbaikan':1,'Perlu Diganti':1};
+var REM={'Rusak':1,'Not Available':1};
+
+var SEGS={shift:['Day','Night'],kondisi:['Normal','Waterloss','Caving','Collapse']};
+var NEG={'Collapse':1},WRN={'Waterloss':1,'Caving':1};
+var PH={
+ 1:{t:'BARREL & SPLIT TUBE',s:'Split tube terbuka penuh + barrel terlihat'},
+ 2:{t:'BIT, CORE LIFTER & CORE CASE',s:'Muka bit close-up (tinggi crown) + core lifter & core case'},
+ 3:{t:'LATCH INNER TUBE',s:'Inner tube terpasang/terkunci di outer barrel, sebelum masuk lubang'},
+ 4:{t:'VISCOSITY (MARSH FUNNEL + TIMER)',s:'Funnel dan timer dalam SATU frame'},
+ 5:{t:'SPT TOOLS & UDS',s:'Split spoon SPT + tabung UDS/Shelby (hanya lubang SPT)',sptOnly:true}
+};
+var MAX_AGE_MIN=180;
+
+var LAIN={spv:'__lain',spvd:'__lain',driller:'__lain',asst:'__lain',geologist:'__lain',bitTipe:'Custom',bitSeri:'Lainnya',ibc:'others'};
+var FIELDS=['rig','tgl','depth','drillsite','jenis','ukuran','driller','drillerLain','asst','asstLain','geologist','geologistLain',
+  'bitTipe','bitTipeLain','bitSeri','bitSeriLain','bitKond',
+  'ibc','ibcLain','formasi','phAir','bent','trol','hivis','soda','plug','others','vis','catatan','spv','spvLain','spvd','spvdLain'];
+EQ.forEach(function(e){FIELDS.push('eq_'+e.id,'eq_'+e.id+'Rem');});
+var KEEP=['rig','drillsite','jenis','ukuran','bitTipe','bitTipeLain','bitSeri','bitSeriLain','ibc','ibcLain','formasi'];
+var TGT=['tVisMin','tVisMax'];
+var seg={},photos={},demo=false,appr=null;
+
+// ---------- build: people selects ----------
+Array.prototype.forEach.call(document.querySelectorAll('select[data-people]'),function(sel){
+  var h='<option value="">— pilih —</option>';
+  PEOPLE[sel.getAttribute('data-people')].forEach(function(g){
+    h+='<optgroup label="'+g[0]+'">'+g[1].map(function(n){return '<option>'+n+'</option>';}).join('')+'</optgroup>';
+  });
+  sel.innerHTML=h+'<option value="__lain">Lainnya (ketik nama)</option>';
+});
+
+// ---------- build: equipment rows ----------
+function opts(a){return '<option value="">— pilih —</option>'+a.map(function(o){return '<option>'+o+'</option>';}).join('');}
+EQ.forEach(function(e){
+  var d=document.createElement('div');d.className='eq';d.id='row_'+e.id;
+  var h='<div class="row one" style="margin-bottom:0"><div><label>'+e.n+(e.split?' — kondisi':'')+'<span class="tag">Foto '+e.ph+'</span></label>'+
+    '<select id="eq_'+e.id+'">'+opts(e.split?COND_SPLIT:COND)+'</select>'+
+    '<input class="rem" id="eq_'+e.id+'Rem" placeholder="Remarks (wajib): kondisi / tindakan"></div></div>';
+  if(e.bit){
+    h+='<div class="row three" style="margin:8px 0 0">'+
+      '<div><label>Tipe bit</label><select id="bitTipe">'+opts(['Surface Set Step','Impregnated','Wing/Drag Bit','Tricone','Tungsten','Custom'])+'</select>'+
+      '<input class="lain" id="bitTipeLain" placeholder="Tipe custom"></div>'+
+      '<div><label>No. seri bit</label><select id="bitSeri">'+opts(['1','2','3','4','5','6','7','8','9','10','Lainnya'])+'</select>'+
+      '<input class="lain" id="bitSeriLain" placeholder="No. seri"></div>'+
+      '<div><label>Kondisi (%)</label><select id="bitKond">'+opts(['100','90','80','70','60','50','40','30','20','10','0'])+'</select></div></div>';
+  }
+  d.innerHTML=h;$('eqList').appendChild(d);
+});
+
+// ---------- build: segmented ----------
+Array.prototype.forEach.call(document.querySelectorAll('.seg'),function(el){
+  var k=el.getAttribute('data-k');
+  SEGS[k].forEach(function(o){
+    var b=document.createElement('button');b.type='button';b.textContent=o;
+    b.addEventListener('click',function(){seg[k]=(seg[k]===o?'':o);save();render();});
+    el.appendChild(b);
+  });
+});
+
+// ---------- build: photos ----------
+Object.keys(PH).forEach(function(n){
+  var d=document.createElement('div');d.className='ph';d.id='phr'+n;
+  d.innerHTML='<div class="thumb" id="th'+n+'">FOTO '+n+'</div>'+
+   '<div><b>'+n+'. '+PH[n].t.charAt(0)+PH[n].t.slice(1).toLowerCase()+'</b><div class="spec">'+PH[n].s+'</div>'+
+   '<div class="meta" id="mt'+n+'"></div>'+
+   '<label class="btn sm" style="color:var(--navy);margin-bottom:0">Ambil Foto<input type="file" accept="image/*" capture="environment" id="f'+n+'" style="display:none"></label></div>';
+  $('phList').appendChild(d);
+  $('f'+n).addEventListener('change',function(e){
+    var f=e.target.files&&e.target.files[0];if(!f)return;
+    setPhoto(n,f,new Date(f.lastModified||Date.now()));e.target.value='';
+    photos[n].gps={pending:true};render();
+    getGPS().then(function(g){if(photos[n]&&photos[n].file===f){photos[n].gps=g;render();prepSoon();}});
+  });
+});
+function setPhoto(n,file,taken){
+  if(photos[n]&&photos[n].url)URL.revokeObjectURL(photos[n].url);
+  var url=URL.createObjectURL(file);
+  photos[n]={file:file,url:url,taken:taken};
+  $('th'+n).style.backgroundImage='url('+url+')';$('th'+n).textContent='';
+}
+// GPS satelit TIDAK butuh internet. Tanpa sinyal, fix pertama bisa lebih lama (1–2 menit di area terbuka).
+function getGPS(){
+  return new Promise(function(res){
+    if(location.protocol==='content:')return res({err:'diblokir — form dibuka langsung dari WhatsApp',code:8});
+    if(window.isSecureContext===false)return res({err:'diblokir browser (buka file lewat Chrome)',code:9});
+    if(!navigator.geolocation)return res({err:'tidak didukung browser',code:9});
+    try{navigator.geolocation.getCurrentPosition(
+      function(p){res({lat:p.coords.latitude,lon:p.coords.longitude,acc:Math.round(p.coords.accuracy)});},
+      function(e){var c=e&&e.code;
+        res({code:c,err:c===1?'izin lokasi ditolak':c===2?'GPS HP mati / tidak tersedia':'belum dapat sinyal satelit'});},
+      {enableHighAccuracy:true,timeout:60000,maximumAge:300000});}
+    catch(e){res({err:'tidak didukung browser',code:9});}
+  });
+}
+var gpsWarm=false;
+function warmGPS(){ // panaskan GPS & minta izin lebih awal, sebelum foto diambil
+  if(gpsWarm||demo)return;gpsWarm=true;getGPS().then(function(g){if(g.err)gpsWarm=false;});
+}
+function retryGPS(n){
+  var p=photos[n];if(!p)return;p.gps={pending:true};render();
+  getGPS().then(function(g){if(photos[n]===p){p.gps=g;render();prepSoon();
+    toast(g.err?'Lokasi foto '+n+': '+g.err:'Lokasi foto '+n+' terekam');}});
+}
+function gpsHelp(g){
+  if(!g||!g.err)return '';
+  if(g.code===1)return 'Aktifkan: ikon gembok/ⓘ di address bar Chrome → Izin → Lokasi → Izinkan. Pastikan juga Chrome diizinkan akses lokasi di Setelan HP.';
+  if(g.code===2)return 'Nyalakan Lokasi/GPS di panel notifikasi HP, lalu coba lagi.';
+  if(g.code===8)return 'Lokasi tidak bisa diizinkan untuk file yang dibuka dari WhatsApp. Gunakan link form resmi (https) atau simpan file ke HP lalu buka lewat Chrome.';
+  if(g.code===9)return 'Buka file dengan Google Chrome (bukan penampil file/WhatsApp).';
+  return 'Pindah ke area terbuka (jauh dari kanopi/rig), tunggu 1–2 menit, lalu coba lagi. GPS tidak butuh internet.';
+}
+function gpsTxt(g){
+  if(!g)return 'GPS: -';
+  if(g.pending)return 'GPS: menunggu…';
+  if(g.err)return 'GPS: '+g.err;
+  return 'GPS: '+g.lat.toFixed(5)+', '+g.lon.toFixed(5)+' (±'+g.acc+' m)';
+}
+function distM(a,b){
+  var R=6371000,t=Math.PI/180,dl=(b.lat-a.lat)*t,dn=(b.lon-a.lon)*t;
+  var h=Math.sin(dl/2)*Math.sin(dl/2)+Math.cos(a.lat*t)*Math.cos(b.lat*t)*Math.sin(dn/2)*Math.sin(dn/2);
+  return 2*R*Math.asin(Math.sqrt(h));
+}
+$('phList').addEventListener('click',function(e){var b=e.target.closest&&e.target.closest('.gpsRetry');if(b)retryGPS(b.getAttribute('data-n'));});
+function clearPhotos(){
+  Object.keys(photos).forEach(function(k){try{URL.revokeObjectURL(photos[k].url);}catch(e){}
+    $('th'+k).style.backgroundImage='';$('th'+k).textContent='FOTO '+k;});
+  photos={};SC={key:null,files:null,notes:[],busy:null};
+}
+
+// ---------- helpers ----------
+function v(id){var e=$(id);return e?String(e.value).trim():'';}
+function pick(id){var x=v(id);return x===LAIN[id]?(v(id+'Lain')||''):x;}
+function parseQ(s){
+  s=String(s||'').trim().replace(',','.').replace('¼','0.25').replace('½','0.5').replace('¾','0.75');
+  if(s==='')return NaN;
+  var m=s.match(/^(\d+)\s*\/\s*(\d+)$/);if(m)return +m[1]/+m[2];
+  var x=parseFloat(s);return isNaN(x)?NaN:x;
+}
+function num(id){return parseQ(v(id));}
+function fn(x){return isNaN(x)?'__':String(Math.round(x*100)/100);}
+function fq(x){
+  if(isNaN(x))return '__';
+  var r=Math.round(x*100)/100,w=Math.floor(r),f=Math.round((r-w)*100),fr={25:'¼',50:'½',75:'¾'}[f];
+  return fr?(w?w:'')+fr:String(r);
+}
+function isSPT(){return v('jenis')==='SPT';}
+function size(){var u=v('ukuran');return u==='HQ3'?'HQ':u==='PQ3'?'PQ':'';}
+function ibcVol(){return parseQ(pick('ibc'));}
+function stdNow(){
+  var f=v('formasi'),s=size();if(!f||!s)return null;
+  var vol=ibcVol(),k=isNaN(vol)||vol<=0?1:vol/1000,o={},b=STD[f][s];
+  Object.keys(b).forEach(function(m){o[m]=b[m]*k;});return o;
+}
+function rng(){
+  var a=v('tVisMin').replace(',','.'),b=v('tVisMax').replace(',','.');
+  if(a&&b)return ' (rekomendasi '+a+'–'+b+')';if(b)return ' (maks '+b+')';if(a)return ' (min '+a+')';return '';
+}
+function inR(x){
+  if(isNaN(x))return null;
+  var a=num('tVisMin'),b=num('tVisMax');
+  if(!isNaN(a)&&x<a)return false;if(!isNaN(b)&&x>b)return false;return true;
+}
+function mk(s){return s==='ok'?'✅':s==='fail'?'❌':s==='warn'?'⚠️':'⬜';}
+function activeEq(){return EQ.filter(function(e){return !e.sptOnly||isSPT();});}
+function activePh(){return Object.keys(PH).filter(function(n){return !PH[n].sptOnly||isSPT();});}
+
+function applyTargets(){
+  var f=v('formasi'),s=size();
+  var t=(f&&s)?VIS[f][s]:['',''];
+  $('tVisMin').value=t[0];$('tVisMax').value=t[1];
+}
+
+// ---------- paint UI state ----------
+function paint(now){
+  Array.prototype.forEach.call(document.querySelectorAll('.seg'),function(el){
+    var k=el.getAttribute('data-k');
+    Array.prototype.forEach.call(el.children,function(b){
+      var on=seg[k]===b.textContent;b.classList.toggle('on',on);
+      b.classList.toggle('neg',on&&!!NEG[b.textContent]);b.classList.toggle('wrn',on&&!!WRN[b.textContent]);
+    });
+  });
+  Object.keys(LAIN).forEach(function(id){$(id+'Lain').classList.toggle('show',$(id).value===LAIN[id]);});
+  EQ.forEach(function(e){
+    var s=$('eq_'+e.id),val=s.value;
+    $('row_'+e.id).classList.toggle('hide',!!e.sptOnly&&!isSPT());
+    s.classList.toggle('neg',!!FAIL[val]);s.classList.toggle('wrn',!!WARN[val]);
+    $('eq_'+e.id+'Rem').classList.toggle('show',!!REM[val]);
+  });
+  Object.keys(PH).forEach(function(n){
+    $('phr'+n).classList.toggle('hide',!!PH[n].sptOnly&&!isSPT());
+    var m=$('mt'+n),p=photos[n];
+    if(!p){m.innerHTML='<span class="bad">Belum ada foto</span>';return;}
+    var old=(now-p.taken)/60000>MAX_AGE_MIN;
+    var g=p.gps,gc=!g||g.pending?'':(g.err?'warnc':'ok');
+    m.innerHTML='<span class="'+(old?'bad':'ok')+'">Diambil '+fmtD(p.taken)+' '+fmtT(p.taken)+(old?' — lebih dari '+(MAX_AGE_MIN/60)+' jam lalu':'')+'</span>'+
+      '<br><span class="'+gc+'">Lokasi '+gpsTxt(g).replace('GPS: ','')+'</span>'+
+      (g&&g.err&&!demo?'<br><span class="hint">'+gpsHelp(g)+'</span><br><button class="btn sm gpsRetry" type="button" data-n="'+n+'">Coba lagi lokasi</button>':'');
+  });
+  var wl=seg.kondisi==='Waterloss',plugEmpty=!(num('plug')>0);
+  $('plugNote').classList.toggle('show',wl&&plugEmpty);
+  $('plug').classList.toggle('wrnin',wl&&plugEmpty);
+  var st=stdNow(),box=$('stdBox');
+  if(st){var vol=ibcVol();
+    box.textContent='Standar '+v('formasi')+' '+size()+' ('+(isNaN(vol)?1000:vol)+' L): '+
+      MAT.map(function(m){return m[1]+' '+(st[m[0]]?fq(st[m[0]])+' kg':'tidak dipakai');}).join(' · ');}
+  else if(v('ukuran')==='8 inch')box.textContent='Ukuran 8 inch belum ada di WIN-MAC-GFO-09-002 Mixing Mud — belum ada formula standar & rekomendasi viscosity.';
+  else box.textContent='Pilih formasi & ukuran lubang (HQ3/PQ3) untuk melihat formula standar.';
+  var a=v('tVisMin'),b=v('tVisMax');
+  $('visLbl').textContent='Viscosity (det/qt)'+(a||b?' — rekomendasi '+(a||'?')+'–'+(b||'?'):'');
+}
+
+// ---------- build report ----------
+function build(){
+  var now=new Date(),iss=[],cur=0;
+  function miss(t){iss.push({c:'miss',s:cur,t:t+' belum diisi'});}
+  function fail(t){iss.push({c:'fail',s:cur,t:t});}
+  function warn(t){iss.push({c:'warn',s:cur,t:t});}
+  function req(val,label){if(!val)miss(label);return val||'__';}
+
+  var rig=req(v('rig'),'Rig');
+  var tglS=v('tgl'),tgl='__';
+  if(tglS){var pp=tglS.split('-');tgl=fmtD(new Date(+pp[0],+pp[1]-1,+pp[2]));}else miss('Tanggal');
+  var shift=req(seg.shift,'Shift'),site=req(v('drillsite'),'Drillsite'),depth=req(v('depth').replace(',','.'),'Depth awal shift');
+  var jenis=req(v('jenis'),'Jenis lubang'),uk=req(v('ukuran'),'Ukuran lubang');
+  var sd=req(pick('spvd'),'SPV Drilling'),dr=req(pick('driller'),'Driller'),as=req(pick('asst'),'Assistant driller'),geo=req(pick('geologist'),'Geologist');
+
+  var L=[];
+  if(demo)L.push('_(CONTOH – bukan laporan nyata)_');
+  L.push('*PRE-SHIFT CHECK – '+rig+'*');
+  L.push('Tgl: '+tgl+' | Shift: '+shift+' | Jam kirim: '+fmtT(now));
+  L.push('Drillsite: '+site+' | Depth awal shift: '+depth+' m');
+  L.push('Jenis lubang: '+jenis+' | Ukuran: '+uk);
+  L.push('SPV Drilling: '+sd);
+  L.push('Driller: '+dr);
+  L.push('Asst. Driller: '+as);
+  L.push('Geologist: '+geo);
+  L.push('');
+
+  // A
+  cur=1;
+  L.push('*A. KONDISI LUBANG*');
+  var k=seg.kondisi;
+  if(!k)miss('Kondisi lubang');else if(k==='Collapse')fail('Kondisi lubang: Collapse');else if(k!=='Normal')warn('Kondisi lubang: '+k);
+  L.push('• Kondisi lubang: '+(k||'__'));
+  L.push('');
+
+  // B
+  cur=2;
+  var aph=activeEq().map(function(e){return e.ph;}).filter(function(x,i,a){return a.indexOf(x)===i;}).sort();
+  L.push('*B. DRILLING EQUIPMENT* 📷'+aph.join(','));
+  activeEq().forEach(function(e){
+    var val=v('eq_'+e.id),rem=v('eq_'+e.id+'Rem'),s='none',line;
+    if(!val)miss(e.n);
+    else if(FAIL[val]){s='fail';fail(e.n+': '+val+(rem?' – '+rem:''));if(!rem)miss('Remarks '+e.n);}
+    else if(WARN[val]){s='warn';warn(e.n+': '+val);}
+    else s='ok';
+    line=mk(s)+' '+e.n+': '+(val||'__');
+    if(e.bit){
+      var bt=pick('bitTipe'),bs=pick('bitSeri'),bk=v('bitKond');
+      if(!bt)miss('Tipe bit');if(!bs)miss('No. seri bit');if(!bk)miss('Kondisi bit (%)');
+      line+=' | '+(bt||'__')+' | No. seri '+(bs||'__')+' | '+(bk||'__')+'%';
+    }
+    if(REM[val])line+=' — '+(rem||'__');
+    L.push(line+' 📷'+e.ph);
+  });
+  L.push('');
+
+  // C
+  cur=3;
+  L.push('*C. MUD* 📷4');
+  var vol=ibcVol();if(isNaN(vol))miss('Vol. IBC tank');
+  var fm=req(v('formasi'),'Formasi');
+  L.push('• IBC tank: '+fn(vol)+' L | Formasi: '+fm);
+  var pa=num('phAir');if(isNaN(pa))miss('pH air');
+  L.push('• pH air: '+fn(pa));
+  L.push('_Formula:_');
+  var st=stdNow();
+  MAT.forEach(function(m){
+    var x=num(m[0]),s='none',note='';
+    if(isNaN(x))miss(m[1]);
+    else if(st){
+      var sd=st[m[0]];
+      if(sd===0){note=' (std: tidak dipakai)';if(x>0){s='warn';warn(m[1]+' '+fq(x)+' kg dipakai, standar '+fm+' tidak dipakai');}else s='ok';}
+      else{note=' (std '+fq(sd)+')';if(Math.abs(x-sd)>sd*TOL){s='warn';warn(m[1]+' '+fq(x)+' kg, standar '+fq(sd)+' kg');}else s='ok';}
+    }else s='ok';
+    L.push(mk(s)+' '+m[1]+': '+fq(x)+' kg'+note);
+  });
+  var pl=num('plug'),wl=seg.kondisi==='Waterloss';
+  if(wl){
+    if(pl>0)L.push('✅ Plug: '+fq(pl)+' kg (waterloss)');
+    else{warn('Kondisi waterloss — plug belum ditambahkan');L.push('⚠️ Plug: '+(isNaN(pl)?'Nihil':fq(pl)+' kg')+' — lubang waterloss');}
+  }else L.push('• Plug: '+(isNaN(pl)?'Nihil':fq(pl)+' kg'));
+  L.push('• Others: '+(v('others')||'Nihil'));
+  L.push('_Result:_');
+  var vs=num('vis'),ok=inR(vs);
+  if(ok===null)miss('Viscosity');else if(!ok)warn('Viscosity '+fn(vs)+' det/qt di luar rekomendasi'+rng()+' — keputusan Rig Geologist');
+  if(!v('tVisMin')&&!v('tVisMax')&&!isNaN(vs))warn('Rekomendasi viscosity belum tersedia untuk '+(v('ukuran')||'ukuran ini')+(v('formasi')?'':' / formasi belum dipilih'));
+  L.push(mk(ok===null?'none':ok?'ok':'warn')+' Viscosity: '+fn(vs)+' det/qt'+rng()+' 📷4');
+  L.push('');
+
+  // photos
+  cur=4;
+  var act=activePh(),have=[];
+  act.forEach(function(n){
+    var p=photos[n];
+    if(!p){iss.push({c:'miss',s:4,t:'Foto '+n+' ('+PH[n].t+') belum ada'});return;}
+    have.push(n);
+    if((now-p.taken)/60000>MAX_AGE_MIN)fail('Foto '+n+' diambil lebih dari '+(MAX_AGE_MIN/60)+' jam lalu ('+fmtT(p.taken)+')');
+  });
+  L.push('📷 Foto terlampir: '+have.length+'/'+act.length+(have.length?' ('+have.join(', ')+')':''));
+  var gOk=have.filter(function(n){var g=photos[n].gps;return g&&!g.pending&&!g.err;});
+  var gBad=have.filter(function(n){var g=photos[n].gps;return g&&g.err;});
+  if(gOk.length){
+    var g0=photos[gOk[0]].gps,far=gOk.filter(function(n){return distM(g0,photos[n].gps)>200;});
+    L.push('📍 GPS: '+g0.lat.toFixed(5)+', '+g0.lon.toFixed(5)+' (±'+g0.acc+' m)');
+    L.push('https://maps.google.com/?q='+g0.lat.toFixed(5)+','+g0.lon.toFixed(5));
+    if(far.length)warn('Foto '+far.join(', ')+' diambil >200 m dari foto '+gOk[0]+' — cek lokasi');
+  }
+  if(gBad.length)warn('Lokasi GPS tidak terekam pada foto '+gBad.join(', ')+' ('+photos[gBad[0]].gps.err+')');
+  L.push('');
+
+  var hard=iss.filter(function(i){return i.c!=='warn';}),warns=iss.filter(function(i){return i.c==='warn';}),status;
+  if(hard.length){
+    status='bad';
+    L.push('*Status: ❌ TIDAK SIAP CORING*');
+    L.push('Alasan:');hard.forEach(function(i){L.push('- '+i.t);});
+    if(warns.length){L.push('Catatan:');warns.forEach(function(i){L.push('- '+i.t);});}
+    L.push('Tindakan: '+(v('catatan')||'__'));
+  }else{
+    status=warns.length?'warn':'ok';
+    L.push('*Status: ✅ SIAP CORING*');
+    if(warns.length){L.push('Catatan:');warns.forEach(function(i){L.push('- '+i.t);});}
+    if(v('catatan'))L.push('Tindakan: '+v('catatan'));
+  }
+  L.push('');
+  L.push('*D. APPROVAL START DRILLING*');
+  if(appr){var at=new Date(appr.time);
+    L.push('✍️ Rig Geologist: '+appr.name);
+    L.push('Waktu TTD: '+fmtD(at)+' '+fmtT(at));
+    if(appr.sig)L.push('📎 Kartu approval + TTD terlampir (gambar pertama)');
+    L.push(demo?'*CONTOH – BUKAN APPROVAL NYATA*':'*▶️ START DRILLING DISETUJUI*');}
+  else L.push('⬜ Menunggu TTD Rig Geologist — belum boleh start drilling');
+  return {text:L.join('\n'),iss:iss,status:status,hard:hard.length,now:now};
+}
+
+function render(){
+  $('out').classList.toggle('demoOut',demo);
+  if(appr&&appr.snap!==snap()){appr=null;saveAppr();clearSig();toast('Data berubah setelah TTD — approval dibatalkan');}
+  var r=build();
+  paint(r.now);
+  $('out').value=r.text;
+  var ul=$('iss');ul.innerHTML='';
+  r.iss.forEach(function(i){var li=document.createElement('li');li.className=i.c;li.textContent=i.t;ul.appendChild(li);});
+  var pill=$('pill');
+  if(r.status==='bad'){pill.className='pill bad';pill.textContent='Tidak siap · '+r.hard;}
+  else if(demo){pill.className='pill warnc';pill.textContent='Contoh';}
+  else if(appr){pill.className='pill ok';pill.textContent='Approved';}
+  else{pill.className='pill '+(r.status==='warn'?'warnc':'ok');pill.textContent='Siap · menunggu TTD';}
+  paintAppr(r);
+  lastR=r;paintSteps(r);
+  paintShareBtn();if(SC.key!==shareKey()&&Object.keys(photos).length)prepSoon();
+  $('demoNote').classList.toggle('show',demo);
+  return r;
+}
+
+// ---------- langkah (stepper) ----------
+var STEPS=['Identitas','Lubang','Equipment','Mud','Foto','Approval','Kirim'],step=0,visited={0:1},lastR=null;
+var SECS=Array.prototype.slice.call(document.querySelectorAll('main>section'));
+SECS.forEach(function(sec,k){if(k<5){var d=document.createElement('div');d.className='stepIss';d.id='si'+k;sec.appendChild(d);}});
+(function(){
+  $('steps').innerHTML=STEPS.map(function(n,k){return '<button class="chip" type="button" data-k="'+k+'"><i>'+(k+1)+'</i>'+n+'</button>';}).join('');
+  Array.prototype.forEach.call($('steps').children,function(c){c.addEventListener('click',function(){go(+c.getAttribute('data-k'));});});
+})();
+function go(k){
+  k=Math.max(0,Math.min(STEPS.length-1,k));visited[step]=1;step=k;visited[k]=1;
+  SECS.forEach(function(sec,i){sec.classList.toggle('act',i===k);});
+  if(k===5&&!appr&&!ink)initSig();
+  if(k===4)warmGPS();
+  try{localStorage.setItem('psc5_step',String(k));}catch(e){}
+  window.scrollTo(0,0);
+  var c=$('steps').children[k];if(c&&c.scrollIntoView)try{c.scrollIntoView({block:'nearest',inline:'center'});}catch(e){}
+  if(lastR)paintSteps(lastR);
+}
+function paintSteps(r){
+  Array.prototype.forEach.call($('steps').children,function(c,k){
+    var hard=r.iss.filter(function(i){return i.s===k&&i.c!=='warn';}),wr=r.iss.filter(function(i){return i.s===k&&i.c==='warn';});
+    var st='';
+    if(k<5){st=hard.length?(visited[k]&&k!==step?'err':''):(wr.length?'wrn':'done');}
+    else if(k===5)st=appr?'done':'';
+    c.className='chip'+(k===step?' act':'')+(st?' '+st:'');
+    c.querySelector('i').textContent=st==='done'?'✓':st==='err'?'!':String(k+1);
+    if(k<5){
+      var box=$('si'+k),list=hard.length?hard:wr;
+      box.className='stepIss'+(list.length&&(visited[k]||!hard.length)?' show '+(hard.length?'bad':'warn'):'');
+      box.innerHTML=list.length?'<b>'+(hard.length?list.length+' item perlu dilengkapi':'Catatan')+'</b><ul>'+list.map(function(i){return '<li>'+i.t.replace(/[&<>]/g,function(m){return {'&':'&amp;','<':'&lt;','>':'&gt;'}[m];})+'</li>';}).join('')+'</ul>':'';
+    }
+  });
+  $('stepInfo').textContent=(step+1)+'/'+STEPS.length;
+  $('bBack').disabled=step===0;
+  $('bNext').textContent=step===STEPS.length-1?'Bagikan':step===STEPS.length-2?'Ke Laporan':'Lanjut';
+  var sub=[v('rig'),v('drillsite'),seg.shift?('Shift '+seg.shift):''].filter(Boolean).join(' · ');
+  $('sub').textContent=sub||'Coring · isi sebelum run pertama';
+}
+$('bBack').addEventListener('click',function(){go(step-1);});
+['copy','cut','contextmenu'].forEach(function(t){$('out').addEventListener(t,function(e){if(demo){e.preventDefault();toast(DEMO_MSG);}});});
+$('bNext').addEventListener('click',function(){if(step===STEPS.length-1)$('bShare').click();else go(step+1);});
+
+// ---------- persistence ----------
+function save(){
+  if(demo)return;
+  var d={seg:seg};FIELDS.forEach(function(f){d[f]=v(f);});LS.set('psc3_draft',d);
+}
+function load(){
+  var d=LS.get('psc3_draft',null);
+  if(d){FIELDS.forEach(function(f){if(d[f]!=null&&$(f))$(f).value=d[f];});seg=d.seg||{};}
+  if(!v('tgl'))$('tgl').value=today();
+  if(!seg.shift){var h=new Date().getHours();seg.shift=(h>=6&&h<18)?'Day':'Night';}
+  applyTargets();
+  appr=LS.get('psc4_appr',null);
+}
+FIELDS.forEach(function(f){var e=$(f);if(!e)return;
+  var h=function(){if(f==='formasi'||f==='ukuran')applyTargets();save();render();};
+  e.addEventListener('input',h);e.addEventListener('change',h);});
+
+// ---------- approval & signature ----------
+function snap(){
+  var o={s:seg,p:Object.keys(photos).sort().map(function(k){return k+':'+photos[k].taken.getTime();})};
+  FIELDS.forEach(function(f){o[f]=v(f);});return JSON.stringify(o);
+}
+function saveAppr(){if(!demo)LS.set('psc4_appr',appr);}
+var sig=$('sig'),sx=null,ink=false,drawing=false;
+function initSig(){
+  try{var dpr=window.devicePixelRatio||1,w=sig.clientWidth||320;
+    sig.width=Math.round(w*dpr);sig.height=Math.round(160*dpr);sx=sig.getContext('2d');
+    if(sx){sx.setTransform(dpr,0,0,dpr,0,0);sx.lineWidth=2.4;sx.lineCap='round';sx.lineJoin='round';sx.strokeStyle='#0b2a5b';}
+  }catch(e){sx=null;}
+  ink=false;
+}
+function clearSig(){
+  if(sx){sx.save();sx.setTransform(1,0,0,1,0,0);sx.clearRect(0,0,sig.width,sig.height);sx.restore();}
+  ink=false;
+}
+function spos(e){var b=sig.getBoundingClientRect();return [e.clientX-b.left,e.clientY-b.top];}
+sig.addEventListener('pointerdown',function(e){if(!sx||appr)return;drawing=true;
+  try{sig.setPointerCapture(e.pointerId);}catch(_){}var q=spos(e);sx.beginPath();sx.moveTo(q[0],q[1]);e.preventDefault();});
+sig.addEventListener('pointermove',function(e){if(!drawing)return;var q=spos(e);sx.lineTo(q[0],q[1]);sx.stroke();ink=true;e.preventDefault();});
+['pointerup','pointercancel','pointerleave'].forEach(function(t){sig.addEventListener(t,function(){drawing=false;});});
+function paintAppr(r){
+  var info=$('apprInfo'),img=$('sigImg');
+  if(appr){
+    sig.style.display='none';img.style.display=appr.sig?'block':'none';if(appr.sig)img.src=appr.sig;
+    var at=new Date(appr.time);
+    info.className='appr ok';info.textContent='Disetujui oleh '+appr.name+' — '+fmtD(at)+' '+fmtT(at)+'. Perubahan data akan membatalkan approval.';
+    $('bApprove').disabled=true;
+  }else{
+    sig.style.display='block';img.style.display='none';
+    info.className='appr wait';
+    info.textContent=r.status==='bad'?'Checklist belum SIAP — lengkapi dulu sebelum TTD.':'Menunggu tanda tangan Rig Geologist.';
+    $('bApprove').disabled=r.status==='bad';
+  }
+}
+$('bSigClr').addEventListener('click',function(){clearSig();if(appr){appr=null;saveAppr();}render();});
+$('bApprove').addEventListener('click',function(){
+  if(demoBlock())return;
+  var r=build();
+  if(r.status==='bad'){toast('Status TIDAK SIAP — belum bisa disetujui');return;}
+  if(!pick('spv')){toast('Pilih nama Rig Geologist');return;}
+  if(sx&&!ink){toast('Tanda tangan dulu');return;}
+  appr={name:pick('spv'),time:Date.now(),sig:sx?sig.toDataURL('image/png'):'',snap:snap()};
+  saveAppr();render();toast('Disetujui — start drilling');
+});
+function sigCard(r){
+  return loadImg(appr.sig).then(function(img){
+    var W=1080,H=1350,P=56,c=document.createElement('canvas');c.width=W;c.height=H;var x=c.getContext('2d');
+    var navy='#1f3a5f',ink='#1d2430',mut='#5b6573',ok='#1e7a3c',wr='#9a5a00';
+    x.fillStyle='#fff';x.fillRect(0,0,W,H);
+    x.textBaseline='alphabetic';x.textAlign='left';
+    // header
+    x.fillStyle=navy;x.fillRect(0,0,W,150);
+    x.fillStyle='#fff';x.font='bold 46px Arial';x.fillText('PRE-SHIFT CHECK',P,72);
+    x.font='30px Arial';x.fillText((v('rig')||'-')+'  |  '+(v('drillsite')||'-')+'  |  Shift '+(seg.shift||'-'),P,122);
+    var tg=v('tgl');if(tg){var q=tg.split('-');x.textAlign='right';x.fillText(fmtD(new Date(+q[0],+q[1]-1,+q[2])),W-P,72);x.textAlign='left';}
+    // status banner
+    var warns=r.iss.filter(function(i){return i.c==='warn';});
+    x.fillStyle=warns.length?'#fff4e0':'#e9f6ee';x.fillRect(P,186,W-2*P,110);
+    if(demo){x.fillStyle='#fbeceb';x.fillRect(P,186,W-2*P,110);x.fillStyle='#c4372c';x.font='bold 46px Arial';x.fillText('CONTOH – BUKAN APPROVAL NYATA',P+28,258);}
+    else{x.fillStyle=ok;x.font='bold 50px Arial';x.fillText('✓ START DRILLING DISETUJUI',P+28,258);}
+    // key facts
+    var eq=activeEq(),nOk=eq.filter(function(e){return v('eq_'+e.id)==='Normal';}).length;
+    var rows=[
+      ['Jenis / ukuran',(v('jenis')||'-')+' / '+(v('ukuran')||'-')],
+      ['Formasi',v('formasi')||'-'],
+      ['Kondisi lubang',seg.kondisi||'-'],
+      ['Drilling equipment',nOk+'/'+eq.length+' Normal'],
+      ['Viscosity',(v('vis')||'-')+' det/qt'+(v('tVisMin')?' (rekomendasi '+v('tVisMin')+'–'+v('tVisMax')+')':'')],
+      ['Foto bukti',activePh().filter(function(n){return photos[n];}).length+'/'+activePh().length],
+      ['Lokasi GPS',(function(){var k=activePh().filter(function(n){var g=photos[n]&&photos[n].gps;return g&&!g.pending&&!g.err;})[0];
+        if(!k)return '-';var g=photos[k].gps;return g.lat.toFixed(5)+', '+g.lon.toFixed(5)+' (±'+g.acc+' m)';})()],
+      ['SPV Drilling',pick('spvd')||'-'],
+      ['Driller',pick('driller')||'-']
+    ];
+    var y=360;
+    rows.forEach(function(rw){
+      x.fillStyle=mut;x.font='30px Arial';x.fillText(rw[0],P,y);
+      x.fillStyle=ink;x.font='bold 32px Arial';x.fillText(rw[1],P+360,y);
+      x.strokeStyle='#e3e8ef';x.lineWidth=2;x.beginPath();x.moveTo(P,y+20);x.lineTo(W-P,y+20);x.stroke();
+      y+=56;
+    });
+    if(warns.length){
+      x.fillStyle=wr;x.font='bold 28px Arial';
+      x.fillText('⚠ Catatan: '+warns.map(function(i){return i.t;}).join('; ').slice(0,62)+(warns.length>1||warns[0].t.length>62?'…':''),P,y+6);
+      y+=50;
+    }
+    // signature box
+    var by=y+16,bh=Math.min(300,H-by-160);
+    x.strokeStyle='#9fb6d1';x.lineWidth=2;x.setLineDash([10,8]);x.strokeRect(P,by,W-2*P,bh);x.setLineDash([]);
+    var sw=W-2*P-40,sh=sw*img.naturalHeight/img.naturalWidth;if(sh>bh-30){sh=bh-30;sw=sh*img.naturalWidth/img.naturalHeight;}
+    x.drawImage(img,(W-sw)/2,by+(bh-sh)/2,sw,sh);
+    var at=new Date(appr.time);
+    x.fillStyle=ink;x.font='bold 36px Arial';x.fillText(appr.name,P,by+bh+60);
+    x.fillStyle=mut;x.font='30px Arial';x.fillText('Rig Geologist  ·  TTD '+fmtD(at)+' '+fmtT(at),P,by+bh+104);
+    if(demo)wm(x,W,H);
+    return new Promise(function(res){c.toBlob(res,'image/jpeg',0.9);});
+  });
+}
+function demoSign(){
+  if(!sx)return;clearSig();
+  sx.beginPath();sx.moveTo(30,110);
+  sx.bezierCurveTo(60,30,90,140,120,80);sx.bezierCurveTo(140,40,160,120,190,90);
+  sx.bezierCurveTo(220,60,240,120,280,70);sx.moveTo(60,125);sx.lineTo(260,118);sx.stroke();ink=true;
+}
+
+// ---------- demo ----------
+// Data contoh sengaja dibuat TIDAK NORMAL (banyak catatan) & semua output diberi tanda CONTOH,
+// supaya tidak bisa dipakai sebagai laporan nyata. Hanya Bagikan Foto + Teks yang aktif untuk uji coba.
+var DEMO={rig:'RC 01',depth:'12.20',drillsite:'WSU 027',jenis:'Quality',ukuran:'HQ3',formasi:'Broken/Brittle',
+  spvd:'Taufik Hidayat',driller:'Ahmad Khasil',asst:'Dani Indrawan',geologist:'Eko Kristianta',
+  eq_barrel:'Perlu Penggantian Segera',
+  eq_bit:'Perlu Penggantian Segera',bitTipe:'Impregnated',bitSeri:'3',bitKond:'30',
+  eq_latch:'Perlu Penggantian Segera',
+  eq_lifter:'Perlu Penggantian Segera',
+  eq_ccase:'Perlu Penggantian Segera',
+  eq_split:'Perlu Perbaikan',
+  ibc:'1000',phAir:'6',bent:'5',trol:'1',hivis:'0.25',soda:'0',vis:'34',spv:'Dedi Akhmadi Irawan',
+  catatan:'CONTOH – bit, latch & core case diganti sebelum run ke-2'};
+var DEMO_MSG='Mode contoh hanya bisa uji coba Bagikan Foto + Teks. Tekan Shift Baru untuk mulai mengisi.';
+function demoBlock(){if(!demo)return false;toast(DEMO_MSG);return true;}
+function demoPhoto(n){
+  return new Promise(function(res){
+    var c=document.createElement('canvas'),x=null;
+    try{c.width=800;c.height=600;x=c.getContext('2d');}catch(e){}
+    if(!x||!c.toBlob){res(new Blob(['demo'],{type:'image/jpeg'}));return;}
+    x.fillStyle='#6b7a8c';x.fillRect(0,0,800,600);
+    x.fillStyle='#fff';x.font='bold 40px Arial';x.textAlign='center';
+    x.fillText('FOTO CONTOH '+n,400,280);x.font='24px Arial';x.fillText(PH[n].t,400,330);
+    x.save();x.translate(400,300);x.rotate(-0.5);x.fillStyle='rgba(196,55,44,.55)';x.font='bold 110px Arial';x.fillText('CONTOH',0,40);x.restore();
+    c.toBlob(function(b){res(b||new Blob(['demo'],{type:'image/jpeg'}));},'image/jpeg',0.8);
+  });
+}
+$('bDemo').addEventListener('click',function(){
+  demo=true;appr=null;clearSig();
+  FIELDS.forEach(function(f){if($(f))$(f).value=DEMO[f]||'';});
+  $('tgl').value=today();
+  seg={shift:'Day',kondisi:'Waterloss'};
+  applyTargets();clearPhotos();
+  var base=Date.now();
+  Promise.all(activePh().map(function(n){return demoPhoto(n).then(function(b){
+    setPhoto(n,new File([b],'contoh_'+n+'.jpg',{type:'image/jpeg'}),new Date(base-(6-n)*60000));
+    photos[n].gps=n==='4'?{err:'izin lokasi ditolak'}:{lat:-0.41237+n*0.00002,lon:114.48821+n*0.00001,acc:6};});}))
+  .then(function(){demoSign();appr={name:pick('spv'),time:Date.now(),sig:sx?sig.toDataURL('image/png'):'',snap:snap()};
+    visited={0:1,1:1,2:1,3:1,4:1,5:1};render();go(6);});
+  render();
+});
+
+// ---------- photo stamping & sharing ----------
+function loadImg(url){return new Promise(function(res,rej){var i=new Image();i.onload=function(){res(i);};i.onerror=rej;i.src=url;});}
+function wm(x,w,h){x.save();x.translate(w/2,h/2);x.rotate(-0.5);x.textAlign='center';x.textBaseline='middle';
+  x.fillStyle='rgba(196,55,44,.35)';x.font='bold '+Math.round(w/6)+'px Arial';x.fillText('CONTOH',0,0);x.restore();}
+function decode(p){
+  return loadImg(p.url).catch(function(){
+    if(window.createImageBitmap)return createImageBitmap(p.file);
+    throw new Error('decode');
+  });
+}
+function stamp(n){
+  var p=photos[n];
+  return decode(p).then(function(img){
+    var W0=img.naturalWidth||img.width,H0=img.naturalHeight||img.height;
+    var sc=Math.min(1,1600/Math.max(W0,H0));
+    var w=Math.round(W0*sc),h=Math.round(H0*sc);
+    var c=document.createElement('canvas');c.width=w;c.height=h;var x=c.getContext('2d');
+    x.drawImage(img,0,0,w,h);
+    var fs=Math.max(14,Math.round(w/42)),lh=fs*1.35;
+    var lines=(demo?['CONTOH – BUKAN LAPORAN NYATA']:[]).concat(['FOTO '+n+' – '+PH[n].t,
+      (v('rig')||'-')+' | '+(v('drillsite')||'-')+' | '+(v('jenis')||'-')+' '+(v('ukuran')||'')+' | Shift '+(seg.shift||'-'),
+      'Diambil: '+fmtD(p.taken)+' '+fmtT(p.taken),
+      gpsTxt(p.gps)]);
+    var bh=lh*lines.length+fs*0.8;
+    x.fillStyle='rgba(0,0,0,0.6)';x.fillRect(0,h-bh,w,bh);
+    x.fillStyle='#fff';x.font='600 '+fs+'px Arial, sans-serif';x.textBaseline='top';x.textAlign='left';
+    lines.forEach(function(l,i){x.fillStyle=(demo&&i===0)?'#ff8a80':'#fff';x.fillText(l,fs*0.6,h-bh+fs*0.4+i*lh);});
+    if(demo)wm(x,w,h);
+    return new Promise(function(res,rej){c.toBlob(function(b){b?res(b):rej(new Error('toBlob'));},'image/jpeg',0.82);});
+  });
+}
+function fileBase(){return ('PSC_'+(v('rig')||'RIG')+'_'+v('tgl').replace(/-/g,'')+'_'+(seg.shift||'')).replace(/[^\w-]+/g,'_');}
+function toast(t){var e=$('toast');e.textContent=t;e.style.display='block';clearTimeout(toast._t);toast._t=setTimeout(function(){e.style.display='none';},3000);}
+function copyFallback(t){
+  var ta=document.createElement('textarea');ta.value=t;ta.setAttribute('readonly','');
+  ta.style.cssText='position:fixed;top:0;left:0;width:1px;height:1px;opacity:0';
+  document.body.appendChild(ta);ta.focus();ta.select();try{ta.setSelectionRange(0,t.length);}catch(e){}
+  var ok=false;try{ok=document.execCommand('copy');}catch(e){}
+  ta.remove();return ok;
+}
+// always resolves true/false, never rejects
+function copyText(t){
+  return new Promise(function(res){
+    if(navigator.clipboard&&navigator.clipboard.writeText&&window.isSecureContext!==false){
+      navigator.clipboard.writeText(t).then(function(){res(true);},function(){res(copyFallback(t));});
+    }else res(copyFallback(t));
+  });
+}
+function flash(btn,txt){var o=btn.getAttribute('data-l')||btn.textContent;btn.setAttribute('data-l',o);btn.textContent=txt;
+  clearTimeout(btn._t);btn._t=setTimeout(function(){btn.textContent=o;},1800);}
+// in-page confirm (window.confirm is blocked in some in-app browsers)
+function ask(msg,yes){
+  return new Promise(function(res){
+    var o=document.createElement('div');o.id='cfm';o.className='cfm';
+    o.innerHTML='<div class="box"><p></p><div class="btns"><button class="btn" id="cfmNo" type="button">Batal</button><button class="btn pri" id="cfmYes" type="button"></button></div></div>';
+    o.querySelector('p').textContent=msg;o.querySelector('#cfmYes').textContent=yes||'Ya';
+    document.body.appendChild(o);
+    function done(v){o.remove();res(v);}
+    o.querySelector('#cfmYes').addEventListener('click',function(){done(true);});
+    o.querySelector('#cfmNo').addEventListener('click',function(){done(false);});
+    o.addEventListener('click',function(e){if(e.target===o)done(false);});
+  });
+}
+$('bCopy').addEventListener('click',function(){
+  if(demoBlock())return;
+  var b=this;copyText(render().text).then(function(ok){
+    if(ok){flash(b,'✓ Tersalin');toast('Teks disalin — tempel di WhatsApp');}
+    else{var o=$('out');o.focus();o.select();flash(b,'Salin manual');toast('Browser memblokir salin otomatis — teks sudah diblok, tekan lama lalu Salin');}
+  });
+});
+$('bWa').addEventListener('click',function(){
+  if(demoBlock())return;
+  if(appr)toast('Teks saja — gambar TTD hanya terkirim lewat "Bagikan Foto + Teks"');
+  window.open('https://wa.me/?text='+encodeURIComponent(render().text),'_blank');});
+// Foto distempel lebih dulu (di latar belakang) supaya saat tombol ditekan, share langsung terpanggil.
+// Beberapa browser (terutama iPhone) menolak share jika ada jeda proses setelah tombol ditekan.
+var SC={key:null,files:null,notes:[],busy:null};
+function shareKey(){
+  return snap()+'|'+(appr?appr.time:'')+'|'+v('tVisMin')+v('tVisMax')+'|'+
+    Object.keys(photos).sort().map(function(k){var g=photos[k].gps;return k+':'+(g?(g.pending?'p':g.err||g.lat):'')}).join(',');
+}
+function prepare(){
+  var key=shareKey();
+  if(SC.key===key&&SC.files)return Promise.resolve(SC);
+  if(SC.busy&&SC.busyKey===key)return SC.busy;
+  var r=build(),ns=activePh().filter(function(n){return photos[n];}),notes=[];
+  var jobs=ns.map(function(n){
+    return stamp(n).then(function(b){return new File([b],fileBase()+'_F'+n+'.jpg',{type:'image/jpeg'});})
+      .catch(function(){notes.push(n);var f=photos[n].file;return new File([f],fileBase()+'_F'+n+'_asli.'+((f.type.split('/')[1]||'jpg').replace('jpeg','jpg')),{type:f.type||'image/jpeg'});});
+  });
+  // kartu approval + TTD di urutan pertama: di WhatsApp teks jadi caption gambar pertama
+  if(appr&&appr.sig)jobs.unshift(sigCard(r).then(function(b){return new File([b],fileBase()+'_0_APPROVAL.jpg',{type:'image/jpeg'});}).catch(function(){notes.push('TTD');return null;}));
+  SC.busyKey=key;
+  SC.busy=Promise.all(jobs).then(function(files){
+    SC={key:key,files:files.filter(Boolean),notes:notes,busy:null};paintShareBtn();return SC;
+  },function(){SC.busy=null;throw new Error('prep');});
+  return SC.busy;
+}
+var prepT=null;
+function prepSoon(){clearTimeout(prepT);prepT=setTimeout(function(){if(Object.keys(photos).length)prepare().catch(function(){});},1200);}
+function paintShareBtn(){
+  var ready=SC.files&&SC.key===shareKey(),b=$('bShare');
+  b.textContent='Bagikan Foto + Teks';b.classList.toggle('ready',!!ready);
+}
+function downloadAll(files){
+  files.forEach(function(f,i){setTimeout(function(){var a=document.createElement('a');a.href=URL.createObjectURL(f);a.download=f.name;document.body.appendChild(a);a.click();a.remove();},i*250);});
+}
+function canShareFiles(files){try{return !!(navigator.canShare&&navigator.share&&navigator.canShare({files:files}));}catch(e){return false;}}
+function fallback(files,text,why){
+  downloadAll(files);
+  copyText(text).then(function(ok){
+    toast(why+' — '+files.length+' foto disimpan ke folder Download'+(ok?', teks disalin. Buka WhatsApp, tempel teks & lampirkan foto.':'. Salin teks manual dari kotak laporan.'));
+  });
+}
+function doShare(st,text,afterWait){
+  var files=st.files,extra=st.notes.length?' (foto '+st.notes.join(', ')+' dikirim tanpa stamp)':'';
+  if(!canShareFiles(files)){fallback(files,text,'Browser ini tidak bisa share foto');return;}
+  copyText(text);
+  var pr;
+  try{pr=navigator.share({files:files,text:text});}catch(e){pr=Promise.reject(e);}
+  pr.then(function(){if(extra)toast('Terkirim'+extra);})
+  .catch(function(e){
+    var nm=e&&e.name;
+    if(nm==='AbortError')return; // dibatalkan pengguna
+    if(nm==='NotAllowedError'&&!st.retried){st.retried=true;paintShareBtn();toast('Foto siap — tekan "Bagikan" sekali lagi');return;}
+    fallback(files,text,'Share ditolak browser');
+  });
+}
+$('bShare').addEventListener('click',function(){
+  var r=render(),ns=activePh().filter(function(n){return photos[n];});
+  if(!ns.length&&!(appr&&appr.sig)){toast('Belum ada foto');return;}
+  if(ns.some(function(n){var g=photos[n].gps;return g&&g.pending;}))toast('GPS belum selesai — foto dikirim dengan status GPS saat ini');
+  if(SC.files&&SC.key===shareKey()){doShare(SC,r.text,false);return;}   // langsung, tanpa jeda
+  toast('Menyiapkan foto…');
+  prepare().then(function(st){doShare(st,r.text,true);})
+  .catch(function(){toast('Foto tidak bisa diproses di browser ini — coba buka file lewat Google Chrome');});
+});
+// ---------- simpan ke HP (ZIP, tanpa kompresi, tanpa internet) ----------
+var CRC=(function(){var t=new Uint32Array(256);for(var n=0;n<256;n++){var c=n;for(var k=0;k<8;k++)c=c&1?0xEDB88320^(c>>>1):c>>>1;t[n]=c>>>0;}return t;})();
+function crc32(u){var c=0xFFFFFFFF;for(var i=0;i<u.length;i++)c=CRC[(c^u[i])&255]^(c>>>8);return (c^0xFFFFFFFF)>>>0;}
+function makeZip(entries){
+  var d=new Date(),dt=((d.getHours()<<11)|(d.getMinutes()<<5)|(d.getSeconds()>>1))&0xFFFF,
+      dd=(((d.getFullYear()-1980)<<9)|((d.getMonth()+1)<<5)|d.getDate())&0xFFFF;
+  var parts=[],central=[],off=0,enc=new TextEncoder();
+  entries.forEach(function(e){
+    var nm=enc.encode(e.name),crc=crc32(e.data),sz=e.data.length;
+    var h=new DataView(new ArrayBuffer(30));
+    h.setUint32(0,0x04034b50,true);h.setUint16(4,20,true);h.setUint16(6,0x0800,true);h.setUint16(8,0,true);
+    h.setUint16(10,dt,true);h.setUint16(12,dd,true);h.setUint32(14,crc,true);h.setUint32(18,sz,true);h.setUint32(22,sz,true);
+    h.setUint16(26,nm.length,true);h.setUint16(28,0,true);
+    parts.push(new Uint8Array(h.buffer),nm,e.data);
+    var c=new DataView(new ArrayBuffer(46));
+    c.setUint32(0,0x02014b50,true);c.setUint16(4,20,true);c.setUint16(6,20,true);c.setUint16(8,0x0800,true);c.setUint16(10,0,true);
+    c.setUint16(12,dt,true);c.setUint16(14,dd,true);c.setUint32(16,crc,true);c.setUint32(20,sz,true);c.setUint32(24,sz,true);
+    c.setUint16(28,nm.length,true);c.setUint32(42,off,true);
+    central.push(new Uint8Array(c.buffer),nm);
+    off+=30+nm.length+sz;
+  });
+  var cs=central.reduce(function(a,b){return a+b.length;},0),end=new DataView(new ArrayBuffer(22));
+  end.setUint32(0,0x06054b50,true);end.setUint16(8,entries.length,true);end.setUint16(10,entries.length,true);
+  end.setUint32(12,cs,true);end.setUint32(16,off,true);
+  return new Blob(parts.concat(central,[new Uint8Array(end.buffer)]),{type:'application/zip'});
+}
+function readBytes(f){
+  if(f.arrayBuffer)return f.arrayBuffer().then(function(b){return new Uint8Array(b);});
+  return new Promise(function(res,rej){var fr=new FileReader();fr.onload=function(){res(new Uint8Array(fr.result));};fr.onerror=rej;fr.readAsArrayBuffer(f);});
+}
+$('bSave').addEventListener('click',function(){
+  if(demoBlock())return;
+  var r=render(),has=activePh().some(function(n){return photos[n];})||(appr&&appr.sig);
+  toast('Menyiapkan file…');
+  (has?prepare():Promise.resolve({files:[],notes:[]})).then(function(st){
+    return Promise.all(st.files.map(function(f){return readBytes(f).then(function(u){return {name:f.name,data:u};});}));
+  }).then(function(entries){
+    entries.push({name:fileBase()+'_LAPORAN.txt',data:new TextEncoder().encode(r.text.replace(/\n/g,'\r\n'))});
+    var name=fileBase()+'.zip',blob=makeZip(entries),a=document.createElement('a');
+    a.href=URL.createObjectURL(blob);a.download=name;document.body.appendChild(a);a.click();a.remove();
+    setTimeout(function(){URL.revokeObjectURL(a.href);},60000);
+    toast('Tersimpan: Download/'+name+' ('+entries.length+' file, '+Math.round(blob.size/1024)+' KB)');
+  }).catch(function(){toast('Gagal menyimpan — coba buka file lewat Google Chrome');});
+});
+$('bNew').addEventListener('click',function(){
+  ask(demo?'Hapus data CONTOH dan mulai form kosong?':'Mulai shift baru? Isian shift ini, foto & TTD dikosongkan. Rig, drillsite, jenis & ukuran lubang, formasi, bit & IBC tetap.','Ya, Shift Baru').then(function(ok){if(ok)newShift();});
+});
+function newShift(){
+  var wasDemo=demo;demo=false;
+  FIELDS.forEach(function(f){if((wasDemo||KEEP.indexOf(f)<0)&&$(f))$(f).value='';});
+  applyTargets();
+  $('tgl').value=today();
+  seg={shift:seg.shift==='Day'?'Night':'Day'};
+  appr=null;clearSig();LS.set('psc4_appr',null);
+  clearPhotos();save();render();visited={0:1};go(0);toast('Form siap untuk shift '+seg.shift);
+}
+
+(function(){
+  if(location.protocol==='content:'){var n=$('ctxNote');n.style.display='block';
+    n.innerHTML='<b>Form dibuka langsung dari WhatsApp.</b> Lokasi GPS diblokir &amp; isian bisa hilang saat file ditutup. Gunakan link form resmi (https), atau simpan file ke HP lalu buka lewat Chrome.';}
+})();
+initSig();load();
+(function(){var k=0;try{k=+localStorage.getItem('psc5_step')||0;}catch(e){}go(k);})();
+render();
+setInterval(render,60000);
+})();
+</script>
+<script>
+/* Offline: simpan form di HP setelah dibuka pertama kali (hanya di link https). */
+(function(){
+  if(!('serviceWorker' in navigator)||!(location.protocol==='https:'||location.hostname==='localhost'))return;
+  window.addEventListener('load',function(){navigator.serviceWorker.register('sw.js').catch(function(){});});
+})();
+</script>
+</body>
+</html>
