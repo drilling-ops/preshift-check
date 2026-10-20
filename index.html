@@ -814,8 +814,10 @@ $('bApprove').addEventListener('click',function(){
   appr={name:pick('spv'),time:Date.now(),sig:sx?sig.toDataURL('image/png'):'',snap:snap()};
   saveAppr();render();toast('Disetujui — start drilling');
 });
+// Kartu status selalu dibuat (gambar pertama di WhatsApp): Approved / Menunggu TTD / Tidak siap / Contoh.
 function sigCard(r){
-  return loadImg(appr.sig).then(function(img){
+  var signed=!!(appr&&appr.sig);
+  return (signed?loadImg(appr.sig):Promise.resolve(null)).then(function(img){
     var W=1080,H=1350,P=56,c=document.createElement('canvas');c.width=W;c.height=H;var x=c.getContext('2d');
     var navy='#1f3a5f',ink='#1d2430',mut='#5b6573',ok='#1e7a3c',wr='#9a5a00';
     x.fillStyle='#fff';x.fillRect(0,0,W,H);
@@ -827,9 +829,12 @@ function sigCard(r){
     var tg=v('tgl');if(tg){var q=tg.split('-');x.textAlign='right';x.fillText(fmtD(new Date(+q[0],+q[1]-1,+q[2])),W-P,72);x.textAlign='left';}
     // status banner
     var warns=r.iss.filter(function(i){return i.c==='warn';});
-    x.fillStyle=warns.length?'#fff4e0':'#e9f6ee';x.fillRect(P,186,W-2*P,110);
-    if(demo){x.fillStyle='#fbeceb';x.fillRect(P,186,W-2*P,110);x.fillStyle='#c4372c';x.font='bold 46px Arial';x.fillText('CONTOH – BUKAN APPROVAL NYATA',P+28,258);}
-    else{x.fillStyle=ok;x.font='bold 50px Arial';x.fillText('✓ START DRILLING DISETUJUI',P+28,258);}
+    var ban=demo?['#fbeceb','#c4372c','CONTOH – BUKAN APPROVAL NYATA']
+      :signed?[warns.length?'#fff4e0':'#e9f6ee',ok,'✓ START DRILLING DISETUJUI']
+      :r.status==='bad'?['#fbeceb','#c4372c','✗ TIDAK SIAP CORING ('+r.hard+' item)']
+      :['#f1f3f5','#5b6573','MENUNGGU TTD RIG GEOLOGIST'];
+    x.fillStyle=ban[0];x.fillRect(P,186,W-2*P,110);
+    x.fillStyle=ban[1];x.font='bold 46px Arial';x.fillText(ban[2],P+28,258);
     // key facts
     var eq=activeEq(),nOk=eq.filter(function(e){return v('eq_'+e.id)==='Normal';}).length;
     var rows=[
@@ -859,11 +864,17 @@ function sigCard(r){
     // signature box
     var by=y+16,bh=Math.min(300,H-by-160);
     x.strokeStyle='#9fb6d1';x.lineWidth=2;x.setLineDash([10,8]);x.strokeRect(P,by,W-2*P,bh);x.setLineDash([]);
-    var sw=W-2*P-40,sh=sw*img.naturalHeight/img.naturalWidth;if(sh>bh-30){sh=bh-30;sw=sh*img.naturalWidth/img.naturalHeight;}
-    x.drawImage(img,(W-sw)/2,by+(bh-sh)/2,sw,sh);
-    var at=new Date(appr.time);
-    x.fillStyle=ink;x.font='bold 36px Arial';x.fillText(appr.name,P,by+bh+60);
-    x.fillStyle=mut;x.font='30px Arial';x.fillText('Rig Geologist  ·  TTD '+fmtD(at)+' '+fmtT(at),P,by+bh+104);
+    if(img){
+      var sw=W-2*P-40,sh=sw*img.naturalHeight/img.naturalWidth;if(sh>bh-30){sh=bh-30;sw=sh*img.naturalWidth/img.naturalHeight;}
+      x.drawImage(img,(W-sw)/2,by+(bh-sh)/2,sw,sh);
+      var at=new Date(appr.time);
+      x.fillStyle=ink;x.font='bold 36px Arial';x.fillText(appr.name,P,by+bh+60);
+      x.fillStyle=mut;x.font='30px Arial';x.fillText('Rig Geologist  ·  TTD '+fmtD(at)+' '+fmtT(at),P,by+bh+104);
+    }else{
+      x.fillStyle='#9aa3ad';x.font='italic 34px Arial';x.textAlign='center';x.fillText('Belum ditandatangani',W/2,by+bh/2+12);x.textAlign='left';
+      x.fillStyle=ink;x.font='bold 36px Arial';x.fillText(pick('spv')||'Rig Geologist: —',P,by+bh+60);
+      x.fillStyle=mut;x.font='30px Arial';x.fillText('Rig Geologist  ·  belum boleh start drilling',P,by+bh+104);
+    }
     if(demo)wm(x,W,H);
     return new Promise(function(res){c.toBlob(res,'image/jpeg',0.9);});
   });
@@ -1008,7 +1019,7 @@ function prepare(){
       .catch(function(){notes.push(n);var f=photos[n].file;return new File([f],fileBase()+'_F'+n+'_asli.'+((f.type.split('/')[1]||'jpg').replace('jpeg','jpg')),{type:f.type||'image/jpeg'});});
   });
   // kartu approval + TTD di urutan pertama: di WhatsApp teks jadi caption gambar pertama
-  if(appr&&appr.sig)jobs.unshift(sigCard(r).then(function(b){return new File([b],fileBase()+'_0_APPROVAL.jpg',{type:'image/jpeg'});}).catch(function(){notes.push('TTD');return null;}));
+  jobs.unshift(sigCard(r).then(function(b){return new File([b],fileBase()+(appr&&appr.sig?'_0_APPROVAL.jpg':'_0_STATUS.jpg'),{type:'image/jpeg'});}).catch(function(){notes.push('kartu status');return null;}));
   SC.busyKey=key;
   SC.busy=Promise.all(jobs).then(function(files){
     SC={key:key,files:files.filter(Boolean),notes:notes,busy:null};paintShareBtn();return SC;
@@ -1047,7 +1058,6 @@ function doShare(st,text,afterWait){
 }
 $('bShare').addEventListener('click',function(){
   var r=render(),ns=activePh().filter(function(n){return photos[n];});
-  if(!ns.length&&!(appr&&appr.sig)){toast('Belum ada foto');return;}
   if(ns.some(function(n){var g=photos[n].gps;return g&&g.pending;}))toast('GPS belum selesai — foto dikirim dengan status GPS saat ini');
   if(SC.files&&SC.key===shareKey()){doShare(SC,r.text,false);return;}   // langsung, tanpa jeda
   toast('Menyiapkan foto…');
@@ -1086,7 +1096,7 @@ function readBytes(f){
 }
 $('bSave').addEventListener('click',function(){
   if(demoBlock())return;
-  var r=render(),has=activePh().some(function(n){return photos[n];})||(appr&&appr.sig);
+  var r=render(),has=true;
   toast('Menyiapkan file…');
   (has?prepare():Promise.resolve({files:[],notes:[]})).then(function(st){
     return Promise.all(st.files.map(function(f){return readBytes(f).then(function(u){return {name:f.name,data:u};});}));
@@ -1122,7 +1132,6 @@ setInterval(render,60000);
 })();
 </script>
 <script>
-/* Offline: simpan form di HP setelah dibuka pertama kali (hanya di link https). */
 (function(){
   if(!('serviceWorker' in navigator)||!(location.protocol==='https:'||location.hostname==='localhost'))return;
   window.addEventListener('load',function(){navigator.serviceWorker.register('sw.js').catch(function(){});});
