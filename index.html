@@ -748,7 +748,13 @@ function paintSteps(r){
 }
 $('bBack').addEventListener('click',function(){go(step-1);});
 ['copy','cut','contextmenu'].forEach(function(t){$('out').addEventListener(t,function(e){if(demo){e.preventDefault();toast(DEMO_MSG);}});});
-$('bNext').addEventListener('click',function(){if(step===STEPS.length-1)$('bShare').click();else go(step+1);});
+$('bNext').addEventListener('click',function(){
+  if(step===STEPS.length-1){$('bShare').click();return;}
+  if(step===5&&!demo&&!appr&&ink){        // sudah TTD tapi belum tekan Setujui -> setujui otomatis
+    if(!approve())return;                 // gagal (mis. nama kosong / tidak siap): tetap di halaman ini
+  }
+  go(step+1);
+});
 
 // ---------- persistence ----------
 function save(){
@@ -805,15 +811,15 @@ function paintAppr(r){
   }
 }
 $('bSigClr').addEventListener('click',function(){clearSig();if(appr){appr=null;saveAppr();}render();});
-$('bApprove').addEventListener('click',function(){
-  if(demoBlock())return;
+function approve(){
   var r=build();
-  if(r.status==='bad'){toast('Status TIDAK SIAP — belum bisa disetujui');return;}
-  if(!pick('spv')){toast('Pilih nama Rig Geologist');return;}
-  if(sx&&!ink){toast('Tanda tangan dulu');return;}
+  if(r.status==='bad'){toast('Status TIDAK SIAP — belum bisa disetujui');return false;}
+  if(!pick('spv')){toast('Pilih nama Rig Geologist');return false;}
+  if(sx&&!ink){toast('Tanda tangan dulu');return false;}
   appr={name:pick('spv'),time:Date.now(),sig:sx?sig.toDataURL('image/png'):'',snap:snap()};
-  saveAppr();render();toast('Disetujui — start drilling');
-});
+  saveAppr();render();toast('Disetujui — start drilling');return true;
+}
+$('bApprove').addEventListener('click',function(){if(demoBlock())return;approve();});
 // Kartu status selalu dibuat (gambar pertama di WhatsApp): Approved / Menunggu TTD / Tidak siap / Contoh.
 function sigCard(r){
   var signed=!!(appr&&appr.sig);
