@@ -301,14 +301,14 @@ function today(){var n=new Date();return n.getFullYear()+'-'+p2(n.getMonth()+1)+
 var LS={get:function(k,d){try{var v=localStorage.getItem(k);return v==null?d:JSON.parse(v);}catch(e){return d;}},
         set:function(k,v){try{localStorage.setItem(k,JSON.stringify(v));}catch(e){}}};
 
-// ---------- master data (POB Control DBM & ICE, Okt-2026; resign dikeluarkan) ----------
+// ---------- master data (POB Control DBM 23-Okt-2026 & ICE, Okt-2026; resign dikeluarkan) ----------
 var PEOPLE={
  spvd:[
   ['SPV Drilling',['Fitri Bangke','Jon Palangan','Taufik Hidayat']]],
  driller:[
-  ['Driller',['Adri','Ahmad Khasil','Dasta','Hamran','Hari Cahyono','Heri Bradata Agon','Ibnu Abas Yahya','Ibrahim','Muhammad Toat Siregar','Sahrul','Taufik Riduar']]],
+  ['Driller',['Adri','Ahmad Khasil','Dasta','Hamran','Hari Cahyono','Heri Bradata Agon','Ibnu Abas Yahya','Ibrahim','Kontrianus Sarong','Muhammad Toat Siregar','Sahrul','Taufik Riduar','Yulius Aristo Harsa']]],
  asst:[
-  ['Assistant Driller',['Dadang','Dani Indrawan','Isma Wahyudiansyah','Kontrianus Sarong','Malik Fajar','Rehyan Hamidan','Rizal Wahyu Nurholik','Samir','Sebastianus Delmon','Yulius Aristo Harsa']]],
+  ['Assistant Driller',['Dadang','Dani Indrawan','Elman Nur','Faidhur Rahim','Isma Wahyudiansyah','Malik Fajar','Muh Arta Kurniawan','Mursal','Nicolas','Rehyan Hamidan','Rizal Wahyu Nurholik','Samir','Sebastianus Delmon']]],
  geo:[
   ['Sr. Geologist',['Agustien Bakda Maulidiena','Budi Sulistyanto','Dedi Akhmadi Irawan','Didik Wahyudi']],
   ['Geologist',['Achmad Andika Nugraha','Bagus Adiguna Apriliyanto','Bramsetyo Naryadi','Eko Kristianta','Ezra Theodavid Sinulingga','Fadhilon Rafykausar Aria Jaya','I Nyoman Agus Dharma Manggala','Krismon Carolus Ginting','Muhammad Iqbal Bima Sakti','Muhammad Taqiyuddin Rabbani','Reynaldo Indra Destama','Rohmad Bagus Abadi','Ryan Aprilian','Sunawar Sukowati','Willy Hikal']],
