@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="id">
+<html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
@@ -183,87 +183,87 @@ canvas.sig{width:100%;height:170px;border:1px dashed var(--line);border-radius:4
 </head>
 <body>
 <header class="app">
-  <div class="r1"><h1>Pre-Shift Check</h1><button id="bDemo" class="ghost" type="button">Contoh</button></div>
-  <div class="r2"><div id="sub">Coring · isi sebelum run pertama</div><div class="pill" id="pill">—</div></div>
-  <nav class="steps" id="steps" aria-label="Langkah"></nav>
+  <div class="r1"><h1>Pre-Shift Check</h1><button id="bDemo" class="ghost" type="button">Sample</button></div>
+  <div class="r2"><div id="sub">Coring · fill before the first run</div><div class="pill" id="pill">—</div></div>
+  <nav class="steps" id="steps" aria-label="Steps"></nav>
 </header>
 
 <main>
 <div class="demo show" id="ctxNote" style="display:none"></div>
-<div class="demo" id="demoNote">Mode contoh — data sengaja dibuat tidak normal &amp; semua foto/kartu bertanda CONTOH. Hanya Bagikan Foto + Teks yang aktif untuk uji coba. Tekan <b>Shift Baru</b> untuk mengosongkan sebelum dipakai.</div>
+<div class="demo" id="demoNote">Sample mode — data is deliberately abnormal &amp; every photo/card is marked SAMPLE. Only Share Photos + Text works, for testing. Tap <b>New Shift</b> to clear the form before real use.</div>
 
 <section>
-  <h2>Shift ID</h2><p class="lead">Rig, tanggal, shift &amp; personel.</p>
+  <h2>Shift ID</h2><p class="lead">Rig, date, shift &amp; crew.</p>
   <div class="bd">
     <div class="row">
-      <div><label>Rig</label><select id="rig"><option value="">— pilih —</option>
+      <div><label>Rig</label><select id="rig"><option value="">— select —</option>
         <option>RC 01</option><option>RC 02</option><option>RC 03</option><option>RC 04</option><option>RC 05</option><option>DR 01</option></select></div>
-      <div><label>Tanggal</label><input id="tgl" type="date"></div>
+      <div><label>Date</label><input id="tgl" type="date"></div>
     </div>
     <div class="row one">
       <div><label>Shift</label><div class="seg" data-k="shift"></div></div>
     </div>
     <div class="row one">
-      <div><label>SPV Drilling</label><select id="spvd" data-people="spvd"></select><input class="lain" id="spvdLain" placeholder="Nama SPV drilling"></div>
+      <div><label>SPV Drilling</label><select id="spvd" data-people="spvd"></select><input class="lain" id="spvdLain" placeholder="SPV drilling name"></div>
     </div>
     <div class="row one">
-      <div><label>Driller</label><select id="driller" data-people="driller"></select><input class="lain" id="drillerLain" placeholder="Nama driller"></div>
+      <div><label>Driller</label><select id="driller" data-people="driller"></select><input class="lain" id="drillerLain" placeholder="Driller name"></div>
     </div>
     <div class="row one">
-      <div><label>Assistant Driller</label><select id="asst" data-people="asst"></select><input class="lain" id="asstLain" placeholder="Nama assistant driller"></div>
+      <div><label>Assistant Driller</label><select id="asst" data-people="asst"></select><input class="lain" id="asstLain" placeholder="Assistant driller name"></div>
     </div>
     <div class="row one">
-      <div><label>Geologist</label><select id="geologist" data-people="geo"></select><input class="lain" id="geologistLain" placeholder="Nama geologist"></div>
+      <div><label>Geologist</label><select id="geologist" data-people="geo"></select><input class="lain" id="geologistLain" placeholder="Geologist name"></div>
     </div>
   </div>
 </section>
 
 <section>
-  <h2>Drillhole &amp; Kondisi Lubang</h2><p class="lead">Lokasi lubang, kedalaman awal &amp; kondisi saat serah terima.</p>
+  <h2>Drillhole &amp; Hole Condition</h2><p class="lead">Hole location, start depth &amp; condition at handover.</p>
   <div class="bd">
     <div class="row one">
-      <div><label>Block</label><select id="block"><option value="">— pilih block —</option></select></div>
+      <div><label>Block</label><select id="block"><option value="">— select block —</option></select></div>
     </div>
     <div class="row one">
-      <div class="combo"><label>Drillsite</label><div class="cbox"><input id="drillsite" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="Pilih atau ketik, mis. WS / ES / BH"><button type="button" id="dsBtn" aria-label="Tampilkan daftar drillsite"></button></div>
+      <div class="combo"><label>Drillsite</label><div class="cbox"><input id="drillsite" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="Select or type, e.g. WS / ES / BH"><button type="button" id="dsBtn" aria-label="Show drillsite list"></button></div>
         <div class="sugg" id="dsList" role="listbox"></div><div class="hint" id="dsInfo"></div></div>
     </div>
     <div class="row">
-      <div><label>Jenis lubang (otomatis)</label><select id="jenis" class="lock" tabindex="-1"><option value="">—</option>
-        <option>GT</option><option>SPT</option><option>Stratigrafi</option><option>Twin Hole</option></select></div>
-      <div><label>Ukuran (otomatis)</label><select id="ukuran" class="lock" tabindex="-1"><option value="">—</option>
+      <div><label>Hole type (auto)</label><select id="jenis" class="lock" tabindex="-1"><option value="">—</option>
+        <option>GT</option><option>SPT</option><option>Stratigraphic</option><option>Twin Hole</option></select></div>
+      <div><label>Size (auto)</label><select id="ukuran" class="lock" tabindex="-1"><option value="">—</option>
         <option>HQ3</option><option>PQ3</option></select></div>
     </div>
     <div class="row one" id="faseRow">
-      <div><label>Fase lubang (Twin Hole)</label><select id="fase"><option value="">— pilih —</option>
+      <div><label>Hole phase (Twin Hole)</label><select id="fase"><option value="">— select —</option>
         <option value="PO">Pilot / Open hole — ID …PO · HQ3</option><option value="PC">Partial core — ID …PC · PQ3</option></select></div>
     </div>
     <p class="hint" id="holeInfo" style="margin:-4px 0 12px"></p>
     <div class="row one">
-      <div><label>Depth awal shift (m)</label><input id="depth" inputmode="decimal"></div>
+      <div><label>Shift start depth (m)</label><input id="depth" inputmode="decimal"></div>
     </div>
-    <div class="sub">Kondisi saat serah terima</div>
-    <div class="row one"><div><label>Kondisi lubang</label><div class="seg" data-k="kondisi"></div></div></div>
+    <div class="sub">Condition at handover</div>
+    <div class="row one"><div><label>Hole condition</label><div class="seg" data-k="kondisi"></div></div></div>
     <div class="row one">
-      <div><label>Formasi</label><select id="formasi"><option value="">— pilih —</option><option>Solid</option><option>Broken/Brittle/Sandy</option><option>Clay / Seam Batubara</option></select></div>
+      <div><label>Formation</label><select id="formasi"><option value="">— select —</option><option>Solid</option><option>Broken/Brittle/Sandy</option><option>Clay / Coal Seam</option></select></div>
     </div>
   </div>
 </section>
 
 <section>
-  <h2>Drilling Equipment</h2><p class="lead">Kondisi tiap alat sebelum run pertama.</p>
+  <h2>Drilling Equipment</h2><p class="lead">Condition of each tool before the first run.</p>
   <div class="bd" id="eqList"></div>
 </section>
 
 <section>
-  <h2>Mud</h2><p class="lead">Formula tangki &amp; hasil uji viscosity.</p>
+  <h2>Mud</h2><p class="lead">Tank formula &amp; viscosity test result.</p>
   <div class="bd">
     <div class="row one">
-      <div><label>Vol. IBC tank (L)</label><select id="ibc"><option value="">— pilih —</option><option>1000</option><option value="others">Others</option></select>
+      <div><label>Vol. IBC tank (L)</label><select id="ibc"><option value="">— select —</option><option>1000</option><option value="others">Others</option></select>
         <input class="lain" id="ibcLain" inputmode="numeric" placeholder="Volume (L)"></div>
     </div>
     <div class="row one">
-      <div><label id="phLbl">pH mud setelah Soda Ash (target 8,5–9,5)</label><input id="phAir" inputmode="decimal"></div>
+      <div><label id="phLbl">Mud pH after Soda Ash (target 8.5–9.5)</label><input id="phAir" inputmode="decimal"></div>
     </div>
     <div class="sub">Formula</div>
     <div class="row">
@@ -275,79 +275,79 @@ canvas.sig{width:100%;height:170px;border:1px dashed var(--line);border-radius:4
       <div><label>Soda Ash (kg)</label><input id="soda" inputmode="decimal"></div>
     </div>
     <div class="row">
-      <div><label>Plug (gram/pill)</label><input id="plug" inputmode="numeric" placeholder="hanya saat loss"><div class="note" id="plugNote">⚠️ Lubang waterloss — siapkan pill plug &amp; isi jumlahnya (gram)</div></div>
-      <div><label>Others</label><input id="others" placeholder="mis. Polymer X 1 kg"></div>
+      <div><label>Plug (gram/pill)</label><input id="plug" inputmode="numeric" placeholder="only when losing"><div class="note" id="plugNote">⚠️ Waterloss hole — prepare a plug pill &amp; enter the amount (gram)</div></div>
+      <div><label>Others</label><input id="others" placeholder="e.g. Polymer X 1 kg"></div>
     </div>
     <div class="std" id="stdBox"></div>
     <div class="sub">Result</div>
     <div class="row one">
-      <div><label id="visLbl">Viscosity (det/qt)</label><input id="vis" inputmode="decimal"></div>
+      <div><label id="visLbl">Viscosity (s/qt)</label><input id="vis" inputmode="decimal"></div>
     </div>
   </div>
   <details id="tgtBox">
-    <summary>Rekomendasi viscosity (otomatis dari formasi &amp; ukuran lubang)</summary>
+    <summary>Recommended viscosity (auto from formation &amp; hole size)</summary>
     <div class="bd">
-      <div class="row"><div><label>Rekomendasi min (det/qt)</label><input id="tVisMin" class="ro" readonly tabindex="-1"></div><div><label>Rekomendasi maks (det/qt)</label><input id="tVisMax" class="ro" readonly tabindex="-1"></div></div>
-      <p class="hint" id="tgtHint">Terisi otomatis &amp; tidak bisa diubah di lapangan. Sumber: WIN-MAC-GFO-09-002 Mixing Mud Rev 0.0 — Solid PQ 38–42 / HQ 35–40 · Broken/Brittle/Sandy PQ 45–55 / HQ 42–50 · Clay/Seam Batubara PQ 40–45 / HQ 38–42 det/qt. Di luar rekomendasi = catatan ⚠️, keputusan lanjut coring oleh Rig Geologist.</p>
+      <div class="row"><div><label>Recommended min (s/qt)</label><input id="tVisMin" class="ro" readonly tabindex="-1"></div><div><label>Recommended max (s/qt)</label><input id="tVisMax" class="ro" readonly tabindex="-1"></div></div>
+      <p class="hint" id="tgtHint">Auto-filled &amp; locked in the field. Source: WIN-MAC-GFO-09-002 Mixing Mud Rev 0.0 — Solid PQ 38–42 / HQ 35–40 · Broken/Brittle/Sandy PQ 45–55 / HQ 42–50 · Clay/Coal Seam PQ 40–45 / HQ 38–42 s/qt. Outside the recommendation = ⚠️ note; the Rig Geologist decides whether coring proceeds.</p>
     </div>
   </details>
 </section>
 
 <section>
-  <h2>Evidence</h2><p class="lead">Ambil langsung dari kamera. Waktu &amp; lokasi terekam otomatis.</p>
+  <h2>Evidence</h2><p class="lead">Take directly with the camera. Time &amp; location are recorded automatically.</p>
   <div class="bd" id="phList"></div>
 </section>
 
 <section id="apprSec">
-  <h2>Approval Start Drilling</h2><p class="lead">Tanda tangan Rig Geologist setelah semua langkah siap.</p>
+  <h2>Approval Start Drilling</h2><p class="lead">Rig Geologist signs once every step is ready.</p>
   <div class="bd">
-    <div class="row one"><div><label>Rig Geologist (otomatis dari Shift ID)</label><select id="spv" data-people="geo" class="lock" tabindex="-1"></select><input class="lain ro" id="spvLain" readonly tabindex="-1"><p class="hint" id="spvHint" style="margin-top:5px"></p></div></div>
+    <div class="row one"><div><label>Rig Geologist (auto from Shift ID)</label><select id="spv" data-people="geo" class="lock" tabindex="-1"></select><input class="lain ro" id="spvLain" readonly tabindex="-1"><p class="hint" id="spvHint" style="margin-top:5px"></p></div></div>
     <div id="ovBox" class="ovbox">
-      <b>Ada item ❌ yang menahan drilling</b>
+      <b>❌ items are holding drilling</b>
       <ul id="ovList"></ul>
-      <p class="hint">Jika Rig Geologist tetap menyetujui (mis. part pengganti sedang dipasang), aktifkan pengecualian &amp; tulis alasannya. Pengecualian tercatat di laporan.</p>
+      <p class="hint">If the Rig Geologist still approves (e.g. a replacement part is being fitted), enable the exception &amp; write the reason. The exception is recorded in the report.</p>
       <div class="seg" data-k="ov" style="margin-top:8px"></div>
-      <textarea id="ovReason" rows="2" placeholder="Alasan pengecualian (wajib), mis. core lifter cadangan dipasang sebelum run pertama" style="margin-top:8px"></textarea>
+      <textarea id="ovReason" rows="2" placeholder="Exception reason (required), e.g. spare core lifter fitted before first run" style="margin-top:8px"></textarea>
     </div>
-    <label>Tanda tangan Rig Geologist</label>
-    <canvas id="sig" class="sig"></canvas><img id="sigImg" alt="Tanda tangan">
+    <label>Rig Geologist signature</label>
+    <canvas id="sig" class="sig"></canvas><img id="sigImg" alt="Signature">
     <div class="btns">
-      <button class="btn" id="bSigClr" type="button">Hapus TTD</button>
-      <button class="btn pri" id="bApprove" type="button">Setujui Start Drilling</button>
+      <button class="btn" id="bSigClr" type="button">Clear signature</button>
+      <button class="btn pri" id="bApprove" type="button">Approve Start Drilling</button>
     </div>
     <div class="appr wait" id="apprInfo"></div>
   </div>
 </section>
 
 <section id="prev">
-  <h2>Send Report</h2><p class="lead">Pratinjau pesan WhatsApp &amp; simpan arsip.</p>
+  <h2>Send Report</h2><p class="lead">WhatsApp message preview &amp; archive.</p>
   <div class="bd">
     <ul class="iss" id="iss"></ul>
-    <div class="row one"><div><label>Tindakan / catatan (wajib jika TIDAK SIAP)</label><textarea id="catatan" rows="2"></textarea></div></div>
+    <div class="row one"><div><label>Action / notes (required if NOT READY)</label><textarea id="catatan" rows="2" placeholder="Bahasa Indonesia boleh — mis. bit diganti sebelum run ke-2"></textarea></div></div>
     <textarea id="out" rows="28" readonly></textarea>
     <div class="btns">
-      <button class="btn pri" id="bShare">Bagikan Foto + Teks</button>
-      <button class="btn" id="bWa">Kirim Teks ke WA</button>
-      <button class="btn" id="bCopy">Salin Teks</button>
+      <button class="btn pri" id="bShare">Share Photos + Text</button>
+      <button class="btn" id="bWa">Send Text to WA</button>
+      <button class="btn" id="bCopy">Copy Text</button>
     </div>
     <div class="btns">
-      <button class="btn" id="bSave">Simpan ke HP</button>
-      <button class="btn" id="bNew">Shift Baru</button>
+      <button class="btn" id="bSave">Save to Phone</button>
+      <button class="btn" id="bNew">New Shift</button>
     </div>
-    <p class="hint" style="margin-top:8px">Simpan ke HP bekerja tanpa sinyal: kartu approval, foto ber-stamp &amp; teks laporan disimpan sebagai 1 file ZIP di folder Download.</p>
+    <p class="hint" style="margin-top:8px">Save to Phone works without signal: the approval card, stamped photos &amp; report text are saved as one ZIP in the Download folder.</p>
   </div>
 </section>
 
 </main>
 
-<div class="bar"><div class="in"><button class="btn" id="bBack" type="button">Kembali</button><div id="stepInfo">1/7</div><button class="btn pri" id="bNext" type="button">Lanjut</button></div></div>
+<div class="bar"><div class="in"><button class="btn" id="bBack" type="button">Back</button><div id="stepInfo">1/7</div><button class="btn pri" id="bNext" type="button">Next</button></div></div>
 <div class="toast" id="toast"></div>
 
 <script>
 (function(){
 "use strict";
 var $=function(id){return document.getElementById(id);};
-var BLN=['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep','Okt','Nov','Des'];
+var BLN=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 function p2(n){return String(n).padStart(2,'0');}
 function fmtD(d){return p2(d.getDate())+'-'+BLN[d.getMonth()]+'-'+d.getFullYear();}
 function fmtT(d){return p2(d.getHours())+':'+p2(d.getMinutes());}
@@ -357,7 +357,7 @@ var LS={get:function(k,d){try{var v=localStorage.getItem(k);return v==null?d:JSO
 
 // ---------- drillsite (AMI_GFO_Drillsite_Completion, Active Site List per 11-Nov-2026) ----------
 // sites: [nama, index block, status, jenis lubang (Drilling Type)]
-var DS={"blocks":["West Usai (Central Kal)","West Usai (East Kal)","East Usai (Central Kal)","2nd CHPP"],"sites":[["BH-01",3,"Cancel","SPT"],["BH-02",3,"Completed","SPT"],["BH-03",3,"Completed","SPT"],["BH-04",3,"Completed","SPT"],["BH-05",3,"Completed","SPT"],["BH-06",3,"Completed","SPT"],["BH-07",3,"Completed","SPT"],["BH-08",3,"Completed","SPT"],["BH-09",3,"Completed","SPT"],["BH-10",3,"Completed","SPT"],["BH-11",3,"Remaining","SPT"],["BH-12",3,"Completed","SPT"],["BH-13",3,"Completed","SPT"],["BH-14",3,"Completed","SPT"],["BH-15",3,"Completed","SPT"],["BH-16",3,"Completed","SPT"],["BH-17",3,"Completed","SPT"],["BH-18",3,"Completed","SPT"],["BH-19",3,"Remaining","SPT"],["BH-20",3,"Remaining","SPT"],["BH-21",3,"Completed","SPT"],["BH-22",3,"Completed","SPT"],["BH-23",3,"Completed","SPT"],["BH-24",3,"Completed","SPT"],["BH-25",3,"Completed","SPT"],["BH-26",3,"Completed","SPT"],["BH-27",3,"Completed","SPT"],["BH-28",3,"Completed","SPT"],["BH-29",3,"Completed","SPT"],["BH-30",3,"Completed","SPT"],["BH-31",3,"Remaining","SPT"],["BH-32_REV",3,"Completed","SPT"],["BH-33_REV",3,"Completed","SPT"],["BH-34_REV",3,"Completed","SPT"],["BH-35",3,"Cancel","SPT"],["BH-36",3,"Cancel","SPT"],["BH-37",3,"Cancel","SPT"],["BH-38",3,"Completed","SPT"],["BH-39",3,"Completed","SPT"],["BH-40",3,"Completed","SPT"],["BH-41",3,"Completed","SPT"],["BH-42",3,"Completed","SPT"],["BH-43",3,"Completed","SPT"],["BH-44",3,"Completed","SPT"],["ESU001",2,"Remaining","Twin Hole"],["ESU002",2,"Remaining","Twin Hole"],["ESU003",2,"Remaining","Twin Hole"],["ESU004",2,"Remaining","Twin Hole"],["ESU005",2,"Remaining","Stratigrafi"],["ESU006",2,"Remaining","Twin Hole"],["ESU007",2,"Remaining","Twin Hole"],["ESU008",2,"Remaining","Stratigrafi"],["ESU009",2,"Remaining","Twin Hole"],["ESU010",2,"Remaining","Twin Hole"],["ESU011",2,"Remaining","Twin Hole"],["ESU012",2,"Remaining","Twin Hole"],["ESU013",2,"Remaining","Twin Hole"],["ESU014",2,"Remaining","Twin Hole"],["ESU015",2,"Remaining","Twin Hole"],["ESU016",2,"Remaining","Stratigrafi"],["ESU017",2,"Remaining","Twin Hole"],["ESU018",2,"Remaining","Twin Hole"],["ESU019",2,"Remaining","Twin Hole"],["ESU020",2,"Remaining","Twin Hole"],["ESU021",2,"Remaining","Twin Hole"],["ESU022",2,"Remaining","Twin Hole"],["ESU023",2,"Remaining","Twin Hole"],["ESU024",2,"Remaining","Twin Hole"],["ESU025",2,"Remaining","Twin Hole"],["ESU026",2,"Remaining","Twin Hole"],["ESU027",2,"Remaining","Twin Hole"],["EU0036",2,"Remaining","Twin Hole"],["EU0037",2,"Remaining","Twin Hole"],["EU0051",2,"Remaining","Twin Hole"],["EU0052",2,"Remaining","Twin Hole"],["EU0056",2,"Remaining","Twin Hole"],["EU0066",2,"Remaining","Twin Hole"],["EU0076",2,"Remaining","Twin Hole"],["EU0080",2,"Remaining","Twin Hole"],["EU0081",2,"Remaining","Twin Hole"],["EU0091",2,"Remaining","Twin Hole"],["EU0092",2,"Remaining","Twin Hole"],["EU0095",2,"Remaining","Stratigrafi"],["EU0096",2,"Remaining","Stratigrafi"],["EU0097",2,"Remaining","Twin Hole"],["EU0107",2,"Remaining","Twin Hole"],["EU0108",2,"Remaining","Twin Hole"],["EU0109",2,"Remaining","Twin Hole"],["EU0113",2,"Remaining","Twin Hole"],["EU0114",2,"Remaining","Twin Hole"],["EU0115",2,"Remaining","Twin Hole"],["EU0121",2,"Remaining","Twin Hole"],["EU0122",2,"Remaining","Twin Hole"],["EU0123",2,"Remaining","Twin Hole"],["EU0124",2,"Remaining","Twin Hole"],["EU0127",2,"Remaining","Twin Hole"],["EU0128",2,"Remaining","Twin Hole"],["EU0138",2,"Remaining","Twin Hole"],["EU0139",2,"Remaining","Twin Hole"],["EU0140",2,"Remaining","Twin Hole"],["EU0141",2,"Remaining","Twin Hole"],["EU0142",2,"Remaining","Twin Hole"],["EU0143",2,"Remaining","Twin Hole"],["EU0144",2,"Remaining","Twin Hole"],["EU0146",2,"Remaining","Twin Hole"],["EU0147",2,"Remaining","Twin Hole"],["EU0156",2,"Remaining","Twin Hole"],["EU0157",2,"Remaining","Twin Hole"],["EU0158",2,"Remaining","Twin Hole"],["EU0159",2,"Remaining","Twin Hole"],["EU0160",2,"Remaining","Twin Hole"],["EU0171",2,"Remaining","Twin Hole"],["EU0172",2,"Remaining","Twin Hole"],["EU0173",2,"Remaining","Twin Hole"],["EU0174",2,"Remaining","Twin Hole"],["EU0175",2,"Remaining","Twin Hole"],["EU0199",2,"Remaining","Twin Hole"],["EU0201",2,"Remaining","Twin Hole"],["WSU001",1,"Cancel","GT"],["WSU002",0,"Remaining","Stratigrafi"],["WSU003",1,"Completed","Twin Hole"],["WSU004",0,"Remaining","Twin Hole"],["WSU005",0,"Remaining","Twin Hole"],["WSU006",0,"Stock","Twin Hole"],["WSU007",0,"Remaining","Twin Hole"],["WSU008",1,"Cancel","GT"],["WSU009",0,"Progress","Stratigrafi"],["WSU010",0,"Stock","Twin Hole"],["WSU011",0,"Stock","Twin Hole"],["WSU012",0,"Stock","Twin Hole"],["WSU013",0,"Stock","Twin Hole"],["WSU014",0,"Stock","Twin Hole"],["WSU015",0,"Stock","Twin Hole"],["WSU016",1,"Completed","Twin Hole"],["WSU017",0,"Stock","Twin Hole"],["WSU018",0,"Progress","Twin Hole"],["WSU019",0,"Progress","Twin Hole"],["WSU020",1,"Cancel","GT"],["WSU021",1,"Cancel","Twin Hole"],["WSU022",0,"Completed","Stratigrafi"],["WSU023",0,"Completed","Twin Hole"],["WSU024",0,"Completed","Twin Hole"],["WSU025",0,"Remaining","Stratigrafi"],["WSU026",1,"Cancel","Twin Hole"],["WSU027",0,"Completed","Twin Hole"],["WSU027BS",0,"Stock","Twin Hole"],["WSU028",0,"Stock","Twin Hole"],["WSU029",0,"Completed","Twin Hole"],["WSU030",0,"Completed","GT"],["WSU031",0,"Completed","Twin Hole"],["WSU032",1,"Cancel","Twin Hole"],["WSU033",1,"Cancel","Twin Hole"],["WSU034",1,"Completed","Twin Hole"],["WSU035",1,"Completed","Twin Hole"],["WSU036",0,"Completed","Stratigrafi"],["WSU037",1,"Completed","Twin Hole"],["WSU038",1,"Completed","Twin Hole"],["WSU039",1,"Completed","Twin Hole"],["WSU040",1,"Cancel","Twin Hole"],["WSU041",1,"Completed","Twin Hole"],["WSU042",1,"Completed","Twin Hole"],["WSU043",1,"Completed","Twin Hole"],["WSU043BS",1,"Remaining","Twin Hole"],["WSU044",1,"Completed","Twin Hole"],["WSU045",1,"Completed","Twin Hole"],["WSU047",1,"Completed","Twin Hole"],["WSU048",1,"Completed","Twin Hole"],["WSU048BS",1,"Remaining","Twin Hole"],["WSU051",1,"Completed","Twin Hole"],["WSU052",1,"Completed","Twin Hole"],["WSU053",1,"Completed","Twin Hole"],["WSU068",0,"Completed","Twin Hole"],["WSU069",1,"Cancel","Twin Hole"],["WSU070",1,"Completed","Twin Hole"],["WSU071",1,"Completed","Twin Hole"],["WSU072",1,"Completed","Twin Hole"],["WSU073",1,"Completed","Twin Hole"],["WSU074",0,"Remaining","Twin Hole"],["WSU075",0,"Remaining","Stratigrafi"],["WSU076",0,"Remaining","Stratigrafi"],["WSU077",0,"Remaining","Stratigrafi"],["WU0146",0,"Cancel","Twin Hole"],["WU0171",1,"Completed","Twin Hole"],["WU0195",1,"Completed","Twin Hole"],["WU0217",0,"Completed","Twin Hole"],["WU0218",0,"Completed","Twin Hole"],["WU0238",0,"Stock","Twin Hole"],["WU0261",0,"Cancel","GT"],["WU0280",0,"Cancel","Twin Hole"],["WU0320",0,"Stock","Twin Hole"],["WU0324",0,"Stock","Twin Hole"],["WU0325",0,"Cancel","GT"],["WU0349",0,"Cancel","Twin Hole"],["WU0370",0,"Cancel","GT"]]};
+var DS={"blocks":["West Usai (Central Kal)","West Usai (East Kal)","East Usai (Central Kal)","2nd CHPP"],"sites":[["BH-01",3,"Cancel","SPT"],["BH-02",3,"Completed","SPT"],["BH-03",3,"Completed","SPT"],["BH-04",3,"Completed","SPT"],["BH-05",3,"Completed","SPT"],["BH-06",3,"Completed","SPT"],["BH-07",3,"Completed","SPT"],["BH-08",3,"Completed","SPT"],["BH-09",3,"Completed","SPT"],["BH-10",3,"Completed","SPT"],["BH-11",3,"Remaining","SPT"],["BH-12",3,"Completed","SPT"],["BH-13",3,"Completed","SPT"],["BH-14",3,"Completed","SPT"],["BH-15",3,"Completed","SPT"],["BH-16",3,"Completed","SPT"],["BH-17",3,"Completed","SPT"],["BH-18",3,"Completed","SPT"],["BH-19",3,"Remaining","SPT"],["BH-20",3,"Remaining","SPT"],["BH-21",3,"Completed","SPT"],["BH-22",3,"Completed","SPT"],["BH-23",3,"Completed","SPT"],["BH-24",3,"Completed","SPT"],["BH-25",3,"Completed","SPT"],["BH-26",3,"Completed","SPT"],["BH-27",3,"Completed","SPT"],["BH-28",3,"Completed","SPT"],["BH-29",3,"Completed","SPT"],["BH-30",3,"Completed","SPT"],["BH-31",3,"Remaining","SPT"],["BH-32_REV",3,"Completed","SPT"],["BH-33_REV",3,"Completed","SPT"],["BH-34_REV",3,"Completed","SPT"],["BH-35",3,"Cancel","SPT"],["BH-36",3,"Cancel","SPT"],["BH-37",3,"Cancel","SPT"],["BH-38",3,"Completed","SPT"],["BH-39",3,"Completed","SPT"],["BH-40",3,"Completed","SPT"],["BH-41",3,"Completed","SPT"],["BH-42",3,"Completed","SPT"],["BH-43",3,"Completed","SPT"],["BH-44",3,"Completed","SPT"],["ESU001",2,"Remaining","Twin Hole"],["ESU002",2,"Remaining","Twin Hole"],["ESU003",2,"Remaining","Twin Hole"],["ESU004",2,"Remaining","Twin Hole"],["ESU005",2,"Remaining","Stratigraphic"],["ESU006",2,"Remaining","Twin Hole"],["ESU007",2,"Remaining","Twin Hole"],["ESU008",2,"Remaining","Stratigraphic"],["ESU009",2,"Remaining","Twin Hole"],["ESU010",2,"Remaining","Twin Hole"],["ESU011",2,"Remaining","Twin Hole"],["ESU012",2,"Remaining","Twin Hole"],["ESU013",2,"Remaining","Twin Hole"],["ESU014",2,"Remaining","Twin Hole"],["ESU015",2,"Remaining","Twin Hole"],["ESU016",2,"Remaining","Stratigraphic"],["ESU017",2,"Remaining","Twin Hole"],["ESU018",2,"Remaining","Twin Hole"],["ESU019",2,"Remaining","Twin Hole"],["ESU020",2,"Remaining","Twin Hole"],["ESU021",2,"Remaining","Twin Hole"],["ESU022",2,"Remaining","Twin Hole"],["ESU023",2,"Remaining","Twin Hole"],["ESU024",2,"Remaining","Twin Hole"],["ESU025",2,"Remaining","Twin Hole"],["ESU026",2,"Remaining","Twin Hole"],["ESU027",2,"Remaining","Twin Hole"],["EU0036",2,"Remaining","Twin Hole"],["EU0037",2,"Remaining","Twin Hole"],["EU0051",2,"Remaining","Twin Hole"],["EU0052",2,"Remaining","Twin Hole"],["EU0056",2,"Remaining","Twin Hole"],["EU0066",2,"Remaining","Twin Hole"],["EU0076",2,"Remaining","Twin Hole"],["EU0080",2,"Remaining","Twin Hole"],["EU0081",2,"Remaining","Twin Hole"],["EU0091",2,"Remaining","Twin Hole"],["EU0092",2,"Remaining","Twin Hole"],["EU0095",2,"Remaining","Stratigraphic"],["EU0096",2,"Remaining","Stratigraphic"],["EU0097",2,"Remaining","Twin Hole"],["EU0107",2,"Remaining","Twin Hole"],["EU0108",2,"Remaining","Twin Hole"],["EU0109",2,"Remaining","Twin Hole"],["EU0113",2,"Remaining","Twin Hole"],["EU0114",2,"Remaining","Twin Hole"],["EU0115",2,"Remaining","Twin Hole"],["EU0121",2,"Remaining","Twin Hole"],["EU0122",2,"Remaining","Twin Hole"],["EU0123",2,"Remaining","Twin Hole"],["EU0124",2,"Remaining","Twin Hole"],["EU0127",2,"Remaining","Twin Hole"],["EU0128",2,"Remaining","Twin Hole"],["EU0138",2,"Remaining","Twin Hole"],["EU0139",2,"Remaining","Twin Hole"],["EU0140",2,"Remaining","Twin Hole"],["EU0141",2,"Remaining","Twin Hole"],["EU0142",2,"Remaining","Twin Hole"],["EU0143",2,"Remaining","Twin Hole"],["EU0144",2,"Remaining","Twin Hole"],["EU0146",2,"Remaining","Twin Hole"],["EU0147",2,"Remaining","Twin Hole"],["EU0156",2,"Remaining","Twin Hole"],["EU0157",2,"Remaining","Twin Hole"],["EU0158",2,"Remaining","Twin Hole"],["EU0159",2,"Remaining","Twin Hole"],["EU0160",2,"Remaining","Twin Hole"],["EU0171",2,"Remaining","Twin Hole"],["EU0172",2,"Remaining","Twin Hole"],["EU0173",2,"Remaining","Twin Hole"],["EU0174",2,"Remaining","Twin Hole"],["EU0175",2,"Remaining","Twin Hole"],["EU0199",2,"Remaining","Twin Hole"],["EU0201",2,"Remaining","Twin Hole"],["WSU001",1,"Cancel","GT"],["WSU002",0,"Remaining","Stratigraphic"],["WSU003",1,"Completed","Twin Hole"],["WSU004",0,"Remaining","Twin Hole"],["WSU005",0,"Remaining","Twin Hole"],["WSU006",0,"Stock","Twin Hole"],["WSU007",0,"Remaining","Twin Hole"],["WSU008",1,"Cancel","GT"],["WSU009",0,"Progress","Stratigraphic"],["WSU010",0,"Stock","Twin Hole"],["WSU011",0,"Stock","Twin Hole"],["WSU012",0,"Stock","Twin Hole"],["WSU013",0,"Stock","Twin Hole"],["WSU014",0,"Stock","Twin Hole"],["WSU015",0,"Stock","Twin Hole"],["WSU016",1,"Completed","Twin Hole"],["WSU017",0,"Stock","Twin Hole"],["WSU018",0,"Progress","Twin Hole"],["WSU019",0,"Progress","Twin Hole"],["WSU020",1,"Cancel","GT"],["WSU021",1,"Cancel","Twin Hole"],["WSU022",0,"Completed","Stratigraphic"],["WSU023",0,"Completed","Twin Hole"],["WSU024",0,"Completed","Twin Hole"],["WSU025",0,"Remaining","Stratigraphic"],["WSU026",1,"Cancel","Twin Hole"],["WSU027",0,"Completed","Twin Hole"],["WSU027BS",0,"Stock","Twin Hole"],["WSU028",0,"Stock","Twin Hole"],["WSU029",0,"Completed","Twin Hole"],["WSU030",0,"Completed","GT"],["WSU031",0,"Completed","Twin Hole"],["WSU032",1,"Cancel","Twin Hole"],["WSU033",1,"Cancel","Twin Hole"],["WSU034",1,"Completed","Twin Hole"],["WSU035",1,"Completed","Twin Hole"],["WSU036",0,"Completed","Stratigraphic"],["WSU037",1,"Completed","Twin Hole"],["WSU038",1,"Completed","Twin Hole"],["WSU039",1,"Completed","Twin Hole"],["WSU040",1,"Cancel","Twin Hole"],["WSU041",1,"Completed","Twin Hole"],["WSU042",1,"Completed","Twin Hole"],["WSU043",1,"Completed","Twin Hole"],["WSU043BS",1,"Remaining","Twin Hole"],["WSU044",1,"Completed","Twin Hole"],["WSU045",1,"Completed","Twin Hole"],["WSU047",1,"Completed","Twin Hole"],["WSU048",1,"Completed","Twin Hole"],["WSU048BS",1,"Remaining","Twin Hole"],["WSU051",1,"Completed","Twin Hole"],["WSU052",1,"Completed","Twin Hole"],["WSU053",1,"Completed","Twin Hole"],["WSU068",0,"Completed","Twin Hole"],["WSU069",1,"Cancel","Twin Hole"],["WSU070",1,"Completed","Twin Hole"],["WSU071",1,"Completed","Twin Hole"],["WSU072",1,"Completed","Twin Hole"],["WSU073",1,"Completed","Twin Hole"],["WSU074",0,"Remaining","Twin Hole"],["WSU075",0,"Remaining","Stratigraphic"],["WSU076",0,"Remaining","Stratigraphic"],["WSU077",0,"Remaining","Stratigraphic"],["WU0146",0,"Cancel","Twin Hole"],["WU0171",1,"Completed","Twin Hole"],["WU0195",1,"Completed","Twin Hole"],["WU0217",0,"Completed","Twin Hole"],["WU0218",0,"Completed","Twin Hole"],["WU0238",0,"Stock","Twin Hole"],["WU0261",0,"Cancel","GT"],["WU0280",0,"Cancel","Twin Hole"],["WU0320",0,"Stock","Twin Hole"],["WU0324",0,"Stock","Twin Hole"],["WU0325",0,"Cancel","GT"],["WU0349",0,"Cancel","Twin Hole"],["WU0370",0,"Cancel","GT"]]};
 // ---------- master data (POB Control DBM 23-Okt-2026 & ICE, Okt-2026; resign dikeluarkan) ----------
 var PEOPLE={
  spvd:[
@@ -377,12 +377,12 @@ var WIN_REF='WIN-MAC-GFO-09-002 Mixing Mud Rev 0.0';
 var STD={
  'Solid':               {PQ:{bent:[10,10],trol:[1,1.5],hivis:[.5,.5],soda:[.5,1]}, HQ:{bent:[8,8],  trol:[1,1.5],hivis:[.5,.5],soda:[.5,1]}},
  'Broken/Brittle/Sandy': {PQ:{bent:[20,25],trol:[2,3],  hivis:[.5,1], soda:[.5,1]}, HQ:{bent:[15,20],trol:[2,3],  hivis:[.5,1], soda:[.5,1]}},
- 'Clay / Seam Batubara':{PQ:{bent:[0,3],  trol:[1.5,2],hivis:[1,1.5], soda:[.5,1]}, HQ:{bent:[0,3],  trol:[1.5,2],hivis:[1,1.5], soda:[.5,1]}}
+ 'Clay / Coal Seam':{PQ:{bent:[0,3],  trol:[1.5,2],hivis:[1,1.5], soda:[.5,1]}, HQ:{bent:[0,3],  trol:[1.5,2],hivis:[1,1.5], soda:[.5,1]}}
 };
 var VIS={   // target viskositas (detik/quart)
  'Solid':               {PQ:[38,42],HQ:[35,40]},
  'Broken/Brittle/Sandy': {PQ:[45,55],HQ:[42,50]},
- 'Clay / Seam Batubara':{PQ:[40,45],HQ:[38,42]}
+ 'Clay / Coal Seam':{PQ:[40,45],HQ:[38,42]}
 };
 var PLUG={'Broken/Brittle/Sandy':{PQ:500,HQ:200}};   // gram per pill, hanya saat loss circulation
 var PH_MIN=8.5,PH_MAX=9.5,PH_LIMIT=10;
@@ -392,10 +392,10 @@ var TOL=0.2;
 // Drilling equipment
 // Checklist drilling equipment
 // A = core-critical (Rusak/Tidak ada = ❌, tidak boleh mulai) · B = pendukung (Rusak = ⚠️, keputusan Rig Geologist)
-var COND=['Normal','Perlu Penggantian Segera','Rusak'];
-var COND_SPLIT=['Normal','Perlu Perbaikan','Perlu Diganti','Rusak','Not Available'];
-var COND_B=['Normal','Perlu Penggantian Segera','Rusak','N/A'];
-var BTN={'Perlu Penggantian Segera':'Perlu ganti','Perlu Perbaikan':'Perlu perbaikan','Perlu Diganti':'Perlu diganti','Not Available':'Tidak ada'};
+var COND=['Normal','Replace Soon','Damaged'];
+var COND_SPLIT=['Normal','Needs Repair','Needs Replacement','Damaged','Not Available'];
+var COND_B=['Normal','Replace Soon','Damaged','N/A'];
+var BTN={'Replace Soon':'Replace soon','Needs Repair':'Needs repair','Needs Replacement':'Needs replacing','Not Available':'Not available'};
 var EQ=[
  {id:'barrel',n:'Barrel',g:'A'},
  {id:'bit',n:'Bit',g:'A',bit:true},
@@ -405,27 +405,27 @@ var EQ=[
  {id:'split',n:'Split tube',g:'A',split:true},
  {id:'spt',n:'SPT tools',g:'A',sptOnly:true},
  {id:'uds',n:'UDS (Shelby tube)',g:'A',sptOnly:true},
- {id:'panel',n:'Control panel & gauges',h:'RPM, feed/WOB & pump pressure terbaca normal',g:'A'},
- {id:'pump',n:'Supply / mud pump',h:'flow & tekanan stabil, tanpa bocor',g:'A'},
- {id:'gearbox',n:'Rotation head / gearbox',h:'rotasi halus, tanpa vibrasi/play',g:'A'},
- {id:'winch',n:'Winch + wireline (overshot)',h:'wireline tidak putus serat/kink, overshot mengunci',g:'B'},
- {id:'footclamp',n:'Footclamp',h:'jaw mencengkeram rod, tidak slip',g:'B'},
- {id:'mixer',n:'Mixer',h:'berfungsi untuk mixing mud',g:'B'}
+ {id:'panel',n:'Control panel & gauges',h:'RPM, feed/WOB & pump pressure read normal',g:'A'},
+ {id:'pump',n:'Supply / mud pump',h:'steady flow & pressure, no leaks',g:'A'},
+ {id:'gearbox',n:'Rotation head / gearbox',h:'smooth rotation, no vibration/play',g:'A'},
+ {id:'winch',n:'Winch + wireline (overshot)',h:'no broken strands/kinks, overshot latches',g:'B'},
+ {id:'footclamp',n:'Footclamp',h:'jaws grip the rod, no slipping',g:'B'},
+ {id:'mixer',n:'Mixer',h:'works for mud mixing',g:'B'}
 ];
-var FAIL={'Rusak':1,'Not Available':1};
-var WARN={'Perlu Penggantian Segera':1,'Perlu Perbaikan':1,'Perlu Diganti':1};
-var REM={'Rusak':1,'Not Available':1};
+var FAIL={'Damaged':1,'Not Available':1};
+var WARN={'Replace Soon':1,'Needs Repair':1,'Needs Replacement':1};
+var REM={'Damaged':1,'Not Available':1};
 
-var SEGS={ov:['Setujui dengan pengecualian'],shift:['Day','Night'],kondisi:['Normal','Waterloss','Caving','Collapse'],p2h:['Ya','Tidak']};
-var NEG={'Collapse':1,'Tidak':1},WRN={'Waterloss':1,'Caving':1};
+var SEGS={ov:['Approve with exception'],shift:['Day','Night'],kondisi:['Normal','Waterloss','Caving','Collapse'],p2h:['Yes','No']};
+var NEG={'Collapse':1,'No':1},WRN={'Waterloss':1,'Caving':1};
 // Foto bukti: hanya 2 — viskositas mud & overview rig (bukti inspeksi dilakukan di lokasi)
 var PH={
- 1:{t:'VISCOSITY (MARSH FUNNEL + TIMER)',s:'Funnel dan timer dalam SATU frame, angka detik terbaca'},
- 2:{t:'OVERVIEW RIG',s:'Seluruh rig dari jarak ±10–20 m, SPV drilling / crew terlihat di lokasi'}
+ 1:{t:'VISCOSITY (MARSH FUNNEL + TIMER)',s:'Funnel and timer in ONE frame, seconds readable'},
+ 2:{t:'OVERVIEW RIG',s:'Whole rig from ±10–20 m, SPV drilling / crew visible on site'}
 };
 var MAX_AGE_MIN=180;
 
-var LAIN={spv:'__lain',spvd:'__lain',driller:'__lain',asst:'__lain',geologist:'__lain',bitTipe:'Custom',bitSeri:'Lainnya',ibc:'others'};
+var LAIN={spv:'__lain',spvd:'__lain',driller:'__lain',asst:'__lain',geologist:'__lain',bitTipe:'Custom',bitSeri:'Other',ibc:'others'};
 var FIELDS=['rig','tgl','depth','block','drillsite','jenis','ukuran','fase','driller','drillerLain','asst','asstLain','geologist','geologistLain',
   'bitTipe','bitTipeLain','bitSeri','bitSeriLain','bitKond',
   'ibc','ibcLain','formasi','phAir','bent','trol','hivis','soda','plug','others','vis','catatan','spv','spvLain','spvd','spvdLain','ovReason'];
@@ -436,41 +436,41 @@ var seg={},photos={},demo=false,appr=null;
 
 // ---------- build: people selects ----------
 Array.prototype.forEach.call(document.querySelectorAll('select[data-people]'),function(sel){
-  var h='<option value="">— pilih —</option>';
+  var h='<option value="">— select —</option>';
   PEOPLE[sel.getAttribute('data-people')].forEach(function(g){
     h+='<optgroup label="'+g[0]+'">'+g[1].map(function(n){return '<option>'+n+'</option>';}).join('')+'</optgroup>';
   });
-  sel.innerHTML=h+'<option value="__lain">Lainnya (ketik nama)</option>';
+  sel.innerHTML=h+'<option value="__lain">Other (type name)</option>';
 });
 
 // ---------- build: equipment checklist ----------
-function opts(a){return '<option value="">— pilih —</option>'+a.map(function(o){return '<option>'+o+'</option>';}).join('');}
+function opts(a){return '<option value="">— select —</option>'+a.map(function(o){return '<option>'+o+'</option>';}).join('');}
 function eqOpts(e){return e.split?COND_SPLIT:e.g==='B'?COND_B:COND;}
 (function(){
   var box=$('eqList');
   box.insertAdjacentHTML('beforeend','<p class="hint eqcount" id="eqCount"></p>');
-  [['A','A. Core-critical — langsung berdampak ke core','Rusak / Tidak ada = tidak boleh mulai drilling'],
-   ['B','B. Pendukung','Rusak = catatan ⚠️, keputusan Rig Geologist']].forEach(function(gr){
+  [['A','A. Core-critical — directly affects the core','Damaged / Not available = drilling cannot start'],
+   ['B','B. Supporting','Damaged = ⚠️ note, Rig Geologist decides']].forEach(function(gr){
     box.insertAdjacentHTML('beforeend','<div class="sub eqg">'+gr[1]+'<small>'+gr[2]+'</small></div>');
     EQ.filter(function(e){return e.g===gr[0];}).forEach(function(e){
       var d=document.createElement('div');d.className='eq';d.id='row_'+e.id;
       var h='<div class="eqh"><b>'+e.n+'</b>'+(e.h?'<span>'+e.h+'</span>':'')+'</div>'+
         '<div class="seg eqs" data-eq="'+e.id+'">'+eqOpts(e).map(function(o){return '<button type="button" data-v="'+o+'">'+(BTN[o]||o)+'</button>';}).join('')+'</div>'+
         '<input type="hidden" id="eq_'+e.id+'">'+
-        '<input class="rem" id="eq_'+e.id+'Rem" placeholder="Remarks (wajib): kondisi / tindakan">';
+        '<input class="rem" id="eq_'+e.id+'Rem" placeholder="Remarks (required): condition / action">';
       if(e.bit){
         h+='<div class="row three" style="margin:8px 0 0">'+
-          '<div><label>Tipe bit</label><select id="bitTipe">'+opts(['Surface Set Step','Impregnated','Wing/Drag Bit','Tricone','Tungsten','Custom'])+'</select>'+
-          '<input class="lain" id="bitTipeLain" placeholder="Tipe custom"></div>'+
-          '<div><label>No. seri bit</label><select id="bitSeri">'+opts(['1','2','3','4','5','6','7','8','9','10','Lainnya'])+'</select>'+
-          '<input class="lain" id="bitSeriLain" placeholder="No. seri"></div>'+
-          '<div><label>Kondisi (%)</label><select id="bitKond">'+opts(['100','90','80','70','60','50','40','30','20','10','0'])+'</select></div></div>';
+          '<div><label>Bit type</label><select id="bitTipe">'+opts(['Surface Set Step','Impregnated','Wing/Drag Bit','Tricone','Tungsten','Custom'])+'</select>'+
+          '<input class="lain" id="bitTipeLain" placeholder="Custom type"></div>'+
+          '<div><label>Bit serial no.</label><select id="bitSeri">'+opts(['1','2','3','4','5','6','7','8','9','10','Other'])+'</select>'+
+          '<input class="lain" id="bitSeriLain" placeholder="Serial no."></div>'+
+          '<div><label>Condition (%)</label><select id="bitKond">'+opts(['100','90','80','70','60','50','40','30','20','10','0'])+'</select></div></div>';
       }
       d.innerHTML=h;box.appendChild(d);
     });
   });
-  box.insertAdjacentHTML('beforeend','<div class="sub eqg">C. Prestart kontraktor<small>Engine, fluid, hidrolik, safety device dicek di form P2H kontraktor</small></div>'+
-    '<div class="eq"><div class="eqh"><b>P2H / prestart kontraktor sudah dilakukan</b></div><div class="seg" data-k="p2h"></div></div>');
+  box.insertAdjacentHTML('beforeend','<div class="sub eqg">C. Contractor prestart<small>Engine, fluids, hydraulics &amp; safety devices are checked on the contractor P2H form</small></div>'+
+    '<div class="eq"><div class="eqh"><b>P2H / contractor prestart done</b></div><div class="seg" data-k="p2h"></div></div>');
   box.addEventListener('click',function(ev){
     var bt=ev.target.closest&&ev.target.closest('.eqs button');if(!bt)return;
     var id=bt.parentNode.getAttribute('data-eq'),inp=$('eq_'+id),val=bt.getAttribute('data-v');
@@ -493,10 +493,10 @@ Array.prototype.forEach.call(document.querySelectorAll('.seg[data-k]'),function(
 // ---------- build: photos ----------
 Object.keys(PH).forEach(function(n){
   var d=document.createElement('div');d.className='ph';d.id='phr'+n;
-  d.innerHTML='<div class="thumb" id="th'+n+'">FOTO '+n+'</div>'+
+  d.innerHTML='<div class="thumb" id="th'+n+'">PHOTO '+n+'</div>'+
    '<div><b>'+n+'. '+PH[n].t.charAt(0)+PH[n].t.slice(1).toLowerCase()+'</b><div class="spec">'+PH[n].s+'</div>'+
    '<div class="meta" id="mt'+n+'"></div>'+
-   '<label class="btn sm" style="color:var(--navy);margin-bottom:0">Ambil Foto<input type="file" accept="image/*" capture="environment" id="f'+n+'" style="display:none"></label></div>';
+   '<label class="btn sm" style="color:var(--navy);margin-bottom:0">Take Photo<input type="file" accept="image/*" capture="environment" id="f'+n+'" style="display:none"></label></div>';
   $('phList').appendChild(d);
   $('f'+n).addEventListener('change',function(e){
     var f=e.target.files&&e.target.files[0];if(!f)return;
@@ -514,15 +514,15 @@ function setPhoto(n,file,taken){
 // GPS satelit TIDAK butuh internet. Tanpa sinyal, fix pertama bisa lebih lama (1–2 menit di area terbuka).
 function getGPS(){
   return new Promise(function(res){
-    if(location.protocol==='content:')return res({err:'diblokir — form dibuka langsung dari WhatsApp',code:8});
-    if(window.isSecureContext===false)return res({err:'diblokir browser (buka file lewat Chrome)',code:9});
-    if(!navigator.geolocation)return res({err:'tidak didukung browser',code:9});
+    if(location.protocol==='content:')return res({err:'blocked — form opened directly from WhatsApp',code:8});
+    if(window.isSecureContext===false)return res({err:'blocked by browser (open the file in Chrome)',code:9});
+    if(!navigator.geolocation)return res({err:'not supported by browser',code:9});
     try{navigator.geolocation.getCurrentPosition(
       function(p){res({lat:p.coords.latitude,lon:p.coords.longitude,acc:Math.round(p.coords.accuracy)});},
       function(e){var c=e&&e.code;
-        res({code:c,err:c===1?'izin lokasi ditolak':c===2?'GPS HP mati / tidak tersedia':'belum dapat sinyal satelit'});},
+        res({code:c,err:c===1?'location permission denied':c===2?'phone GPS off / unavailable':'no satellite fix yet'});},
       {enableHighAccuracy:true,timeout:60000,maximumAge:300000});}
-    catch(e){res({err:'tidak didukung browser',code:9});}
+    catch(e){res({err:'not supported by browser',code:9});}
   });
 }
 var gpsWarm=false;
@@ -532,19 +532,19 @@ function warmGPS(){ // panaskan GPS & minta izin lebih awal, sebelum foto diambi
 function retryGPS(n){
   var p=photos[n];if(!p)return;p.gps={pending:true};render();
   getGPS().then(function(g){if(photos[n]===p){p.gps=g;render();prepSoon();
-    toast(g.err?'Lokasi foto '+n+': '+g.err:'Lokasi foto '+n+' terekam');}});
+    toast(g.err?'Photo '+n+' location: '+g.err:'Photo '+n+' location recorded');}});
 }
 function gpsHelp(g){
   if(!g||!g.err)return '';
-  if(g.code===1)return 'Aktifkan: ikon gembok/ⓘ di address bar Chrome → Izin → Lokasi → Izinkan. Pastikan juga Chrome diizinkan akses lokasi di Setelan HP.';
-  if(g.code===2)return 'Nyalakan Lokasi/GPS di panel notifikasi HP, lalu coba lagi.';
-  if(g.code===8)return 'Lokasi tidak bisa diizinkan untuk file yang dibuka dari WhatsApp. Gunakan link form resmi (https) atau simpan file ke HP lalu buka lewat Chrome.';
-  if(g.code===9)return 'Buka file dengan Google Chrome (bukan penampil file/WhatsApp).';
-  return 'Pindah ke area terbuka (jauh dari kanopi/rig), tunggu 1–2 menit, lalu coba lagi. GPS tidak butuh internet.';
+  if(g.code===1)return 'Enable: lock/ⓘ icon in the Chrome address bar → Permissions → Location → Allow. Also make sure Chrome has location access in the phone Settings.';
+  if(g.code===2)return 'Turn on Location/GPS in the phone notification panel, then try again.';
+  if(g.code===8)return 'Location cannot be allowed for a file opened from WhatsApp. Use the official form link (https), or save the file to the phone and open it in Chrome.';
+  if(g.code===9)return 'Open the file with Google Chrome (not a file viewer/WhatsApp).';
+  return 'Move to an open area (away from canopy/rig), wait 1–2 minutes, then try again. GPS does not need internet.';
 }
 function gpsTxt(g){
   if(!g)return 'GPS: -';
-  if(g.pending)return 'GPS: menunggu…';
+  if(g.pending)return 'GPS: waiting…';
   if(g.err)return 'GPS: '+g.err;
   return 'GPS: '+g.lat.toFixed(5)+', '+g.lon.toFixed(5)+' (±'+g.acc+' m)';
 }
@@ -556,7 +556,7 @@ function distM(a,b){
 $('phList').addEventListener('click',function(e){var b=e.target.closest&&e.target.closest('.gpsRetry');if(b)retryGPS(b.getAttribute('data-n'));});
 function clearPhotos(){
   Object.keys(photos).forEach(function(k){try{URL.revokeObjectURL(photos[k].url);}catch(e){}
-    $('th'+k).style.backgroundImage='';$('th'+k).textContent='FOTO '+k;});
+    $('th'+k).style.backgroundImage='';$('th'+k).textContent='PHOTO '+k;});
   photos={};SC={key:null,files:null,notes:[],busy:null};
 }
 
@@ -587,7 +587,7 @@ function stdNow(){
 }
 function rng(){
   var a=v('tVisMin').replace(',','.'),b=v('tVisMax').replace(',','.');
-  if(a&&b)return ' (rekomendasi '+a+'–'+b+')';if(b)return ' (maks '+b+')';if(a)return ' (min '+a+')';return '';
+  if(a&&b)return ' (recommended '+a+'–'+b+')';if(b)return ' (max '+b+')';if(a)return ' (min '+a+')';return '';
 }
 function inR(x){
   if(isNaN(x))return null;
@@ -622,33 +622,33 @@ function paint(now){
     $('row_'+e.id).classList.toggle('hide',!act);
     Array.prototype.forEach.call(document.querySelectorAll('.eqs[data-eq="'+e.id+'"] button'),function(b){
       var on=b.getAttribute('data-v')===val;b.classList.toggle('on',on);
-      b.classList.toggle('neg',on&&!!FAIL[val]&&!(e.g==='B'&&val==='Rusak'));
-      b.classList.toggle('wrn',on&&(!!WARN[val]||(e.g==='B'&&val==='Rusak')));
+      b.classList.toggle('neg',on&&!!FAIL[val]&&!(e.g==='B'&&val==='Damaged'));
+      b.classList.toggle('wrn',on&&(!!WARN[val]||(e.g==='B'&&val==='Damaged')));
       b.classList.toggle('okc',on&&val==='Normal');
     });
     $('eq_'+e.id+'Rem').classList.toggle('show',!!REM[val]);
     if(act){eqTot++;if(val)eqDone++;if(val==='Normal')eqNorm++;}
   });
-  $('eqCount').textContent=eqDone+' dari '+eqTot+' item dicek · '+eqNorm+' Normal'+(seg.p2h?' · P2H '+seg.p2h:' · P2H belum');
+  $('eqCount').textContent=eqDone+' of '+eqTot+' items checked · '+eqNorm+' Normal'+(seg.p2h?' · P2H '+seg.p2h:' · P2H pending');
   Object.keys(PH).forEach(function(n){
     $('phr'+n).classList.toggle('hide',!!PH[n].sptOnly&&!isSPT());
     var m=$('mt'+n),p=photos[n];
-    if(!p){m.innerHTML='<span class="bad">Belum ada foto</span>';return;}
+    if(!p){m.innerHTML='<span class="bad">No photo yet</span>';return;}
     var old=(now-p.taken)/60000>MAX_AGE_MIN;
     var g=p.gps,gc=!g||g.pending?'':(g.err?'warnc':'ok');
-    m.innerHTML='<span class="'+(old?'bad':'ok')+'">Diambil '+fmtD(p.taken)+' '+fmtT(p.taken)+(old?' — lebih dari '+(MAX_AGE_MIN/60)+' jam lalu':'')+'</span>'+
-      '<br><span class="'+gc+'">Lokasi '+gpsTxt(g).replace('GPS: ','')+'</span>'+
-      (g&&g.err&&!demo?'<br><span class="hint">'+gpsHelp(g)+'</span><br><button class="btn sm gpsRetry" type="button" data-n="'+n+'">Coba lagi lokasi</button>':'');
+    m.innerHTML='<span class="'+(old?'bad':'ok')+'">Taken '+fmtD(p.taken)+' '+fmtT(p.taken)+(old?' — more than '+(MAX_AGE_MIN/60)+' h ago':'')+'</span>'+
+      '<br><span class="'+gc+'">Location '+gpsTxt(g).replace('GPS: ','')+'</span>'+
+      (g&&g.err&&!demo?'<br><span class="hint">'+gpsHelp(g)+'</span><br><button class="btn sm gpsRetry" type="button" data-n="'+n+'">Retry location</button>':'');
   });
   var dc=dsCheck(),di=$('dsInfo');
-  if(!dc){di.textContent=v('block')?'Ketuk ▾ untuk daftar drillsite '+v('block')+', atau ketik 2 huruf untuk mencari.':'Pilih block dulu, atau ketuk ▾ / ketik 2 huruf untuk mencari di semua block.';di.className='hint';}
-  else if(dc.bad&&document.activeElement===$('drillsite')){di.textContent='Pilih drillsite dari daftar di bawah.';di.className='hint';}
+  if(!dc){di.textContent=v('block')?'Tap ▾ for the '+v('block')+' drillsite list, or type 2 letters to search.':'Select a block first, or tap ▾ / type 2 letters to search all blocks.';di.className='hint';}
+  else if(dc.bad&&document.activeElement===$('drillsite')){di.textContent='Select a drillsite from the list below.';di.className='hint';}
   else if(dc.bad){di.textContent=dc.bad;di.className='hint bad';}
-  else if(dc.warn){di.textContent=DS.blocks[dc.x[1]]+' · status '+dc.x[2]+' — pastikan drillsite benar';di.className='hint warnc';}
+  else if(dc.warn){di.textContent=DS.blocks[dc.x[1]]+' · status '+dc.x[2]+' — confirm this is the right drillsite';di.className='hint warnc';}
   else{di.textContent=DS.blocks[dc.x[1]]+' · status '+(dc.x[2]||'-');di.className='hint ok';}
   var hi=$('holeInfo'),j=v('jenis');
-  hi.textContent=!j?'Jenis & ukuran lubang terisi otomatis setelah drillsite dipilih.'
-    :j==='Twin Hole'&&!v('fase')?'Twin Hole — pilih fase: PO (pilot/open hole, HQ3) atau PC (partial core, PQ3).'
+  hi.textContent=!j?'Hole type & size fill in automatically once a drillsite is selected.'
+    :j==='Twin Hole'&&!v('fase')?'Twin Hole — select phase: PO (pilot/open hole, HQ3) or PC (partial core, PQ3).'
     :'Drillhole ID: '+holeId()+' · '+jenisTxt()+' · '+v('ukuran')+(j==='SPT'?' · SPT tools + Shelby tube (UDS)':'');
   var wl=seg.kondisi==='Waterloss',plugEmpty=!(num('plug')>0);
   $('plugNote').classList.toggle('show',wl&&plugEmpty);
@@ -656,43 +656,43 @@ function paint(now){
   var st=stdNow(),box=$('stdBox');
   if(st){var vol=ibcVol();
     var pg=PLUG[v('formasi')]&&PLUG[v('formasi')][size()];
-    box.textContent='Standar '+WIN_REF+' — '+v('formasi')+' '+size()+' ('+(isNaN(vol)?1000:vol)+' L): '+
-      MAT.map(function(m){var g=st[m[0]];return m[1]+' '+(g[1]===0?'tidak dipakai':fr(g)+' kg');}).join(' · ')+
-      ' (Soda Ash sampai pH 8,5–9,5)'+(pg?' · Plug ±'+pg+' g/pill bila loss':'');}
-  else if(v('ukuran')==='8 inch')box.textContent='Ukuran 8 inch belum ada di '+WIN_REF+' — belum ada formula standar & rekomendasi viscosity.';
-  else box.textContent='Pilih formasi & ukuran lubang (HQ3/PQ3) untuk melihat formula standar.';
+    box.textContent='Standard '+WIN_REF+' — '+v('formasi')+' '+size()+' ('+(isNaN(vol)?1000:vol)+' L): '+
+      MAT.map(function(m){var g=st[m[0]];return m[1]+' '+(g[1]===0?'not used':fr(g)+' kg');}).join(' · ')+
+      ' (Soda Ash until pH 8.5–9.5)'+(pg?' · Plug ±'+pg+' g/pill if losing':'');}
+  else if(v('ukuran')==='8 inch')box.textContent='8 inch size is not in '+WIN_REF+' — no standard formula or viscosity recommendation yet.';
+  else box.textContent='Select formation & hole size (HQ3/PQ3) to see the standard formula.';
   var a=v('tVisMin'),b=v('tVisMax');
-  $('visLbl').textContent='Viscosity (det/qt)'+(a||b?' — rekomendasi '+(a||'?')+'–'+(b||'?'):'');
+  $('visLbl').textContent='Viscosity (s/qt)'+(a||b?' — recommended '+(a||'?')+'–'+(b||'?'):'');
 }
 
 // ---------- build report ----------
 function build(){
   var now=new Date(),iss=[],cur=0;
-  function miss(t){iss.push({c:'miss',s:cur,t:t+' belum diisi'});}
+  function miss(t){iss.push({c:'miss',s:cur,t:t+' not filled'});}
   function fail(t){iss.push({c:'fail',s:cur,t:t});}
   function warn(t){iss.push({c:'warn',s:cur,t:t});}
   function req(val,label){if(!val)miss(label);return val||'__';}
 
   var rig=req(v('rig'),'Rig');
   var tglS=v('tgl'),tgl='__';
-  if(tglS){var pp=tglS.split('-');tgl=fmtD(new Date(+pp[0],+pp[1]-1,+pp[2]));}else miss('Tanggal');
+  if(tglS){var pp=tglS.split('-');tgl=fmtD(new Date(+pp[0],+pp[1]-1,+pp[2]));}else miss('Date');
   var shift=req(seg.shift,'Shift');
   cur=1;   // field drillhole ada di halaman Drillhole
-  var blok=req(v('block'),'Block'),site=req(v('drillsite'),'Drillsite'),depth=req(v('depth').replace(',','.'),'Depth awal shift');
+  var blok=req(v('block'),'Block'),site=req(v('drillsite'),'Drillsite'),depth=req(v('depth').replace(',','.'),'Shift start depth');
   var dc=dsCheck();if(dc&&dc.bad)fail(dc.bad);else if(dc&&dc.warn)warn(dc.warn);
-  var jenis=req(v('jenis'),'Jenis lubang'),uk;
-  if(v('jenis')==='Twin Hole'&&!v('fase'))miss('Fase lubang (PO/PC)');
+  var jenis=req(v('jenis'),'Hole type'),uk;
+  if(v('jenis')==='Twin Hole'&&!v('fase'))miss('Hole phase (PO/PC)');
   uk=v('ukuran')||'__';jenis=jenisTxt();var hid=v('drillsite')?holeId():'__';
   cur=0;
   var sd=req(pick('spvd'),'SPV Drilling'),dr=req(pick('driller'),'Driller'),as=req(pick('asst'),'Assistant driller'),geo=req(pick('geologist'),'Geologist');
 
   var L=[];
-  if(demo)L.push('_(CONTOH – bukan laporan nyata)_');
+  if(demo)L.push('_(SAMPLE – not a real report)_');
   L.push('*PRE-SHIFT CHECK – '+rig+'*');
-  L.push('Tgl: '+tgl+' | Shift: '+shift+' | Jam kirim: '+fmtT(now));
+  L.push('Date: '+tgl+' | Shift: '+shift+' | Sent: '+fmtT(now));
   L.push('Block: '+blok);
-  L.push('Drillsite: '+site+' | Drillhole ID: '+hid+' | Depth awal shift: '+depth+' m');
-  L.push('Jenis lubang: '+jenis+' | Ukuran: '+uk);
+  L.push('Drillsite: '+site+' | Drillhole ID: '+hid+' | Shift start depth: '+depth+' m');
+  L.push('Hole type: '+jenis+' | Size: '+uk);
   L.push('SPV Drilling: '+sd);
   L.push('Driller: '+dr);
   L.push('Asst. Driller: '+as);
@@ -701,12 +701,12 @@ function build(){
 
   // A
   cur=1;
-  L.push('*A. KONDISI LUBANG*');
+  L.push('*A. HOLE CONDITION*');
   var k=seg.kondisi;
-  if(!k)miss('Kondisi lubang');else if(k==='Collapse')fail('Kondisi lubang: Collapse');else if(k!=='Normal')warn('Kondisi lubang: '+k);
-  L.push('• Kondisi lubang: '+(k||'__'));
-  var fm=req(v('formasi'),'Formasi');
-  L.push('• Formasi: '+fm);
+  if(!k)miss('Hole condition');else if(k==='Collapse')fail('Hole condition: Collapse');else if(k!=='Normal')warn('Hole condition: '+k);
+  L.push('• Hole condition: '+(k||'__'));
+  var fm=req(v('formasi'),'Formation');
+  L.push('• Formation: '+fm);
   L.push('');
 
   // B
@@ -715,37 +715,37 @@ function build(){
   var lastG='';
   activeEq().forEach(function(e){
     var val=v('eq_'+e.id),rem=v('eq_'+e.id+'Rem'),s='none',line;
-    if(e.g!==lastG){L.push(e.g==='A'?'_A. Core-critical_':'_B. Pendukung_');lastG=e.g;}
+    if(e.g!==lastG){L.push(e.g==='A'?'_A. Core-critical_':'_B. Supporting_');lastG=e.g;}
     if(!val)miss(e.n);
-    else if(e.g==='B'&&val==='Rusak'){s='warn';warn(e.n+': Rusak'+(rem?' – '+rem:'')+' — keputusan Rig Geologist');if(!rem)miss('Remarks '+e.n);}
+    else if(e.g==='B'&&val==='Damaged'){s='warn';warn(e.n+': Damaged'+(rem?' – '+rem:'')+' — Rig Geologist decides');if(!rem)miss('Remarks '+e.n);}
     else if(FAIL[val]){s='fail';fail(e.n+': '+val+(rem?' – '+rem:''));if(!rem)miss('Remarks '+e.n);}
     else if(WARN[val]){s='warn';warn(e.n+': '+val);}
     else s=val==='N/A'?'none':'ok';
     line=mk(s)+' '+e.n+': '+(val||'__');
     if(e.bit){
       var bt=pick('bitTipe'),bs=pick('bitSeri'),bk=v('bitKond');
-      if(!bt)miss('Tipe bit');if(!bs)miss('No. seri bit');if(!bk)miss('Kondisi bit (%)');
-      line+=' | '+(bt||'__')+' | No. seri '+(bs||'__')+' | '+(bk||'__')+'%';
+      if(!bt)miss('Bit type');if(!bs)miss('Bit serial no.');if(!bk)miss('Bit condition (%)');
+      line+=' | '+(bt||'__')+' | S/N '+(bs||'__')+' | '+(bk||'__')+'%';
     }
     if(REM[val])line+=' — '+(rem||'__');
     L.push(line);
   });
-  L.push('_C. Prestart kontraktor_');
-  if(!seg.p2h)miss('P2H / prestart kontraktor');else if(seg.p2h==='Tidak')fail('P2H / prestart kontraktor belum dilakukan');
-  L.push(mk(!seg.p2h?'none':seg.p2h==='Ya'?'ok':'fail')+' P2H / prestart kontraktor: '+(seg.p2h||'__'));
+  L.push('_C. Contractor prestart_');
+  if(!seg.p2h)miss('P2H / prestart kontraktor');else if(seg.p2h==='No')fail('P2H / contractor prestart not done');
+  L.push(mk(!seg.p2h?'none':seg.p2h==='Yes'?'ok':'fail')+' P2H / prestart kontraktor: '+(seg.p2h||'__'));
   L.push('');
 
   // C
   cur=3;
   L.push('*C. MUD* 📷1');
   var vol=ibcVol();if(isNaN(vol))miss('Vol. IBC tank');
-  L.push('• IBC tank: '+fn(vol)+' L | Formasi: '+fm);
+  L.push('• IBC tank: '+fn(vol)+' L | Formation: '+fm);
   var pa=num('phAir');
-  if(isNaN(pa))miss('pH mud');
-  else if(pa>PH_LIMIT)fail('pH mud '+fn(pa)+' > '+PH_LIMIT+' (maks WIN) — encerkan dengan air fresh');
-  else if(pa<PH_MIN||pa>PH_MAX)warn('pH mud '+fn(pa)+' (target 8,5–9,5)');
+  if(isNaN(pa))miss('Mud pH');
+  else if(pa>PH_LIMIT)fail('Mud pH '+fn(pa)+' > '+PH_LIMIT+' (WIN max) — dilute with fresh water');
+  else if(pa<PH_MIN||pa>PH_MAX)warn('Mud pH '+fn(pa)+' (target 8.5–9.5)');
   var phOk=!isNaN(pa)&&pa>=PH_MIN&&pa<=PH_MAX;
-  L.push(mk(isNaN(pa)?'none':pa>PH_LIMIT?'fail':phOk?'ok':'warn')+' pH mud: '+fn(pa)+' (target 8,5–9,5)');
+  L.push(mk(isNaN(pa)?'none':pa>PH_LIMIT?'fail':phOk?'ok':'warn')+' Mud pH: '+fn(pa)+' (target 8.5–9.5)');
   L.push('_Formula:_');
   var st=stdNow();
   MAT.forEach(function(m){
@@ -762,14 +762,14 @@ function build(){
   var pl=num('plug'),wl=seg.kondisi==='Waterloss',pgr=PLUG[fm]&&PLUG[fm][size()];
   if(wl){
     if(pl>0)L.push('✅ Plug: '+fn(pl)+' g/pill (waterloss)'+(pgr?' (std ±'+pgr+')':''));
-    else{warn('Waterloss — pill plug belum disiapkan'+(pgr?' (std ±'+pgr+' g)':''));L.push('⚠️ Plug: Nihil — lubang waterloss');}
-  }else L.push('• Plug: '+(isNaN(pl)?'Nihil':fn(pl)+' g/pill'));
-  L.push('• Others: '+(v('others')||'Nihil'));
+    else{warn('Waterloss — plug pill not prepared'+(pgr?' (std ±'+pgr+' g)':''));L.push('⚠️ Plug: None — waterloss hole');}
+  }else L.push('• Plug: '+(isNaN(pl)?'None':fn(pl)+' g/pill'));
+  L.push('• Others: '+(v('others')||'None'));
   L.push('_Result:_');
   var vs=num('vis'),ok=inR(vs);
-  if(ok===null)miss('Viscosity');else if(!ok)warn('Viscosity '+fn(vs)+' det/qt di luar rekomendasi'+rng()+' — keputusan Rig Geologist');
-  if(!v('tVisMin')&&!v('tVisMax')&&!isNaN(vs))warn('Rekomendasi viscosity belum tersedia untuk '+(v('ukuran')||'ukuran ini')+(v('formasi')?'':' / formasi belum dipilih'));
-  L.push(mk(ok===null?'none':ok?'ok':'warn')+' Viscosity: '+fn(vs)+' det/qt'+rng()+' 📷1');
+  if(ok===null)miss('Viscosity');else if(!ok)warn('Viscosity '+fn(vs)+' s/qt outside recommendation'+rng()+' — Rig Geologist decides');
+  if(!v('tVisMin')&&!v('tVisMax')&&!isNaN(vs))warn('No viscosity recommendation for '+(v('ukuran')||'this size')+(v('formasi')?'':' / formation not selected'));
+  L.push(mk(ok===null?'none':ok?'ok':'warn')+' Viscosity: '+fn(vs)+' s/qt'+rng()+' 📷1');
   L.push('');
 
   // photos
@@ -777,20 +777,20 @@ function build(){
   var act=activePh(),have=[];
   act.forEach(function(n){
     var p=photos[n];
-    if(!p){iss.push({c:'miss',s:4,t:'Foto '+n+' ('+PH[n].t+') belum ada'});return;}
+    if(!p){iss.push({c:'miss',s:4,t:'Photo '+n+' ('+PH[n].t+') missing'});return;}
     have.push(n);
-    if((now-p.taken)/60000>MAX_AGE_MIN)fail('Foto '+n+' diambil lebih dari '+(MAX_AGE_MIN/60)+' jam lalu ('+fmtT(p.taken)+')');
+    if((now-p.taken)/60000>MAX_AGE_MIN)fail('Photo '+n+' taken more than '+(MAX_AGE_MIN/60)+' h ago ('+fmtT(p.taken)+')');
   });
-  L.push('📷 Foto terlampir: '+have.length+'/'+act.length+(have.length?' ('+have.join(', ')+')':''));
+  L.push('📷 Photos attached: '+have.length+'/'+act.length+(have.length?' ('+have.join(', ')+')':''));
   var gOk=have.filter(function(n){var g=photos[n].gps;return g&&!g.pending&&!g.err;});
   var gBad=have.filter(function(n){var g=photos[n].gps;return g&&g.err;});
   if(gOk.length){
     var g0=photos[gOk[0]].gps,far=gOk.filter(function(n){return distM(g0,photos[n].gps)>200;});
     L.push('📍 GPS: '+g0.lat.toFixed(5)+', '+g0.lon.toFixed(5)+' (±'+g0.acc+' m)');
     L.push('https://maps.google.com/?q='+g0.lat.toFixed(5)+','+g0.lon.toFixed(5));
-    if(far.length)warn('Foto '+far.join(', ')+' diambil >200 m dari foto '+gOk[0]+' — cek lokasi');
+    if(far.length)warn('Photo '+far.join(', ')+' taken >200 m from photo '+gOk[0]+' — check location');
   }
-  if(gBad.length)warn('Lokasi GPS tidak terekam pada foto '+gBad.join(', ')+' ('+photos[gBad[0]].gps.err+')');
+  if(gBad.length)warn('GPS location not recorded on photo '+gBad.join(', ')+' ('+photos[gBad[0]].gps.err+')');
   L.push('');
 
   var hard=iss.filter(function(i){return i.c!=='warn';}),warns=iss.filter(function(i){return i.c==='warn';}),status;
@@ -800,48 +800,48 @@ function build(){
   var ovAppr=!!(appr&&appr.ov);
   if(hard.length){
     status='bad';
-    L.push('*Status: ❌ TIDAK SIAP CORING*');
-    L.push('Alasan:');hard.forEach(function(i){L.push('- '+i.t);});
-    if(warns.length){L.push('Catatan:');warns.forEach(function(i){L.push('- '+i.t);});}
-    L.push('Tindakan: '+(v('catatan')||'__'));
+    L.push('*Status: ❌ NOT READY FOR CORING*');
+    L.push('Reasons:');hard.forEach(function(i){L.push('- '+i.t);});
+    if(warns.length){L.push('Notes:');warns.forEach(function(i){L.push('- '+i.t);});}
+    L.push('Action: '+(v('catatan')||'__'));
   }else{
     status=warns.length?'warn':'ok';
-    L.push('*Status: ✅ SIAP CORING*');
-    if(warns.length){L.push('Catatan:');warns.forEach(function(i){L.push('- '+i.t);});}
-    if(v('catatan'))L.push('Tindakan: '+v('catatan'));
+    L.push('*Status: ✅ READY FOR CORING*');
+    if(warns.length){L.push('Notes:');warns.forEach(function(i){L.push('- '+i.t);});}
+    if(v('catatan'))L.push('Action: '+v('catatan'));
   }
   L.push('');
   L.push('*D. APPROVAL START DRILLING*');
   if(appr){var at=new Date(appr.time);
     L.push('✍️ Rig Geologist: '+appr.name);
-    L.push('Waktu TTD: '+fmtD(at)+' '+fmtT(at));
-    if(appr.ov){L.push('🟠 Disetujui DENGAN PENGECUALIAN untuk:');appr.ov.items.forEach(function(t){L.push('- '+t);});L.push('Alasan: '+appr.ov.reason);}
-    if(appr.sig)L.push('📎 Kartu approval + TTD terlampir (gambar pertama)');
-    L.push(demo?'*CONTOH – BUKAN APPROVAL NYATA*':'*▶️ START DRILLING DISETUJUI*');}
-  else L.push('⬜ Menunggu TTD Rig Geologist — belum boleh start drilling');
+    L.push('Signed: '+fmtD(at)+' '+fmtT(at));
+    if(appr.ov){L.push('🟠 Approved WITH EXCEPTION for:');appr.ov.items.forEach(function(t){L.push('- '+t);});L.push('Reason: '+appr.ov.reason);}
+    if(appr.sig)L.push('📎 Approval card + signature attached (first image)');
+    L.push(demo?'*SAMPLE – NOT A REAL APPROVAL*':'*▶️ START DRILLING APPROVED*');}
+  else L.push('⬜ Awaiting Rig Geologist signature — drilling may not start');
   // ---------- versi ringkas untuk WhatsApp: status dulu, hanya yang bermasalah ----------
   var C=[],MAXL=6;
   function shortName(n){if(!n||n==='__')return '__';var w=n.split(' ');return w.length>2?w[0]+' '+w[1]:n;}
-  function list(items){var o=items.slice(0,MAXL).map(function(t){return '• '+t;});if(items.length>MAXL)o.push('• +'+(items.length-MAXL)+' lainnya');return o;}
-  if(demo)C.push('🧪 *CONTOH – BUKAN LAPORAN NYATA*');
+  function list(items){var o=items.slice(0,MAXL).map(function(t){return '• '+t;});if(items.length>MAXL)o.push('• +'+(items.length-MAXL)+' more');return o;}
+  if(demo)C.push('🧪 *SAMPLE – NOT A REAL REPORT*');
   var at2=appr?new Date(appr.time):null;
-  if(hard.length&&ovAppr){C.push('🟠 *DRILLING DISETUJUI DENGAN PENGECUALIAN*');C.push('Disetujui '+appr.name+' · '+fmtT(at2));C.push('Alasan: '+appr.ov.reason);}
-  else if(hard.length){C.push('⛔ *DRILLING BELUM BOLEH DIMULAI*');C.push(hard.length+' item wajib diperbaiki · belum TTD');}
-  else if(appr&&warns.length){C.push('🟡 *DRILLING BOLEH DIMULAI DENGAN CATATAN*');C.push('Disetujui '+appr.name+' · '+fmtT(at2)+' · '+warns.length+' catatan');}
-  else if(appr){C.push('✅ *DRILLING BOLEH DIMULAI*');C.push('Disetujui '+appr.name+' · '+fmtT(at2));}
-  else{C.push('⏳ *MENUNGGU APPROVAL RIG GEOLOGIST*');C.push('Checklist siap'+(warns.length?' dengan '+warns.length+' catatan':'')+' · belum TTD');}
+  if(hard.length&&ovAppr){C.push('🟠 *DRILLING APPROVED WITH EXCEPTION*');C.push('Approved by '+appr.name+' · '+fmtT(at2));C.push('Reason: '+appr.ov.reason);}
+  else if(hard.length){C.push('⛔ *DRILLING MAY NOT START*');C.push(hard.length+' item(s) to fix · not signed');}
+  else if(appr&&warns.length){C.push('🟡 *DRILLING MAY START WITH NOTES*');C.push('Approved by '+appr.name+' · '+fmtT(at2)+' · '+warns.length+' note(s)');}
+  else if(appr){C.push('✅ *DRILLING MAY START*');C.push('Approved by '+appr.name+' · '+fmtT(at2));}
+  else{C.push('⏳ *AWAITING RIG GEOLOGIST APPROVAL*');C.push('Checklist ready'+(warns.length?' with '+warns.length+' note(s)':'')+' · not signed');}
   C.push('');
   C.push('*'+rig+' · '+hid+'*'+(blok!=='__'?' · '+blok:''));
   C.push(tgl+' · '+shift+' · '+jenis+' '+uk+' · '+fm+' · '+depth+' m');
   // masalah wajib: field kosong digabung jadi 1 baris
   var empt=[],hardT=[];
-  hard.forEach(function(i){if(i.c==='miss'&&/ belum diisi$/.test(i.t))empt.push(i.t.replace(/ belum diisi$/,''));else hardT.push(i.t);});
-  if(empt.length)hardT.push('Belum diisi: '+empt.slice(0,8).join(', ')+(empt.length>8?' +'+(empt.length-8):''));
-  if(hardT.length){C.push('');C.push(ovAppr?'🟠 *Dikecualikan Rig Geologist*':'❌ *Wajib diperbaiki*');C=C.concat(list(hardT));}
-  if(warns.length){C.push('');C.push('⚠️ *Perlu perhatian*');C=C.concat(list(warns.map(function(i){return i.t;})));}
+  hard.forEach(function(i){if(i.c==='miss'&&/ not filled$/.test(i.t))empt.push(i.t.replace(/ not filled$/,''));else hardT.push(i.t);});
+  if(empt.length)hardT.push('Not filled: '+empt.slice(0,8).join(', ')+(empt.length>8?' +'+(empt.length-8):''));
+  if(hardT.length){C.push('');C.push(ovAppr?'🟠 *Exempted by Rig Geologist*':'❌ *Must be fixed*');C=C.concat(list(hardT));}
+  if(warns.length){C.push('');C.push('⚠️ *Needs attention*');C=C.concat(list(warns.map(function(i){return i.t;})));}
   var eqA=activeEq().filter(function(e){return v('eq_'+e.id)!=='N/A';}),eqN=eqA.filter(function(e){return v('eq_'+e.id)==='Normal';}).length;
   C.push('');
-  C.push('Lubang '+(k||'__')+' · Equip '+eqN+'/'+eqA.length+' Normal · Visc '+fn(vs)+(v('tVisMin')?' ('+v('tVisMin')+'–'+v('tVisMax')+')':'')+' · pH '+fn(pa)+' · Foto '+have.length+'/'+act.length);
+  C.push('Hole '+(k||'__')+' · Equip '+eqN+'/'+eqA.length+' Normal · Visc '+fn(vs)+(v('tVisMin')?' ('+v('tVisMin')+'–'+v('tVisMax')+')':'')+' · pH '+fn(pa)+' · Photos '+have.length+'/'+act.length);
   C.push('👷 SPV '+shortName(sd)+' · Drl '+shortName(dr)+' · Asst '+shortName(as)+' · Geo '+shortName(geo));
   if(gOk.length)C.push('📍 maps.google.com/?q='+g0.lat.toFixed(5)+','+g0.lon.toFixed(5));
   if(v('catatan'))C.push('📝 '+v('catatan'));
@@ -852,26 +852,26 @@ function build(){
 function syncGeo(){  // Rig Geologist di Approval = Geologist di Identitas
   if($('spv').value!==$('geologist').value)$('spv').value=$('geologist').value;
   if($('spvLain').value!==$('geologistLain').value)$('spvLain').value=$('geologistLain').value;
-  $('spvHint').textContent=pick('geologist')?'':'Pilih Geologist di halaman Shift ID terlebih dulu.';
+  $('spvHint').textContent=pick('geologist')?'':'Select the Geologist on the Shift ID page first.';
   $('spvHint').className=pick('geologist')?'hint':'hint warnc';
 }
 function render(){
   syncGeo();
   applyHole();
   $('out').classList.toggle('demoOut',demo);
-  if(appr&&appr.snap!==snap()){appr=null;saveAppr();clearSig();toast('Data berubah setelah TTD — approval dibatalkan');}
+  if(appr&&appr.snap!==snap()){appr=null;saveAppr();clearSig();toast('Data changed after signing — approval cancelled');}
   var r=build();
   paint(r.now);
   $('out').value=r.text;
   var ul=$('iss');ul.innerHTML='';
   r.iss.forEach(function(i){var li=document.createElement('li');li.className=i.c;li.textContent=i.t;ul.appendChild(li);});
   var pill=$('pill');
-  if(demo){pill.className='pill warnc';pill.textContent='Contoh';}
-  else if(r.status==='bad'&&appr&&appr.ov){pill.className='pill orange';pill.textContent='Disetujui · pengecualian';}
-  else if(r.status==='bad'){pill.className='pill bad';pill.textContent='Tidak siap · '+r.hard;}
-  else if(appr&&r.warns){pill.className='pill warnc';pill.textContent='Approved · catatan';}
+  if(demo){pill.className='pill warnc';pill.textContent='Sample';}
+  else if(r.status==='bad'&&appr&&appr.ov){pill.className='pill orange';pill.textContent='Approved · exception';}
+  else if(r.status==='bad'){pill.className='pill bad';pill.textContent='Not ready · '+r.hard;}
+  else if(appr&&r.warns){pill.className='pill warnc';pill.textContent='Approved · notes';}
   else if(appr){pill.className='pill ok';pill.textContent='Approved';}
-  else{pill.className='pill '+(r.status==='warn'?'warnc':'ok');pill.textContent='Siap · menunggu TTD';}
+  else{pill.className='pill '+(r.status==='warn'?'warnc':'ok');pill.textContent='Ready · awaiting signature';}
   paintAppr(r);
   lastR=r;paintSteps(r);
   paintShareBtn();if(SC.key!==shareKey()&&Object.keys(photos).length)prepSoon();
@@ -902,8 +902,8 @@ function dsShow(force){
     if(!v('block')&&x[1]!==lastB){html+='<div class="grp">'+DS.blocks[x[1]]+'</div>';lastB=x[1];}
     html+='<button type="button" role="option" data-s="'+x[0]+'"'+(x[0]===v('drillsite')?' class="hl"':'')+'>'+x[0]+'<small class="'+x[2]+'">'+(x[2]||'-')+'</small></button>';
   });
-  if(m.length>LIM)html+='<div class="none">+'+(m.length-LIM)+' lainnya — ketik lebih lengkap</div>';
-  if(!m.length)html='<div class="none">Tidak ada drillsite "'+q.toUpperCase()+'"'+(v('block')?' di block '+v('block'):'')+'</div>';
+  if(m.length>LIM)html+='<div class="none">+'+(m.length-LIM)+' more — keep typing to narrow</div>';
+  if(!m.length)html='<div class="none">No drillsite "'+q.toUpperCase()+'"'+(v('block')?' in block '+v('block'):'')+'</div>';
   box.innerHTML=html;box.classList.add('show');$('dsBtn').classList.add('open');
   var cur=box.querySelector('button.hl');if(cur)try{cur.scrollIntoView({block:'center'});}catch(e){}
 }
@@ -933,10 +933,10 @@ $('drillsite').addEventListener('blur',function(){
   var x=siteOf($('drillsite').value);if(x&&$('drillsite').value!==x[0]){$('drillsite').value=x[0];save();render();}
 });
 $('block').addEventListener('change',function(){
-  var x=siteOf(v('drillsite'));if(x&&v('block')&&DS.blocks[x[1]]!==v('block')){$('drillsite').value='';toast('Drillsite dikosongkan — tidak ada di block '+v('block'));}
+  var x=siteOf(v('drillsite'));if(x&&v('block')&&DS.blocks[x[1]]!==v('block')){$('drillsite').value='';toast('Drillsite cleared — not in block '+v('block'));}
 });
 // Jenis lubang & ukuran mengikuti Drilling Type di daftar drillsite:
-// GT -> HQ3 · SPT -> SPT tools + Shelby + HQ3 · Stratigrafi -> HQ3 full coring
+// GT -> HQ3 · SPT -> SPT tools + Shelby + HQ3 · Stratigraphic -> HQ3 full coring
 // Twin Hole -> PO (pilot/open hole) HQ3 · PC (partial core) PQ3 ; Drillhole ID = drillsite + PO/PC
 function applyHole(){
   var x=siteOf(v('drillsite')),j=x?x[3]:'';
@@ -948,13 +948,13 @@ function applyHole(){
 }
 function holeId(){var x=siteOf(v('drillsite'));if(!x)return v('drillsite');return x[0]+(x[3]==='Twin Hole'&&v('fase')?v('fase'):'');}
 function jenisTxt(){var j=v('jenis'),f=v('fase');
-  return j==='Twin Hole'?'Twin Hole '+(f==='PC'?'partial core':f==='PO'?'pilot/open hole':'__'):j==='Stratigrafi'?'Stratigrafi full coring':j==='SPT'?'SPT + Shelby':j||'__';}
+  return j==='Twin Hole'?'Twin Hole '+(f==='PC'?'partial core':f==='PO'?'pilot/open hole':'__'):j==='Stratigraphic'?'Stratigraphic full coring':j==='SPT'?'SPT + Shelby':j||'__';}
 function dsCheck(){ // {ok, txt, st}
   var name=v('drillsite'),b=v('block');if(!name)return null;
   var x=siteOf(name);
-  if(!x)return {bad:'Drillsite '+name+' tidak ada di daftar Active Site'};
-  if(b&&DS.blocks[x[1]]!==b)return {bad:'Drillsite '+x[0]+' bukan di block '+b+' (terdaftar di '+DS.blocks[x[1]]+')'};
-  if(x[2]==='Completed'||x[2]==='Cancel')return {warn:'Drillsite '+x[0]+' berstatus '+x[2]+' di daftar',x:x};
+  if(!x)return {bad:'Drillsite '+name+' is not in the Active Site list'};
+  if(b&&DS.blocks[x[1]]!==b)return {bad:'Drillsite '+x[0]+' is not in block '+b+' (listed under '+DS.blocks[x[1]]+')'};
+  if(x[2]==='Completed'||x[2]==='Cancel')return {warn:'Drillsite '+x[0]+' is listed as '+x[2],x:x};
   return {x:x};
 }
 
@@ -987,14 +987,14 @@ function paintSteps(r){
     if(k<5){
       var box=$('si'+k),list=hard.length?hard:wr;
       box.className='stepIss'+(list.length&&(visited[k]||!hard.length)?' show '+(hard.length?'bad':'warn'):'');
-      box.innerHTML=list.length?'<b>'+(hard.length?list.length+' item perlu dilengkapi':'Catatan')+'</b><ul>'+list.map(function(i){return '<li>'+i.t.replace(/[&<>]/g,function(m){return {'&':'&amp;','<':'&lt;','>':'&gt;'}[m];})+'</li>';}).join('')+'</ul>':'';
+      box.innerHTML=list.length?'<b>'+(hard.length?list.length+' item(s) to complete':'Notes')+'</b><ul>'+list.map(function(i){return '<li>'+i.t.replace(/[&<>]/g,function(m){return {'&':'&amp;','<':'&lt;','>':'&gt;'}[m];})+'</li>';}).join('')+'</ul>':'';
     }
   });
   $('stepInfo').textContent=(step+1)+'/'+STEPS.length;
   $('bBack').disabled=step===0;
-  $('bNext').textContent=step===STEPS.length-1?'Bagikan':step===STEPS.length-2?'Ke Laporan':'Lanjut';
+  $('bNext').textContent=step===STEPS.length-1?'Share':step===STEPS.length-2?'Review':'Next';
   var sub=[v('rig'),v('drillsite'),seg.shift?('Shift '+seg.shift):''].filter(Boolean).join(' · ');
-  $('sub').textContent=sub||'Coring · isi sebelum run pertama';
+  $('sub').textContent=sub||'Coring · fill before the first run';
 }
 $('bBack').addEventListener('click',function(){go(step-1);});
 ['copy','cut','contextmenu'].forEach(function(t){$('out').addEventListener(t,function(e){if(demo){e.preventDefault();toast(DEMO_MSG);}});});
@@ -1011,12 +1011,15 @@ function save(){
   if(demo)return;
   var d={seg:seg};FIELDS.forEach(function(f){d[f]=v(f);});LS.set('psc3_draft',d);
 }
+var MIG={'Perlu Penggantian Segera':'Replace Soon','Perlu Perbaikan':'Needs Repair','Perlu Diganti':'Needs Replacement','Rusak':'Damaged','Clay / Seam Batubara':'Clay / Coal Seam','Stratigrafi':'Stratigraphic','Lainnya':'Other','Ya':'Yes','Tidak':'No','Setujui dengan pengecualian':'Approve with exception'}; // draft lama (versi Bahasa Indonesia)
 function load(){
   var d=LS.get('psc3_draft',null);
+  if(d){Object.keys(d).forEach(function(f){if(typeof d[f]==='string'&&MIG[d[f]])d[f]=MIG[d[f]];});
+    var sg=d.seg||{};Object.keys(sg).forEach(function(q){if(MIG[sg[q]])sg[q]=MIG[sg[q]];});d.seg=sg;}
   if(d){FIELDS.forEach(function(f){if(d[f]!=null&&$(f))$(f).value=d[f];});seg=d.seg||{};}
   if(!v('tgl'))$('tgl').value=today();
   if(!seg.shift){var h=new Date().getHours();seg.shift=(h>=6&&h<18)?'Day':'Night';}
-  if(v('formasi')==='Clay')$('formasi').value='Clay / Seam Batubara';
+  if(v('formasi')==='Clay')$('formasi').value='Clay / Coal Seam';
   if(v('formasi')==='Broken/Brittle')$('formasi').value='Broken/Brittle/Sandy';
   applyTargets();
   appr=LS.get('psc4_appr',null);
@@ -1053,16 +1056,16 @@ function paintAppr(r){
   if(appr){
     sig.style.display='none';img.style.display=appr.sig?'block':'none';if(appr.sig)img.src=appr.sig;
     var at=new Date(appr.time);
-    info.className='appr ok';info.textContent='Disetujui oleh '+appr.name+' — '+fmtD(at)+' '+fmtT(at)+'. Perubahan data akan membatalkan approval.';
+    info.className='appr ok';info.textContent='Approved by '+appr.name+' — '+fmtD(at)+' '+fmtT(at)+'. Any data change cancels the approval.';
     $('bApprove').disabled=true;
   }else{
     sig.style.display='block';img.style.display='none';
     info.className='appr wait';
-    info.textContent=r.status!=='bad'?'Menunggu tanda tangan Rig Geologist.'
-      :!r.canOv?'Masih ada isian/foto yang kosong — lengkapi dulu sebelum TTD.'
-      :r.ovReady?'Siap disetujui DENGAN PENGECUALIAN.':'Ada item ❌. Perbaiki dulu, atau aktifkan pengecualian & tulis alasannya.';
+    info.textContent=r.status!=='bad'?'Awaiting Rig Geologist signature.'
+      :!r.canOv?'Some fields/photos are still empty — complete them before signing.'
+      :r.ovReady?'Ready to approve WITH EXCEPTION.':'❌ items present. Fix them first, or enable the exception & write the reason.';
     $('bApprove').disabled=r.status==='bad'&&!r.ovReady;
-    $('bApprove').textContent=r.status==='bad'&&r.ovReady?'Setujui dengan Pengecualian':'Setujui Start Drilling';
+    $('bApprove').textContent=r.status==='bad'&&r.ovReady?'Approve with Exception':'Approve Start Drilling';
   }
   var ob=$('ovBox'),showOv=!appr&&r.canOv&&!demo;
   ob.classList.toggle('show',showOv||!!(appr&&appr.ov));ob.classList.toggle('on',!!seg.ov);
@@ -1071,14 +1074,14 @@ function paintAppr(r){
 $('bSigClr').addEventListener('click',function(){clearSig();if(appr){appr=null;saveAppr();}render();});
 function approve(){
   var r=build();
-  if(r.status==='bad'&&!r.canOv){toast('Masih ada isian/foto kosong — belum bisa disetujui');return false;}
-  if(r.status==='bad'&&!seg.ov){toast('Ada item ❌ — perbaiki, atau aktifkan pengecualian');return false;}
-  if(r.status==='bad'&&!r.ovReady){toast('Tulis alasan pengecualian dulu');return false;}
-  if(!pick('spv')){toast('Pilih Geologist di halaman Shift ID dulu');return false;}
-  if(sx&&!ink){toast('Tanda tangan dulu');return false;}
+  if(r.status==='bad'&&!r.canOv){toast('Some fields/photos are still empty — cannot approve yet');return false;}
+  if(r.status==='bad'&&!seg.ov){toast('❌ items present — fix them, or enable the exception');return false;}
+  if(r.status==='bad'&&!r.ovReady){toast('Write the exception reason first');return false;}
+  if(!pick('spv')){toast('Select the Geologist on the Shift ID page first');return false;}
+  if(sx&&!ink){toast('Sign first');return false;}
   appr={name:pick('spv'),time:Date.now(),sig:sx?sig.toDataURL('image/png'):'',snap:snap(),
     ov:r.status==='bad'?{reason:v('ovReason'),items:r.fails}:null};
-  saveAppr();render();toast(appr.ov?'Disetujui dengan pengecualian':'Disetujui — start drilling');return true;
+  saveAppr();render();toast(appr.ov?'Approved with exception':'Approved — start drilling');return true;
 }
 $('bApprove').addEventListener('click',function(){if(demoBlock())return;approve();});
 // Kartu status selalu dibuat (gambar pertama di WhatsApp): Approved / Menunggu TTD / Tidak siap / Contoh.
@@ -1096,24 +1099,24 @@ function sigCard(r){
     var tg=v('tgl');if(tg){var q=tg.split('-');x.textAlign='right';x.fillText(fmtD(new Date(+q[0],+q[1]-1,+q[2])),W-P,72);x.textAlign='left';}
     // status banner
     var warns=r.iss.filter(function(i){return i.c==='warn';});
-    var ban=demo?['#fbeceb','#c4372c','CONTOH – BUKAN APPROVAL NYATA']
-      :signed&&appr.ov?['#fff1e6','#c2410c','DISETUJUI DGN PENGECUALIAN']
-      :signed&&warns.length?['#fff4e0','#a86a00','BOLEH DIMULAI DGN CATATAN']
-      :signed?['#e9f6ee',ok,'✓ START DRILLING DISETUJUI']
-      :r.status==='bad'?['#fbeceb','#c4372c','✗ TIDAK SIAP CORING ('+r.hard+' item)']
-      :['#f1f3f5','#5b6573','MENUNGGU TTD RIG GEOLOGIST'];
+    var ban=demo?['#fbeceb','#c4372c','SAMPLE – NOT A REAL APPROVAL']
+      :signed&&appr.ov?['#fff1e6','#c2410c','APPROVED WITH EXCEPTION']
+      :signed&&warns.length?['#fff4e0','#a86a00','MAY START WITH NOTES']
+      :signed?['#e9f6ee',ok,'✓ START DRILLING APPROVED']
+      :r.status==='bad'?['#fbeceb','#c4372c','✗ NOT READY FOR CORING ('+r.hard+')']
+      :['#f1f3f5','#5b6573','AWAITING SIGNATURE'];
     x.fillStyle=ban[0];x.fillRect(P,186,W-2*P,110);
     x.fillStyle=ban[1];x.font='bold 46px Arial';x.fillText(ban[2],P+28,258);
     // key facts
     var eq=activeEq().filter(function(e){return v('eq_'+e.id)!=='N/A';}),nOk=eq.filter(function(e){return v('eq_'+e.id)==='Normal';}).length;
     var rows=[
-      ['Jenis / ukuran',(v('jenis')||'-')+' / '+(v('ukuran')||'-')],
-      ['Formasi',v('formasi')||'-'],
-      ['Kondisi lubang',seg.kondisi||'-'],
+      ['Hole type / size',(v('jenis')||'-')+' / '+(v('ukuran')||'-')],
+      ['Formation',v('formasi')||'-'],
+      ['Hole condition',seg.kondisi||'-'],
       ['Drilling equipment',nOk+'/'+eq.length+' Normal'],
-      ['Viscosity',(v('vis')||'-')+' det/qt'+(v('tVisMin')?' (rekomendasi '+v('tVisMin')+'–'+v('tVisMax')+')':'')],
-      ['Foto bukti',activePh().filter(function(n){return photos[n];}).length+'/'+activePh().length],
-      ['Lokasi GPS',(function(){var k=activePh().filter(function(n){var g=photos[n]&&photos[n].gps;return g&&!g.pending&&!g.err;})[0];
+      ['Viscosity',(v('vis')||'-')+' s/qt'+(v('tVisMin')?' (rec. '+v('tVisMin')+'–'+v('tVisMax')+')':'')],
+      ['Evidence photos',activePh().filter(function(n){return photos[n];}).length+'/'+activePh().length],
+      ['GPS location',(function(){var k=activePh().filter(function(n){var g=photos[n]&&photos[n].gps;return g&&!g.pending&&!g.err;})[0];
         if(!k)return '-';var g=photos[k].gps;return g.lat.toFixed(5)+', '+g.lon.toFixed(5)+' (±'+g.acc+' m)';})()],
       ['SPV Drilling',pick('spvd')||'-'],
       ['Driller',pick('driller')||'-']
@@ -1127,11 +1130,11 @@ function sigCard(r){
     });
     if(signed&&appr.ov){
       x.fillStyle='#c2410c';x.font='bold 28px Arial';
-      var ot='Pengecualian: '+appr.ov.reason;x.fillText(ot.length>64?ot.slice(0,63)+'…':ot,P,y+6);y+=50;
+      var ot='Exception: '+appr.ov.reason;x.fillText(ot.length>64?ot.slice(0,63)+'…':ot,P,y+6);y+=50;
     }
     if(warns.length){
       x.fillStyle=wr;x.font='bold 28px Arial';
-      x.fillText('⚠ Catatan: '+warns.map(function(i){return i.t;}).join('; ').slice(0,62)+(warns.length>1||warns[0].t.length>62?'…':''),P,y+6);
+      x.fillText('⚠ Notes: '+warns.map(function(i){return i.t;}).join('; ').slice(0,56)+(warns.length>1||warns[0].t.length>56?'…':''),P,y+6);
       y+=50;
     }
     // signature box
@@ -1142,11 +1145,11 @@ function sigCard(r){
       x.drawImage(img,(W-sw)/2,by+(bh-sh)/2,sw,sh);
       var at=new Date(appr.time);
       x.fillStyle=ink;x.font='bold 36px Arial';x.fillText(appr.name,P,by+bh+60);
-      x.fillStyle=mut;x.font='30px Arial';x.fillText('Rig Geologist  ·  TTD '+fmtD(at)+' '+fmtT(at),P,by+bh+104);
+      x.fillStyle=mut;x.font='30px Arial';x.fillText('Rig Geologist  ·  signed '+fmtD(at)+' '+fmtT(at),P,by+bh+104);
     }else{
-      x.fillStyle='#9aa3ad';x.font='italic 34px Arial';x.textAlign='center';x.fillText('Belum ditandatangani',W/2,by+bh/2+12);x.textAlign='left';
+      x.fillStyle='#9aa3ad';x.font='italic 34px Arial';x.textAlign='center';x.fillText('Not signed yet',W/2,by+bh/2+12);x.textAlign='left';
       x.fillStyle=ink;x.font='bold 36px Arial';x.fillText(pick('spv')||'Rig Geologist: —',P,by+bh+60);
-      x.fillStyle=mut;x.font='30px Arial';x.fillText('Rig Geologist  ·  belum boleh start drilling',P,by+bh+104);
+      x.fillStyle=mut;x.font='30px Arial';x.fillText('Rig Geologist  ·  drilling may not start',P,by+bh+104);
     }
     if(demo)wm(x,W,H);
     return new Promise(function(res){c.toBlob(res,'image/jpeg',0.9);});
@@ -1161,18 +1164,18 @@ function demoSign(){
 
 // ---------- demo ----------
 // Data contoh sengaja dibuat TIDAK NORMAL (banyak catatan) & semua output diberi tanda CONTOH,
-// supaya tidak bisa dipakai sebagai laporan nyata. Hanya Bagikan Foto + Teks yang aktif untuk uji coba.
+// supaya tidak bisa dipakai sebagai laporan nyata. Hanya Share Photos + Text yang aktif untuk uji coba.
 var DEMO={rig:'RC 01',depth:'12.20',block:'West Usai (Central Kal)',drillsite:'WSU019',fase:'PC',formasi:'Broken/Brittle/Sandy',
   spvd:'Taufik Hidayat',driller:'Ahmad Khasil',asst:'Dani Indrawan',geologist:'Eko Kristianta',
-  eq_barrel:'Perlu Penggantian Segera',
-  eq_bit:'Perlu Penggantian Segera',bitTipe:'Impregnated',bitSeri:'3',bitKond:'30',
-  eq_latch:'Perlu Penggantian Segera',
-  eq_lifter:'Perlu Penggantian Segera',eq_panel:'Normal',eq_pump:'Normal',eq_gearbox:'Normal',eq_winch:'Perlu Penggantian Segera',eq_footclamp:'Normal',eq_mixer:'N/A',
-  eq_ccase:'Perlu Penggantian Segera',
-  eq_split:'Perlu Perbaikan',
+  eq_barrel:'Replace Soon',
+  eq_bit:'Replace Soon',bitTipe:'Impregnated',bitSeri:'3',bitKond:'30',
+  eq_latch:'Replace Soon',
+  eq_lifter:'Replace Soon',eq_panel:'Normal',eq_pump:'Normal',eq_gearbox:'Normal',eq_winch:'Replace Soon',eq_footclamp:'Normal',eq_mixer:'N/A',
+  eq_ccase:'Replace Soon',
+  eq_split:'Needs Repair',
   ibc:'1000',phAir:'7.5',bent:'5',trol:'1',hivis:'0.25',soda:'0',vis:'34',
-  catatan:'CONTOH – bit, latch & core case diganti sebelum run ke-2'};
-var DEMO_MSG='Mode contoh hanya bisa uji coba Bagikan Foto + Teks. Tekan Shift Baru untuk mulai mengisi.';
+  catatan:'SAMPLE – bit, latch & core case diganti sebelum run ke-2'};
+var DEMO_MSG='Sample mode can only test Share Photos + Text. Tap New Shift to start filling in.';
 function demoBlock(){if(!demo)return false;toast(DEMO_MSG);return true;}
 function demoPhoto(n){
   return new Promise(function(res){
@@ -1181,8 +1184,8 @@ function demoPhoto(n){
     if(!x||!c.toBlob){res(new Blob(['demo'],{type:'image/jpeg'}));return;}
     x.fillStyle='#6b7a8c';x.fillRect(0,0,800,600);
     x.fillStyle='#fff';x.font='bold 40px Arial';x.textAlign='center';
-    x.fillText('FOTO CONTOH '+n,400,280);x.font='24px Arial';x.fillText(PH[n].t,400,330);
-    x.save();x.translate(400,300);x.rotate(-0.5);x.fillStyle='rgba(196,55,44,.55)';x.font='bold 110px Arial';x.fillText('CONTOH',0,40);x.restore();
+    x.fillText('SAMPLE PHOTO '+n,400,280);x.font='24px Arial';x.fillText(PH[n].t,400,330);
+    x.save();x.translate(400,300);x.rotate(-0.5);x.fillStyle='rgba(196,55,44,.55)';x.font='bold 110px Arial';x.fillText('SAMPLE',0,40);x.restore();
     c.toBlob(function(b){res(b||new Blob(['demo'],{type:'image/jpeg'}));},'image/jpeg',0.8);
   });
 }
@@ -1190,12 +1193,12 @@ $('bDemo').addEventListener('click',function(){
   demo=true;appr=null;clearSig();
   FIELDS.forEach(function(f){if($(f))$(f).value=DEMO[f]||'';});
   $('tgl').value=today();
-  seg={shift:'Day',kondisi:'Waterloss',p2h:'Ya'};
+  seg={shift:'Day',kondisi:'Waterloss',p2h:'Yes'};
   applyTargets();clearPhotos();
   var base=Date.now();
   Promise.all(activePh().map(function(n){return demoPhoto(n).then(function(b){
-    setPhoto(n,new File([b],'contoh_'+n+'.jpg',{type:'image/jpeg'}),new Date(base-(6-n)*60000));
-    photos[n].gps=n==='4'?{err:'izin lokasi ditolak'}:{lat:-0.41237+n*0.00002,lon:114.48821+n*0.00001,acc:6};});}))
+    setPhoto(n,new File([b],'sample_'+n+'.jpg',{type:'image/jpeg'}),new Date(base-(6-n)*60000));
+    photos[n].gps=n==='4'?{err:'location permission denied'}:{lat:-0.41237+n*0.00002,lon:114.48821+n*0.00001,acc:6};});}))
   .then(function(){demoSign();appr={name:pick('spv'),time:Date.now(),sig:sx?sig.toDataURL('image/png'):'',snap:snap()};
     visited={0:1,1:1,2:1,3:1,4:1,5:1};render();go(6);});
   render();
@@ -1204,7 +1207,7 @@ $('bDemo').addEventListener('click',function(){
 // ---------- photo stamping & sharing ----------
 function loadImg(url){return new Promise(function(res,rej){var i=new Image();i.onload=function(){res(i);};i.onerror=rej;i.src=url;});}
 function wm(x,w,h){x.save();x.translate(w/2,h/2);x.rotate(-0.5);x.textAlign='center';x.textBaseline='middle';
-  x.fillStyle='rgba(196,55,44,.35)';x.font='bold '+Math.round(w/6)+'px Arial';x.fillText('CONTOH',0,0);x.restore();}
+  x.fillStyle='rgba(196,55,44,.35)';x.font='bold '+Math.round(w/6)+'px Arial';x.fillText('SAMPLE',0,0);x.restore();}
 function decode(p){
   return loadImg(p.url).catch(function(){
     if(window.createImageBitmap)return createImageBitmap(p.file);
@@ -1220,7 +1223,7 @@ function stamp(n){
     var c=document.createElement('canvas');c.width=w;c.height=h;var x=c.getContext('2d');
     x.drawImage(img,0,0,w,h);
     var fs=Math.max(14,Math.round(w/42)),lh=fs*1.35;
-    var lines=(demo?['CONTOH – BUKAN LAPORAN NYATA']:[]).concat([
+    var lines=(demo?['SAMPLE – NOT A REAL REPORT']:[]).concat([
       PH[n].t.replace(/ \(.*\)$/,'')+' · '+(v('rig')||'-')+' · '+(v('drillsite')?holeId():'-')+' · '+(seg.shift||'-'),
       fmtD(p.taken)+' '+fmtT(p.taken)+' · '+gpsTxt(p.gps).replace('GPS: ','')]);
     var bh=lh*lines.length+fs*0.8;
@@ -1254,8 +1257,8 @@ function flash(btn,txt){var o=btn.getAttribute('data-l')||btn.textContent;btn.se
 function ask(msg,yes){
   return new Promise(function(res){
     var o=document.createElement('div');o.id='cfm';o.className='cfm';
-    o.innerHTML='<div class="box"><p></p><div class="btns"><button class="btn" id="cfmNo" type="button">Batal</button><button class="btn pri" id="cfmYes" type="button"></button></div></div>';
-    o.querySelector('p').textContent=msg;o.querySelector('#cfmYes').textContent=yes||'Ya';
+    o.innerHTML='<div class="box"><p></p><div class="btns"><button class="btn" id="cfmNo" type="button">Cancel</button><button class="btn pri" id="cfmYes" type="button"></button></div></div>';
+    o.querySelector('p').textContent=msg;o.querySelector('#cfmYes').textContent=yes||'Yes';
     document.body.appendChild(o);
     function done(v){o.remove();res(v);}
     o.querySelector('#cfmYes').addEventListener('click',function(){done(true);});
@@ -1266,13 +1269,13 @@ function ask(msg,yes){
 $('bCopy').addEventListener('click',function(){
   if(demoBlock())return;
   var b=this;copyText(render().text).then(function(ok){
-    if(ok){flash(b,'✓ Tersalin');toast('Teks disalin — tempel di WhatsApp');}
-    else{var o=$('out');o.focus();o.select();flash(b,'Salin manual');toast('Browser memblokir salin otomatis — teks sudah diblok, tekan lama lalu Salin');}
+    if(ok){flash(b,'✓ Copied');toast('Text copied — paste it in WhatsApp');}
+    else{var o=$('out');o.focus();o.select();flash(b,'Copy manually');toast('Browser blocked auto-copy — text is selected, long-press then Copy');}
   });
 });
 $('bWa').addEventListener('click',function(){
   if(demoBlock())return;
-  if(appr)toast('Teks saja — gambar TTD hanya terkirim lewat "Bagikan Foto + Teks"');
+  if(appr)toast('Text only — the signature image is only sent via "Share Photos + Text"');
   window.open('https://wa.me/?text='+encodeURIComponent(render().text),'_blank');});
 // Foto distempel lebih dulu (di latar belakang) supaya saat tombol ditekan, share langsung terpanggil.
 // Beberapa browser (terutama iPhone) menolak share jika ada jeda proses setelah tombol ditekan.
@@ -1288,10 +1291,10 @@ function prepare(){
   var r=build(),ns=activePh().filter(function(n){return photos[n];}),notes=[];
   var jobs=ns.map(function(n){
     return stamp(n).then(function(b){return new File([b],fileBase()+'_F'+n+'.jpg',{type:'image/jpeg'});})
-      .catch(function(){notes.push(n);var f=photos[n].file;return new File([f],fileBase()+'_F'+n+'_asli.'+((f.type.split('/')[1]||'jpg').replace('jpeg','jpg')),{type:f.type||'image/jpeg'});});
+      .catch(function(){notes.push(n);var f=photos[n].file;return new File([f],fileBase()+'_F'+n+'_orig.'+((f.type.split('/')[1]||'jpg').replace('jpeg','jpg')),{type:f.type||'image/jpeg'});});
   });
   // kartu approval + TTD di urutan pertama: di WhatsApp teks jadi caption gambar pertama
-  jobs.unshift(sigCard(r).then(function(b){return new File([b],fileBase()+(appr&&appr.sig?'_0_APPROVAL.jpg':'_0_STATUS.jpg'),{type:'image/jpeg'});}).catch(function(){notes.push('kartu status');return null;}));
+  jobs.unshift(sigCard(r).then(function(b){return new File([b],fileBase()+(appr&&appr.sig?'_0_APPROVAL.jpg':'_0_STATUS.jpg'),{type:'image/jpeg'});}).catch(function(){notes.push('status card');return null;}));
   SC.busyKey=key;
   SC.busy=Promise.all(jobs).then(function(files){
     SC={key:key,files:files.filter(Boolean),notes:notes,busy:null};paintShareBtn();return SC;
@@ -1302,7 +1305,7 @@ var prepT=null;
 function prepSoon(){clearTimeout(prepT);prepT=setTimeout(function(){if(Object.keys(photos).length)prepare().catch(function(){});},1200);}
 function paintShareBtn(){
   var ready=SC.files&&SC.key===shareKey(),b=$('bShare');
-  b.textContent='Bagikan Foto + Teks';b.classList.toggle('ready',!!ready);
+  b.textContent='Share Photos + Text';b.classList.toggle('ready',!!ready);
 }
 function downloadAll(files){
   files.forEach(function(f,i){setTimeout(function(){var a=document.createElement('a');a.href=URL.createObjectURL(f);a.download=f.name;document.body.appendChild(a);a.click();a.remove();},i*250);});
@@ -1311,30 +1314,30 @@ function canShareFiles(files){try{return !!(navigator.canShare&&navigator.share&
 function fallback(files,text,why){
   downloadAll(files);
   copyText(text).then(function(ok){
-    toast(why+' — '+files.length+' foto disimpan ke folder Download'+(ok?', teks disalin. Buka WhatsApp, tempel teks & lampirkan foto.':'. Salin teks manual dari kotak laporan.'));
+    toast(why+' — '+files.length+' photo(s) saved to Download'+(ok?', text copied. Open WhatsApp, paste the text & attach the photos.':'. Copy the text manually from the report box.'));
   });
 }
 function doShare(st,text,afterWait){
-  var files=st.files,extra=st.notes.length?' (foto '+st.notes.join(', ')+' dikirim tanpa stamp)':'';
-  if(!canShareFiles(files)){fallback(files,text,'Browser ini tidak bisa share foto');return;}
+  var files=st.files,extra=st.notes.length?' (photo '+st.notes.join(', ')+' sent without stamp)':'';
+  if(!canShareFiles(files)){fallback(files,text,'This browser cannot share photos');return;}
   copyText(text);
   var pr;
   try{pr=navigator.share({files:files,text:text});}catch(e){pr=Promise.reject(e);}
-  pr.then(function(){if(extra)toast('Terkirim'+extra);})
+  pr.then(function(){if(extra)toast('Sent'+extra);})
   .catch(function(e){
     var nm=e&&e.name;
     if(nm==='AbortError')return; // dibatalkan pengguna
-    if(nm==='NotAllowedError'&&!st.retried){st.retried=true;paintShareBtn();toast('Foto siap — tekan "Bagikan" sekali lagi');return;}
-    fallback(files,text,'Share ditolak browser');
+    if(nm==='NotAllowedError'&&!st.retried){st.retried=true;paintShareBtn();toast('Photos ready — tap "Share" again');return;}
+    fallback(files,text,'Share blocked by browser');
   });
 }
 $('bShare').addEventListener('click',function(){
   var r=render(),ns=activePh().filter(function(n){return photos[n];});
-  if(ns.some(function(n){var g=photos[n].gps;return g&&g.pending;}))toast('GPS belum selesai — foto dikirim dengan status GPS saat ini');
+  if(ns.some(function(n){var g=photos[n].gps;return g&&g.pending;}))toast('GPS not finished — photos sent with the current GPS status');
   if(SC.files&&SC.key===shareKey()){doShare(SC,r.text,false);return;}   // langsung, tanpa jeda
-  toast('Menyiapkan foto…');
+  toast('Preparing photos…');
   prepare().then(function(st){doShare(st,r.text,true);})
-  .catch(function(){toast('Foto tidak bisa diproses di browser ini — coba buka file lewat Google Chrome');});
+  .catch(function(){toast('Photos cannot be processed in this browser — try opening the file in Google Chrome');});
 });
 // ---------- simpan ke HP (ZIP, tanpa kompresi, tanpa internet) ----------
 var CRC=(function(){var t=new Uint32Array(256);for(var n=0;n<256;n++){var c=n;for(var k=0;k<8;k++)c=c&1?0xEDB88320^(c>>>1):c>>>1;t[n]=c>>>0;}return t;})();
@@ -1369,19 +1372,19 @@ function readBytes(f){
 $('bSave').addEventListener('click',function(){
   if(demoBlock())return;
   var r=render(),has=true;
-  toast('Menyiapkan file…');
+  toast('Preparing file…');
   (has?prepare():Promise.resolve({files:[],notes:[]})).then(function(st){
     return Promise.all(st.files.map(function(f){return readBytes(f).then(function(u){return {name:f.name,data:u};});}));
   }).then(function(entries){
-    entries.push({name:fileBase()+'_LAPORAN_LENGKAP.txt',data:new TextEncoder().encode(r.detail.replace(/\n/g,'\r\n'))});
+    entries.push({name:fileBase()+'_FULL_REPORT.txt',data:new TextEncoder().encode(r.detail.replace(/\n/g,'\r\n'))});
     var name=fileBase()+'.zip',blob=makeZip(entries),a=document.createElement('a');
     a.href=URL.createObjectURL(blob);a.download=name;document.body.appendChild(a);a.click();a.remove();
     setTimeout(function(){URL.revokeObjectURL(a.href);},60000);
-    toast('Tersimpan: Download/'+name+' ('+entries.length+' file, '+Math.round(blob.size/1024)+' KB)');
-  }).catch(function(){toast('Gagal menyimpan — coba buka file lewat Google Chrome');});
+    toast('Saved: Download/'+name+' ('+entries.length+' files, '+Math.round(blob.size/1024)+' KB)');
+  }).catch(function(){toast('Save failed — try opening the file in Google Chrome');});
 });
 $('bNew').addEventListener('click',function(){
-  ask(demo?'Hapus data CONTOH dan mulai form kosong?':'Mulai shift baru? Isian shift ini, foto & TTD dikosongkan. Rig, drillsite, jenis & ukuran lubang, formasi, bit & IBC tetap.','Ya, Shift Baru').then(function(ok){if(ok)newShift();});
+  ask(demo?'Clear the SAMPLE data and start a blank form?':'Start a new shift? Entries, photos & signature for this shift are cleared. Rig, drillsite, hole type & size, formation, bit & IBC are kept.','Yes, New Shift').then(function(ok){if(ok)newShift();});
 });
 function newShift(){
   var wasDemo=demo;demo=false;
@@ -1390,12 +1393,12 @@ function newShift(){
   $('tgl').value=today();
   seg={shift:seg.shift==='Day'?'Night':'Day'};
   appr=null;clearSig();LS.set('psc4_appr',null);
-  clearPhotos();save();render();visited={0:1};go(0);toast('Form siap untuk shift '+seg.shift);
+  clearPhotos();save();render();visited={0:1};go(0);toast('Form ready for '+seg.shift+' shift');
 }
 
 (function(){
   if(location.protocol==='content:'){var n=$('ctxNote');n.style.display='block';
-    n.innerHTML='<b>Form dibuka langsung dari WhatsApp.</b> Lokasi GPS diblokir &amp; isian bisa hilang saat file ditutup. Gunakan link form resmi (https), atau simpan file ke HP lalu buka lewat Chrome.';}
+    n.innerHTML='<b>Form opened directly from WhatsApp.</b> GPS location is blocked &amp; entries may be lost when the file closes. Use the official form link (https), or save the file to the phone and open it in Chrome.';}
 })();
 initSig();load();
 (function(){var k=0;try{k=+localStorage.getItem('psc5_step')||0;}catch(e){}go(k);})();
