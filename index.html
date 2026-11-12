@@ -1255,16 +1255,30 @@ $('bApprove').addEventListener('click',function(){if(demoBlock())return;approve(
 // Kartu status selalu dibuat (gambar pertama di WhatsApp): Approved / Menunggu TTD / Tidak siap / Contoh.
 function sigCard(r){
   var signed=!!(appr&&appr.sig);
-  return Promise.all([signed?loadImg(appr.sig).catch(function(){return null;}):null,apprC&&apprC.sig?loadImg(apprC.sig).catch(function(){return null;}):null]).then(function(ims){var img=ims[0],imgC=ims[1];
+  return Promise.all([signed?loadImg(appr.sig).catch(function(){return null;}):null,apprC&&apprC.sig?loadImg(apprC.sig).catch(function(){return null;}):null,
+    loadImg('card-bg.jpg').catch(function(){return null;}),loadImg('alamtri-logo.png').catch(function(){return null;})]).then(function(ims){var img=ims[0],imgC=ims[1],bg=ims[2],logo=ims[3];
     var W=1080,H=1350,P=56,c=document.createElement('canvas');c.width=W;c.height=H;var x=c.getContext('2d');
     var navy='#1f3a5f',ink='#1d2430',mut='#5b6573',ok='#1e7a3c',wr='#9a5a00';
-    x.fillStyle='#fff';x.fillRect(0,0,W,H);
     x.textBaseline='alphabetic';x.textAlign='left';
-    // header
-    x.fillStyle=navy;x.fillRect(0,0,W,150);
-    x.fillStyle='#fff';x.font='bold 46px Arial';x.fillText('PRE-SHIFT CHECK',P,72);
-    x.font='30px Arial';x.fillText((v('rig')||'-')+'  |  '+(v('drillsite')?holeId():'-')+'  |  Shift '+(seg.shift||'-'),P,122);
-    var tg=v('tgl');if(tg){var q=tg.split('-');x.textAlign='right';x.fillText(fmtD(new Date(+q[0],+q[1]-1,+q[2])),W-P,72);x.textAlign='left';}
+    // latar: foto lanskap (banner AlamTri) diperbesar & diburamkan; cadangan: putih
+    function cover(im,dx,dy,dw,dh,fx){var sc=Math.max(dw/im.naturalWidth,dh/im.naturalHeight),sw=dw/sc,sh=dh/sc,sx0=(im.naturalWidth-sw)*(fx==null?.5:fx),sy0=(im.naturalHeight-sh)/2;
+      x.drawImage(im,sx0,sy0,sw,sh,dx,dy,dw,dh);}
+    if(bg){x.save();try{x.filter='blur(10px)';}catch(e){}cover(bg,-30,-30,W+60,H+60,.32);x.restore();
+      x.fillStyle='rgba(16,32,48,.18)';x.fillRect(0,0,W,H);}
+    else{x.fillStyle='#fff';x.fillRect(0,0,W,H);}
+    // header: banner tajam + logo
+    var HH=232;
+    if(bg){cover(bg,0,0,W,HH,.3);var gr=x.createLinearGradient(0,0,W,0);gr.addColorStop(0,'rgba(8,28,44,.72)');gr.addColorStop(.6,'rgba(8,28,44,.35)');gr.addColorStop(1,'rgba(8,28,44,.15)');
+      x.fillStyle=gr;x.fillRect(0,0,W,HH);}
+    else{x.fillStyle=navy;x.fillRect(0,0,W,HH);}
+    if(logo){var lh=58,lw=lh*logo.naturalWidth/logo.naturalHeight;x.drawImage(logo,P-6,26,lw,lh);}
+    x.fillStyle='#fff';x.font='bold 44px Arial';x.fillText('PRE-SHIFT CHECK',P,152);
+    x.font='28px Arial';x.fillText((v('rig')||'-')+'  |  '+(v('drillsite')?holeId():'-')+'  |  Shift '+(seg.shift||'-'),P,198);
+    var tg=v('tgl');if(tg){var q=tg.split('-');x.textAlign='right';x.font='bold 30px Arial';x.fillText(fmtD(new Date(+q[0],+q[1]-1,+q[2])),W-P,68);x.textAlign='left';}
+    // panel abu-abu transparan untuk isi kartu
+    function rr(px,py,pw,ph,rad){x.beginPath();x.moveTo(px+rad,py);x.arcTo(px+pw,py,px+pw,py+ph,rad);x.arcTo(px+pw,py+ph,px,py+ph,rad);x.arcTo(px,py+ph,px,py,rad);x.arcTo(px,py,px+pw,py,rad);x.closePath();}
+    rr(28,HH+18,W-56,H-HH-46,22);x.fillStyle=bg?'rgba(238,241,244,.80)':'#fff';x.fill();
+    if(bg){x.strokeStyle='rgba(255,255,255,.65)';x.lineWidth=2;x.stroke();}
     // status banner
     var warns=r.iss.filter(function(i){return i.c==='warn';});
     var ban=demo?['#fbeceb','#c4372c','SAMPLE – NOT A REAL APPROVAL']
@@ -1273,8 +1287,8 @@ function sigCard(r){
       :signed?['#e9f6ee',ok,'✓ START DRILLING APPROVED']
       :r.status==='bad'?['#fbeceb','#c4372c','✗ NOT READY FOR CORING ('+r.hard+')']
       :['#f1f3f5','#5b6573',apprC?'AWAITING GEOLOGIST APPROVAL':'AWAITING SIGNATURES'];
-    x.fillStyle=ban[0];x.fillRect(P,186,W-2*P,110);
-    x.fillStyle=ban[1];x.font='bold 46px Arial';x.fillText(ban[2],P+28,258);
+    rr(P,HH+46,W-2*P,98,12);x.fillStyle=ban[0];x.fill();
+    x.fillStyle=ban[1];x.font='bold 44px Arial';x.fillText(ban[2],P+28,HH+111);
     // key facts
     var eq=activeEq().filter(function(e){return v('eq_'+e.id)!=='N/A';}),nOk=eq.filter(function(e){return v('eq_'+e.id)==='Normal';}).length;
     var rows=[
@@ -1289,12 +1303,12 @@ function sigCard(r){
       ['Weather',(seg.wx||'-')+(function(){var f=wxShift();return f?' · fcst rain '+f.pmax+'%':'';})()],
       ['SPV Drilling',pick('spvd')||'-']
     ];
-    var y=360;
+    var y=HH+200;
     rows.forEach(function(rw){
       x.fillStyle=mut;x.font='30px Arial';x.fillText(rw[0],P,y);
       x.fillStyle=ink;x.font='bold 32px Arial';x.fillText(rw[1],P+360,y);
-      x.strokeStyle='#e3e8ef';x.lineWidth=2;x.beginPath();x.moveTo(P,y+20);x.lineTo(W-P,y+20);x.stroke();
-      y+=56;
+      x.strokeStyle='rgba(120,135,150,.28)';x.lineWidth=2;x.beginPath();x.moveTo(P,y+18);x.lineTo(W-P,y+18);x.stroke();
+      y+=51;
     });
     if(signed&&appr.ov){
       x.fillStyle='#c2410c';x.font='bold 28px Arial';
@@ -1306,11 +1320,12 @@ function sigCard(r){
       y+=50;
     }
     // 2 kotak tanda tangan: kontraktor (kiri) & Rig Geologist (kanan)
-    var by=y+30,gap=24,bw=(W-2*P-gap)/2,bh=Math.max(150,Math.min(230,H-by-130));
+    var by=y+30,gap=24,bw=(W-2*P-gap)/2,bh=Math.max(130,Math.min(220,H-by-150));
     [['CHECKED BY CONTRACTOR',imgC,apprC?apprC.name:(cWho()||'—'),apprC?(apprC.role+'  ·  '+fmtD(new Date(apprC.time))+' '+fmtT(new Date(apprC.time))):((seg.cRole||'Driller')+'  ·  not signed')],
      ['APPROVED BY RIG GEOLOGIST',img,appr?appr.name:(pick('spv')||'—'),appr?('Rig Geologist  ·  '+fmtD(new Date(appr.time))+' '+fmtT(new Date(appr.time))):'Rig Geologist  ·  not signed']].forEach(function(sg,i){
       var bx=P+i*(bw+gap),fs=30;
       x.fillStyle=mut;x.font='bold 22px Arial';x.fillText(sg[0],bx,by);
+      x.fillStyle='rgba(255,255,255,.75)';x.fillRect(bx,by+14,bw,bh);
       x.strokeStyle='#9fb6d1';x.lineWidth=2;x.setLineDash([10,8]);x.strokeRect(bx,by+14,bw,bh);x.setLineDash([]);
       if(sg[1]){var sw=bw-30,sh=sw*sg[1].naturalHeight/sg[1].naturalWidth;if(sh>bh-20){sh=bh-20;sw=sh*sg[1].naturalWidth/sg[1].naturalHeight;}
         x.drawImage(sg[1],bx+(bw-sw)/2,by+14+(bh-sh)/2,sw,sh);}

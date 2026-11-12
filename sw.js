@@ -1,7 +1,7 @@
 /* Pre-Shift Check – offline cache.
    Ganti VERSION setiap kali index.html diperbarui, supaya HP crew mengambil versi baru. */
-const VERSION = 'psc-2026-11-12l';
-const CORE = ['./', './index.html', './manifest.webmanifest', './icon-192.png', './icon-512.png', './icon-maskable-512.png'];
+const VERSION = 'psc-2026-11-12m';
+const CORE = ['./', './index.html', './manifest.webmanifest', './icon-192.png', './icon-512.png', './icon-maskable-512.png', './card-bg.jpg', './alamtri-logo.png'];
 
 self.addEventListener('install', e => {
   e.waitUntil(caches.open(VERSION).then(c => c.addAll(CORE)).then(() => self.skipWaiting()));
