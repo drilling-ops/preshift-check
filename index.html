@@ -84,6 +84,15 @@ input.wrnin{border-color:var(--warn);background:var(--warnbg)}
 .seg button.on.wrn{background:var(--warn);color:#fff}
 .sub{font:600 11px var(--fb);letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:16px 0 10px;padding-top:14px;border-top:1px solid var(--line)}
 .eq{padding:12px 0;border-top:1px solid var(--line)}
+.eqh{display:flex;flex-direction:column;gap:1px;margin-bottom:7px}
+.eqh b{font:600 15px var(--fb)}
+.eqh span{font-size:12px;color:var(--muted)}
+.seg.eqs{flex-wrap:wrap}
+.seg.eqs button{flex:1 1 22%;min-width:72px;font-size:13px}
+.seg.eqs button.on.okc{background:var(--ok);color:#fff}
+.sub.eqg{display:flex;flex-direction:column;gap:2px}
+.sub.eqg small{font:400 12px var(--fb);letter-spacing:0;text-transform:none;color:var(--muted)}
+.eqcount{font:500 13px var(--fm);color:var(--fg);margin:0 0 4px}
 .eq:first-child{border-top:0;padding-top:0}
 .eq.hide{display:none}
 .std{font-size:12px;color:var(--muted);background:var(--bg);border-left:3px solid var(--accent);padding:8px 10px;margin:0 0 12px}
@@ -364,30 +373,38 @@ var MAT=[['bent','Bentonite/Gel'],['trol','Trol (PAC)'],['hivis','Hi-Vis (PHPA)'
 var TOL=0.2;
 
 // Drilling equipment
+// Checklist drilling equipment
+// A = core-critical (Rusak/Tidak ada = ❌, tidak boleh mulai) · B = pendukung (Rusak = ⚠️, keputusan Rig Geologist)
 var COND=['Normal','Perlu Penggantian Segera','Rusak'];
 var COND_SPLIT=['Normal','Perlu Perbaikan','Perlu Diganti','Rusak','Not Available'];
+var COND_B=['Normal','Perlu Penggantian Segera','Rusak','N/A'];
+var BTN={'Perlu Penggantian Segera':'Perlu ganti','Perlu Perbaikan':'Perlu perbaikan','Perlu Diganti':'Perlu diganti','Not Available':'Tidak ada'};
 var EQ=[
- {id:'barrel',n:'Barrel',ph:1},
- {id:'bit',n:'Bit',ph:2,bit:true},
- {id:'latch',n:'Latch',ph:3},
- {id:'lifter',n:'Core lifter',ph:2},
- {id:'ccase',n:'Core case',ph:2},
- {id:'split',n:'Split tube',ph:1,split:true},
- {id:'spt',n:'SPT tools',ph:5,sptOnly:true},
- {id:'uds',n:'UDS (Shelby tube)',ph:5,sptOnly:true}
+ {id:'barrel',n:'Barrel',g:'A'},
+ {id:'bit',n:'Bit',g:'A',bit:true},
+ {id:'latch',n:'Latch',g:'A'},
+ {id:'lifter',n:'Core lifter',g:'A'},
+ {id:'ccase',n:'Core case',g:'A'},
+ {id:'split',n:'Split tube',g:'A',split:true},
+ {id:'spt',n:'SPT tools',g:'A',sptOnly:true},
+ {id:'uds',n:'UDS (Shelby tube)',g:'A',sptOnly:true},
+ {id:'panel',n:'Control panel & gauges',h:'RPM, feed/WOB & pump pressure terbaca normal',g:'A'},
+ {id:'pump',n:'Supply / mud pump',h:'flow & tekanan stabil, tanpa bocor',g:'A'},
+ {id:'gearbox',n:'Rotation head / gearbox',h:'rotasi halus, tanpa vibrasi/play',g:'A'},
+ {id:'winch',n:'Winch + wireline (overshot)',h:'wireline tidak putus serat/kink, overshot mengunci',g:'B'},
+ {id:'footclamp',n:'Footclamp',h:'jaw mencengkeram rod, tidak slip',g:'B'},
+ {id:'mixer',n:'Mixer',h:'berfungsi untuk mixing mud',g:'B'}
 ];
 var FAIL={'Rusak':1,'Not Available':1};
 var WARN={'Perlu Penggantian Segera':1,'Perlu Perbaikan':1,'Perlu Diganti':1};
 var REM={'Rusak':1,'Not Available':1};
 
-var SEGS={shift:['Day','Night'],kondisi:['Normal','Waterloss','Caving','Collapse']};
-var NEG={'Collapse':1},WRN={'Waterloss':1,'Caving':1};
+var SEGS={shift:['Day','Night'],kondisi:['Normal','Waterloss','Caving','Collapse'],p2h:['Ya','Tidak']};
+var NEG={'Collapse':1,'Tidak':1},WRN={'Waterloss':1,'Caving':1};
+// Foto bukti: hanya 2 — viskositas mud & overview rig (bukti inspeksi dilakukan di lokasi)
 var PH={
- 1:{t:'BARREL & SPLIT TUBE',s:'Split tube terbuka penuh + barrel terlihat'},
- 2:{t:'BIT, CORE LIFTER & CORE CASE',s:'Muka bit close-up (tinggi crown) + core lifter & core case'},
- 3:{t:'LATCH INNER TUBE',s:'Inner tube terpasang/terkunci di outer barrel, sebelum masuk lubang'},
- 4:{t:'VISCOSITY (MARSH FUNNEL + TIMER)',s:'Funnel dan timer dalam SATU frame'},
- 5:{t:'SPT TOOLS & UDS',s:'Split spoon SPT + tabung UDS/Shelby (hanya lubang SPT)',sptOnly:true}
+ 1:{t:'VISCOSITY (MARSH FUNNEL + TIMER)',s:'Funnel dan timer dalam SATU frame, angka detik terbaca'},
+ 2:{t:'OVERVIEW RIG',s:'Seluruh rig dari jarak ±10–20 m, SPV drilling / crew terlihat di lokasi'}
 };
 var MAX_AGE_MIN=180;
 
@@ -409,26 +426,45 @@ Array.prototype.forEach.call(document.querySelectorAll('select[data-people]'),fu
   sel.innerHTML=h+'<option value="__lain">Lainnya (ketik nama)</option>';
 });
 
-// ---------- build: equipment rows ----------
+// ---------- build: equipment checklist ----------
 function opts(a){return '<option value="">— pilih —</option>'+a.map(function(o){return '<option>'+o+'</option>';}).join('');}
-EQ.forEach(function(e){
-  var d=document.createElement('div');d.className='eq';d.id='row_'+e.id;
-  var h='<div class="row one" style="margin-bottom:0"><div><label>'+e.n+(e.split?' — kondisi':'')+'<span class="tag">Foto '+e.ph+'</span></label>'+
-    '<select id="eq_'+e.id+'">'+opts(e.split?COND_SPLIT:COND)+'</select>'+
-    '<input class="rem" id="eq_'+e.id+'Rem" placeholder="Remarks (wajib): kondisi / tindakan"></div></div>';
-  if(e.bit){
-    h+='<div class="row three" style="margin:8px 0 0">'+
-      '<div><label>Tipe bit</label><select id="bitTipe">'+opts(['Surface Set Step','Impregnated','Wing/Drag Bit','Tricone','Tungsten','Custom'])+'</select>'+
-      '<input class="lain" id="bitTipeLain" placeholder="Tipe custom"></div>'+
-      '<div><label>No. seri bit</label><select id="bitSeri">'+opts(['1','2','3','4','5','6','7','8','9','10','Lainnya'])+'</select>'+
-      '<input class="lain" id="bitSeriLain" placeholder="No. seri"></div>'+
-      '<div><label>Kondisi (%)</label><select id="bitKond">'+opts(['100','90','80','70','60','50','40','30','20','10','0'])+'</select></div></div>';
-  }
-  d.innerHTML=h;$('eqList').appendChild(d);
-});
+function eqOpts(e){return e.split?COND_SPLIT:e.g==='B'?COND_B:COND;}
+(function(){
+  var box=$('eqList');
+  box.insertAdjacentHTML('beforeend','<p class="hint eqcount" id="eqCount"></p>');
+  [['A','A. Core-critical — langsung berdampak ke core','Rusak / Tidak ada = tidak boleh mulai drilling'],
+   ['B','B. Pendukung','Rusak = catatan ⚠️, keputusan Rig Geologist']].forEach(function(gr){
+    box.insertAdjacentHTML('beforeend','<div class="sub eqg">'+gr[1]+'<small>'+gr[2]+'</small></div>');
+    EQ.filter(function(e){return e.g===gr[0];}).forEach(function(e){
+      var d=document.createElement('div');d.className='eq';d.id='row_'+e.id;
+      var h='<div class="eqh"><b>'+e.n+'</b>'+(e.h?'<span>'+e.h+'</span>':'')+'</div>'+
+        '<div class="seg eqs" data-eq="'+e.id+'">'+eqOpts(e).map(function(o){return '<button type="button" data-v="'+o+'">'+(BTN[o]||o)+'</button>';}).join('')+'</div>'+
+        '<input type="hidden" id="eq_'+e.id+'">'+
+        '<input class="rem" id="eq_'+e.id+'Rem" placeholder="Remarks (wajib): kondisi / tindakan">';
+      if(e.bit){
+        h+='<div class="row three" style="margin:8px 0 0">'+
+          '<div><label>Tipe bit</label><select id="bitTipe">'+opts(['Surface Set Step','Impregnated','Wing/Drag Bit','Tricone','Tungsten','Custom'])+'</select>'+
+          '<input class="lain" id="bitTipeLain" placeholder="Tipe custom"></div>'+
+          '<div><label>No. seri bit</label><select id="bitSeri">'+opts(['1','2','3','4','5','6','7','8','9','10','Lainnya'])+'</select>'+
+          '<input class="lain" id="bitSeriLain" placeholder="No. seri"></div>'+
+          '<div><label>Kondisi (%)</label><select id="bitKond">'+opts(['100','90','80','70','60','50','40','30','20','10','0'])+'</select></div></div>';
+      }
+      d.innerHTML=h;box.appendChild(d);
+    });
+  });
+  box.insertAdjacentHTML('beforeend','<div class="sub eqg">C. Prestart kontraktor<small>Engine, fluid, hidrolik, safety device dicek di form P2H kontraktor</small></div>'+
+    '<div class="eq"><div class="eqh"><b>P2H / prestart kontraktor sudah dilakukan</b></div><div class="seg" data-k="p2h"></div></div>');
+  box.addEventListener('click',function(ev){
+    var bt=ev.target.closest&&ev.target.closest('.eqs button');if(!bt)return;
+    var id=bt.parentNode.getAttribute('data-eq'),inp=$('eq_'+id),val=bt.getAttribute('data-v');
+    inp.value=(inp.value===val?'':val);
+    if(!REM[inp.value])$('eq_'+id+'Rem').value=$('eq_'+id+'Rem').value; // remarks disimpan apa adanya
+    save();render();
+  });
+})();
 
 // ---------- build: segmented ----------
-Array.prototype.forEach.call(document.querySelectorAll('.seg'),function(el){
+Array.prototype.forEach.call(document.querySelectorAll('.seg[data-k]'),function(el){
   var k=el.getAttribute('data-k');
   SEGS[k].forEach(function(o){
     var b=document.createElement('button');b.type='button';b.textContent=o;
@@ -555,7 +591,7 @@ function applyTargets(){
 
 // ---------- paint UI state ----------
 function paint(now){
-  Array.prototype.forEach.call(document.querySelectorAll('.seg'),function(el){
+  Array.prototype.forEach.call(document.querySelectorAll('.seg[data-k]'),function(el){
     var k=el.getAttribute('data-k');
     Array.prototype.forEach.call(el.children,function(b){
       var on=seg[k]===b.textContent;b.classList.toggle('on',on);
@@ -563,12 +599,20 @@ function paint(now){
     });
   });
   Object.keys(LAIN).forEach(function(id){$(id+'Lain').classList.toggle('show',$(id).value===LAIN[id]);});
+  var eqTot=0,eqDone=0,eqNorm=0;
   EQ.forEach(function(e){
-    var s=$('eq_'+e.id),val=s.value;
-    $('row_'+e.id).classList.toggle('hide',!!e.sptOnly&&!isSPT());
-    s.classList.toggle('neg',!!FAIL[val]);s.classList.toggle('wrn',!!WARN[val]);
+    var val=$('eq_'+e.id).value,act=!e.sptOnly||isSPT();
+    $('row_'+e.id).classList.toggle('hide',!act);
+    Array.prototype.forEach.call(document.querySelectorAll('.eqs[data-eq="'+e.id+'"] button'),function(b){
+      var on=b.getAttribute('data-v')===val;b.classList.toggle('on',on);
+      b.classList.toggle('neg',on&&!!FAIL[val]&&!(e.g==='B'&&val==='Rusak'));
+      b.classList.toggle('wrn',on&&(!!WARN[val]||(e.g==='B'&&val==='Rusak')));
+      b.classList.toggle('okc',on&&val==='Normal');
+    });
     $('eq_'+e.id+'Rem').classList.toggle('show',!!REM[val]);
+    if(act){eqTot++;if(val)eqDone++;if(val==='Normal')eqNorm++;}
   });
+  $('eqCount').textContent=eqDone+' dari '+eqTot+' item dicek · '+eqNorm+' Normal'+(seg.p2h?' · P2H '+seg.p2h:' · P2H belum');
   Object.keys(PH).forEach(function(n){
     $('phr'+n).classList.toggle('hide',!!PH[n].sptOnly&&!isSPT());
     var m=$('mt'+n),p=photos[n];
@@ -648,14 +692,16 @@ function build(){
 
   // B
   cur=2;
-  var aph=activeEq().map(function(e){return e.ph;}).filter(function(x,i,a){return a.indexOf(x)===i;}).sort();
-  L.push('*B. DRILLING EQUIPMENT* 📷'+aph.join(','));
+  L.push('*B. DRILLING EQUIPMENT*');
+  var lastG='';
   activeEq().forEach(function(e){
     var val=v('eq_'+e.id),rem=v('eq_'+e.id+'Rem'),s='none',line;
+    if(e.g!==lastG){L.push(e.g==='A'?'_A. Core-critical_':'_B. Pendukung_');lastG=e.g;}
     if(!val)miss(e.n);
+    else if(e.g==='B'&&val==='Rusak'){s='warn';warn(e.n+': Rusak'+(rem?' – '+rem:'')+' — keputusan Rig Geologist');if(!rem)miss('Remarks '+e.n);}
     else if(FAIL[val]){s='fail';fail(e.n+': '+val+(rem?' – '+rem:''));if(!rem)miss('Remarks '+e.n);}
     else if(WARN[val]){s='warn';warn(e.n+': '+val);}
-    else s='ok';
+    else s=val==='N/A'?'none':'ok';
     line=mk(s)+' '+e.n+': '+(val||'__');
     if(e.bit){
       var bt=pick('bitTipe'),bs=pick('bitSeri'),bk=v('bitKond');
@@ -663,13 +709,16 @@ function build(){
       line+=' | '+(bt||'__')+' | No. seri '+(bs||'__')+' | '+(bk||'__')+'%';
     }
     if(REM[val])line+=' — '+(rem||'__');
-    L.push(line+' 📷'+e.ph);
+    L.push(line);
   });
+  L.push('_C. Prestart kontraktor_');
+  if(!seg.p2h)miss('P2H / prestart kontraktor');else if(seg.p2h==='Tidak')fail('P2H / prestart kontraktor belum dilakukan');
+  L.push(mk(!seg.p2h?'none':seg.p2h==='Ya'?'ok':'fail')+' P2H / prestart kontraktor: '+(seg.p2h||'__'));
   L.push('');
 
   // C
   cur=3;
-  L.push('*C. MUD* 📷4');
+  L.push('*C. MUD* 📷1');
   var vol=ibcVol();if(isNaN(vol))miss('Vol. IBC tank');
   L.push('• IBC tank: '+fn(vol)+' L | Formasi: '+fm);
   var pa=num('phAir');
@@ -701,7 +750,7 @@ function build(){
   var vs=num('vis'),ok=inR(vs);
   if(ok===null)miss('Viscosity');else if(!ok)warn('Viscosity '+fn(vs)+' det/qt di luar rekomendasi'+rng()+' — keputusan Rig Geologist');
   if(!v('tVisMin')&&!v('tVisMax')&&!isNaN(vs))warn('Rekomendasi viscosity belum tersedia untuk '+(v('ukuran')||'ukuran ini')+(v('formasi')?'':' / formasi belum dipilih'));
-  L.push(mk(ok===null?'none':ok?'ok':'warn')+' Viscosity: '+fn(vs)+' det/qt'+rng()+' 📷4');
+  L.push(mk(ok===null?'none':ok?'ok':'warn')+' Viscosity: '+fn(vs)+' det/qt'+rng()+' 📷1');
   L.push('');
 
   // photos
@@ -763,7 +812,7 @@ function build(){
   if(empt.length)hardT.push('Belum diisi: '+empt.slice(0,8).join(', ')+(empt.length>8?' +'+(empt.length-8):''));
   if(hardT.length){C.push('');C.push('❌ *Wajib diperbaiki*');C=C.concat(list(hardT));}
   if(warns.length){C.push('');C.push('⚠️ *Perlu perhatian*');C=C.concat(list(warns.map(function(i){return i.t;})));}
-  var eqA=activeEq(),eqN=eqA.filter(function(e){return v('eq_'+e.id)==='Normal';}).length;
+  var eqA=activeEq().filter(function(e){return v('eq_'+e.id)!=='N/A';}),eqN=eqA.filter(function(e){return v('eq_'+e.id)==='Normal';}).length;
   C.push('');
   C.push('Lubang '+(k||'__')+' · Equip '+eqN+'/'+eqA.length+' Normal · Visc '+fn(vs)+(v('tVisMin')?' ('+v('tVisMin')+'–'+v('tVisMax')+')':'')+' · pH '+fn(pa)+' · Foto '+have.length+'/'+act.length);
   C.push('👷 SPV '+shortName(sd)+' · Drl '+shortName(dr)+' · Asst '+shortName(as)+' · Geo '+shortName(geo));
@@ -1008,7 +1057,7 @@ function sigCard(r){
     x.fillStyle=ban[0];x.fillRect(P,186,W-2*P,110);
     x.fillStyle=ban[1];x.font='bold 46px Arial';x.fillText(ban[2],P+28,258);
     // key facts
-    var eq=activeEq(),nOk=eq.filter(function(e){return v('eq_'+e.id)==='Normal';}).length;
+    var eq=activeEq().filter(function(e){return v('eq_'+e.id)!=='N/A';}),nOk=eq.filter(function(e){return v('eq_'+e.id)==='Normal';}).length;
     var rows=[
       ['Jenis / ukuran',(v('jenis')||'-')+' / '+(v('ukuran')||'-')],
       ['Formasi',v('formasi')||'-'],
@@ -1066,7 +1115,7 @@ var DEMO={rig:'RC 01',depth:'12.20',block:'West Usai (Central Kal)',drillsite:'W
   eq_barrel:'Perlu Penggantian Segera',
   eq_bit:'Perlu Penggantian Segera',bitTipe:'Impregnated',bitSeri:'3',bitKond:'30',
   eq_latch:'Perlu Penggantian Segera',
-  eq_lifter:'Perlu Penggantian Segera',
+  eq_lifter:'Perlu Penggantian Segera',eq_panel:'Normal',eq_pump:'Normal',eq_gearbox:'Normal',eq_winch:'Perlu Penggantian Segera',eq_footclamp:'Normal',eq_mixer:'N/A',
   eq_ccase:'Perlu Penggantian Segera',
   eq_split:'Perlu Perbaikan',
   ibc:'1000',phAir:'7.5',bent:'5',trol:'1',hivis:'0.25',soda:'0',vis:'34',spv:'Dedi Akhmadi Irawan',
@@ -1089,7 +1138,7 @@ $('bDemo').addEventListener('click',function(){
   demo=true;appr=null;clearSig();
   FIELDS.forEach(function(f){if($(f))$(f).value=DEMO[f]||'';});
   $('tgl').value=today();
-  seg={shift:'Day',kondisi:'Waterloss'};
+  seg={shift:'Day',kondisi:'Waterloss',p2h:'Ya'};
   applyTargets();clearPhotos();
   var base=Date.now();
   Promise.all(activePh().map(function(n){return demoPhoto(n).then(function(b){
@@ -1119,10 +1168,9 @@ function stamp(n){
     var c=document.createElement('canvas');c.width=w;c.height=h;var x=c.getContext('2d');
     x.drawImage(img,0,0,w,h);
     var fs=Math.max(14,Math.round(w/42)),lh=fs*1.35;
-    var lines=(demo?['CONTOH – BUKAN LAPORAN NYATA']:[]).concat(['FOTO '+n+' – '+PH[n].t,
-      (v('rig')||'-')+' | '+(v('drillsite')||'-')+' | '+(v('jenis')||'-')+' '+(v('ukuran')||'')+' | Shift '+(seg.shift||'-'),
-      'Diambil: '+fmtD(p.taken)+' '+fmtT(p.taken),
-      gpsTxt(p.gps)]);
+    var lines=(demo?['CONTOH – BUKAN LAPORAN NYATA']:[]).concat([
+      PH[n].t.replace(/ \(.*\)$/,'')+' · '+(v('rig')||'-')+' · '+(v('drillsite')?holeId():'-')+' · '+(seg.shift||'-'),
+      fmtD(p.taken)+' '+fmtT(p.taken)+' · '+gpsTxt(p.gps).replace('GPS: ','')]);
     var bh=lh*lines.length+fs*0.8;
     x.fillStyle='rgba(0,0,0,0.6)';x.fillRect(0,h-bh,w,bh);
     x.fillStyle='#fff';x.font='600 '+fs+'px Arial, sans-serif';x.textBaseline='top';x.textAlign='left';
