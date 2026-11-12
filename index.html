@@ -71,6 +71,9 @@ select.wrn{border-color:var(--warn);color:var(--warn);background-color:var(--war
 input.lain,input.rem{margin-top:6px;display:none}
 input.lain.show,input.rem.show{display:block}
 input.rem{border-color:var(--bad);background:var(--badbg)}
+select.lock{pointer-events:none;background-color:var(--sunk);background-image:none;font-weight:600;color:var(--fg)}
+#faseRow{display:none}
+#faseRow.show{display:grid}
 input.ro{background:var(--sunk);font:600 16px var(--fm);border-color:var(--line);pointer-events:none}
 input.wrnin{border-color:var(--warn);background:var(--warnbg)}
 .seg{display:flex;border:1px solid var(--line);border-radius:4px;overflow:hidden;background:var(--bg)}
@@ -193,14 +196,16 @@ canvas.sig{width:100%;height:170px;border:1px dashed var(--line);border-radius:4
         <div class="sugg" id="dsList" role="listbox"></div><div class="hint" id="dsInfo"></div></div>
     </div>
     <div class="row">
-      <div><label>Jenis lubang</label><select id="jenis"><option value="">— pilih —</option>
-        <option>Pilot Hole</option><option>Quality</option><option>Geotek</option><option>SPT</option></select></div>
-      <div><label>Ukuran lubang</label><select id="ukuran"><option value="">— pilih —</option>
-        <option>HQ3</option><option>PQ3</option><option>8 inch</option></select></div>
+      <div><label>Jenis lubang (otomatis)</label><select id="jenis" class="lock" tabindex="-1"><option value="">—</option>
+        <option>GT</option><option>SPT</option><option>Stratigrafi</option><option>Twin Hole</option></select></div>
+      <div><label>Ukuran (otomatis)</label><select id="ukuran" class="lock" tabindex="-1"><option value="">—</option>
+        <option>HQ3</option><option>PQ3</option></select></div>
     </div>
-    <div class="row one">
-      <div><label>Formasi</label><select id="formasi"><option value="">— pilih —</option><option>Solid</option><option>Broken/Brittle</option><option>Clay / Seam Batubara</option></select></div>
+    <div class="row one" id="faseRow">
+      <div><label>Fase lubang (Twin Hole)</label><select id="fase"><option value="">— pilih —</option>
+        <option value="PO">Pilot / Open hole — ID …PO · HQ3</option><option value="PC">Partial core — ID …PC · PQ3</option></select></div>
     </div>
+    <p class="hint" id="holeInfo" style="margin:-4px 0 12px"></p>
     <div class="row one">
       <div><label>SPV Drilling</label><select id="spvd" data-people="spvd"></select><input class="lain" id="spvdLain" placeholder="Nama SPV drilling"></div>
     </div>
@@ -217,9 +222,12 @@ canvas.sig{width:100%;height:170px;border:1px dashed var(--line);border-radius:4
 </section>
 
 <section>
-  <h2>Kondisi Lubang</h2><p class="lead">Kondisi lubang saat serah terima shift.</p>
+  <h2>Kondisi Lubang</h2><p class="lead">Kondisi lubang &amp; formasi saat serah terima shift.</p>
   <div class="bd">
     <div class="row one"><div><label>Kondisi lubang</label><div class="seg" data-k="kondisi"></div></div></div>
+    <div class="row one">
+      <div><label>Formasi</label><select id="formasi"><option value="">— pilih —</option><option>Solid</option><option>Broken/Brittle/Sandy</option><option>Clay / Seam Batubara</option></select></div>
+    </div>
   </div>
 </section>
 
@@ -261,7 +269,7 @@ canvas.sig{width:100%;height:170px;border:1px dashed var(--line);border-radius:4
     <summary>Rekomendasi viscosity (otomatis dari formasi &amp; ukuran lubang)</summary>
     <div class="bd">
       <div class="row"><div><label>Rekomendasi min (det/qt)</label><input id="tVisMin" class="ro" readonly tabindex="-1"></div><div><label>Rekomendasi maks (det/qt)</label><input id="tVisMax" class="ro" readonly tabindex="-1"></div></div>
-      <p class="hint" id="tgtHint">Terisi otomatis &amp; tidak bisa diubah di lapangan. Sumber: WIN-MAC-GFO-09-002 Mixing Mud Rev 0.0 — Solid PQ 38–42 / HQ 35–40 · Broken PQ 45–55 / HQ 42–50 · Clay/Seam Batubara PQ 40–45 / HQ 38–42 det/qt. Di luar rekomendasi = catatan ⚠️, keputusan lanjut coring oleh Rig Geologist.</p>
+      <p class="hint" id="tgtHint">Terisi otomatis &amp; tidak bisa diubah di lapangan. Sumber: WIN-MAC-GFO-09-002 Mixing Mud Rev 0.0 — Solid PQ 38–42 / HQ 35–40 · Broken/Brittle/Sandy PQ 45–55 / HQ 42–50 · Clay/Seam Batubara PQ 40–45 / HQ 38–42 det/qt. Di luar rekomendasi = catatan ⚠️, keputusan lanjut coring oleh Rig Geologist.</p>
     </div>
   </details>
 </section>
@@ -322,9 +330,8 @@ var LS={get:function(k,d){try{var v=localStorage.getItem(k);return v==null?d:JSO
         set:function(k,v){try{localStorage.setItem(k,JSON.stringify(v));}catch(e){}}};
 
 // ---------- drillsite (AMI_GFO_Drillsite_Completion, Active Site List per 11-Nov-2026) ----------
-// sites: [nama, index block, status]
-var DS={"blocks":["West Usai (Central Kal)","West Usai (East Kal)","East Usai (Central Kal)","2nd CHPP"],"sites":[["BH-01",3,"Cancel"],["BH-02",3,"Completed"],["BH-03",3,"Completed"],["BH-04",3,"Completed"],["BH-05",3,"Completed"],["BH-06",3,"Completed"],["BH-07",3,"Completed"],["BH-08",3,"Completed"],["BH-09",3,"Completed"],["BH-10",3,"Completed"],["BH-11",3,"Remaining"],["BH-12",3,"Completed"],["BH-13",3,"Completed"],["BH-14",3,"Completed"],["BH-15",3,"Completed"],["BH-16",3,"Completed"],["BH-17",3,"Completed"],["BH-18",3,"Completed"],["BH-19",3,"Remaining"],["BH-20",3,"Remaining"],["BH-21",3,"Completed"],["BH-22",3,"Completed"],["BH-23",3,"Completed"],["BH-24",3,"Completed"],["BH-25",3,"Completed"],["BH-26",3,"Completed"],["BH-27",3,"Completed"],["BH-28",3,"Completed"],["BH-29",3,"Completed"],["BH-30",3,"Completed"],["BH-31",3,"Remaining"],["BH-32_REV",3,"Completed"],["BH-33_REV",3,"Completed"],["BH-34_REV",3,"Completed"],["BH-35",3,"Cancel"],["BH-36",3,"Cancel"],["BH-37",3,"Cancel"],["BH-38",3,"Completed"],["BH-39",3,"Completed"],["BH-40",3,"Completed"],["BH-41",3,"Completed"],["BH-42",3,"Completed"],["BH-43",3,"Completed"],["BH-44",3,"Completed"],["ESU001",2,"Remaining"],["ESU002",2,"Remaining"],["ESU003",2,"Remaining"],["ESU004",2,"Remaining"],["ESU005",2,"Remaining"],["ESU006",2,"Remaining"],["ESU007",2,"Remaining"],["ESU008",2,"Remaining"],["ESU009",2,"Remaining"],["ESU010",2,"Remaining"],["ESU011",2,"Remaining"],["ESU012",2,"Remaining"],["ESU013",2,"Remaining"],["ESU014",2,"Remaining"],["ESU015",2,"Remaining"],["ESU016",2,"Remaining"],["ESU017",2,"Remaining"],["ESU018",2,"Remaining"],["ESU019",2,"Remaining"],["ESU020",2,"Remaining"],["ESU021",2,"Remaining"],["ESU022",2,"Remaining"],["ESU023",2,"Remaining"],["ESU024",2,"Remaining"],["ESU025",2,"Remaining"],["ESU026",2,"Remaining"],["ESU027",2,"Remaining"],["EU0036",2,"Remaining"],["EU0037",2,"Remaining"],["EU0051",2,"Remaining"],["EU0052",2,"Remaining"],["EU0056",2,"Remaining"],["EU0066",2,"Remaining"],["EU0076",2,"Remaining"],["EU0080",2,"Remaining"],["EU0081",2,"Remaining"],["EU0091",2,"Remaining"],["EU0092",2,"Remaining"],["EU0095",2,"Remaining"],["EU0096",2,"Remaining"],["EU0097",2,"Remaining"],["EU0107",2,"Remaining"],["EU0108",2,"Remaining"],["EU0109",2,"Remaining"],["EU0113",2,"Remaining"],["EU0114",2,"Remaining"],["EU0115",2,"Remaining"],["EU0121",2,"Remaining"],["EU0122",2,"Remaining"],["EU0123",2,"Remaining"],["EU0124",2,"Remaining"],["EU0127",2,"Remaining"],["EU0128",2,"Remaining"],["EU0138",2,"Remaining"],["EU0139",2,"Remaining"],["EU0140",2,"Remaining"],["EU0141",2,"Remaining"],["EU0142",2,"Remaining"],["EU0143",2,"Remaining"],["EU0144",2,"Remaining"],["EU0146",2,"Remaining"],["EU0147",2,"Remaining"],["EU0156",2,"Remaining"],["EU0157",2,"Remaining"],["EU0158",2,"Remaining"],["EU0159",2,"Remaining"],["EU0160",2,"Remaining"],["EU0171",2,"Remaining"],["EU0172",2,"Remaining"],["EU0173",2,"Remaining"],["EU0174",2,"Remaining"],["EU0175",2,"Remaining"],["EU0199",2,"Remaining"],["EU0201",2,"Remaining"],["WSU001",1,"Cancel"],["WSU002",0,"Remaining"],["WSU003",1,"Completed"],["WSU004",0,"Remaining"],["WSU005",0,"Remaining"],["WSU006",0,"Stock"],["WSU007",0,"Remaining"],["WSU008",1,"Cancel"],["WSU009",0,"Progress"],["WSU010",0,"Stock"],["WSU011",0,"Stock"],["WSU012",0,"Stock"],["WSU013",0,"Stock"],["WSU014",0,"Stock"],["WSU015",0,"Stock"],["WSU016",1,"Completed"],["WSU017",0,"Stock"],["WSU018",0,"Progress"],["WSU019",0,"Progress"],["WSU020",1,"Cancel"],["WSU021",1,"Cancel"],["WSU022",0,"Completed"],["WSU023",0,"Completed"],["WSU024",0,"Completed"],["WSU025",0,"Remaining"],["WSU026",1,"Cancel"],["WSU027",0,"Completed"],["WSU027BS",0,"Stock"],["WSU028",0,"Stock"],["WSU029",0,"Completed"],["WSU030",0,"Completed"],["WSU031",0,"Completed"],["WSU032",1,"Cancel"],["WSU033",1,"Cancel"],["WSU034",1,"Completed"],["WSU035",1,"Completed"],["WSU036",0,"Completed"],["WSU037",1,"Completed"],["WSU038",1,"Completed"],["WSU039",1,"Completed"],["WSU040",1,"Cancel"],["WSU041",1,"Completed"],["WSU042",1,"Completed"],["WSU043",1,"Completed"],["WSU043BS",1,"Remaining"],["WSU044",1,"Completed"],["WSU045",1,"Completed"],["WSU047",1,"Completed"],["WSU048",1,"Completed"],["WSU048BS",1,"Remaining"],["WSU051",1,"Completed"],["WSU052",1,"Completed"],["WSU053",1,"Completed"],["WSU068",0,"Completed"],["WSU069",1,"Cancel"],["WSU070",1,"Completed"],["WSU071",1,"Completed"],["WSU072",1,"Completed"],["WSU073",1,"Completed"],["WSU074",0,"Remaining"],["WSU075",0,"Remaining"],["WSU076",0,"Remaining"],["WSU077",0,"Remaining"],["WU0146",0,"Cancel"],["WU0171",1,"Completed"],["WU0195",1,"Completed"],["WU0217",0,"Completed"],["WU0218",0,"Completed"],["WU0238",0,"Stock"],["WU0261",0,"Cancel"],["WU0280",0,"Cancel"],["WU0320",0,"Stock"],["WU0324",0,"Stock"],["WU0325",0,"Cancel"],["WU0349",0,"Cancel"],["WU0370",0,"Cancel"]]}
-;
+// sites: [nama, index block, status, jenis lubang (Drilling Type)]
+var DS={"blocks":["West Usai (Central Kal)","West Usai (East Kal)","East Usai (Central Kal)","2nd CHPP"],"sites":[["BH-01",3,"Cancel","SPT"],["BH-02",3,"Completed","SPT"],["BH-03",3,"Completed","SPT"],["BH-04",3,"Completed","SPT"],["BH-05",3,"Completed","SPT"],["BH-06",3,"Completed","SPT"],["BH-07",3,"Completed","SPT"],["BH-08",3,"Completed","SPT"],["BH-09",3,"Completed","SPT"],["BH-10",3,"Completed","SPT"],["BH-11",3,"Remaining","SPT"],["BH-12",3,"Completed","SPT"],["BH-13",3,"Completed","SPT"],["BH-14",3,"Completed","SPT"],["BH-15",3,"Completed","SPT"],["BH-16",3,"Completed","SPT"],["BH-17",3,"Completed","SPT"],["BH-18",3,"Completed","SPT"],["BH-19",3,"Remaining","SPT"],["BH-20",3,"Remaining","SPT"],["BH-21",3,"Completed","SPT"],["BH-22",3,"Completed","SPT"],["BH-23",3,"Completed","SPT"],["BH-24",3,"Completed","SPT"],["BH-25",3,"Completed","SPT"],["BH-26",3,"Completed","SPT"],["BH-27",3,"Completed","SPT"],["BH-28",3,"Completed","SPT"],["BH-29",3,"Completed","SPT"],["BH-30",3,"Completed","SPT"],["BH-31",3,"Remaining","SPT"],["BH-32_REV",3,"Completed","SPT"],["BH-33_REV",3,"Completed","SPT"],["BH-34_REV",3,"Completed","SPT"],["BH-35",3,"Cancel","SPT"],["BH-36",3,"Cancel","SPT"],["BH-37",3,"Cancel","SPT"],["BH-38",3,"Completed","SPT"],["BH-39",3,"Completed","SPT"],["BH-40",3,"Completed","SPT"],["BH-41",3,"Completed","SPT"],["BH-42",3,"Completed","SPT"],["BH-43",3,"Completed","SPT"],["BH-44",3,"Completed","SPT"],["ESU001",2,"Remaining","Twin Hole"],["ESU002",2,"Remaining","Twin Hole"],["ESU003",2,"Remaining","Twin Hole"],["ESU004",2,"Remaining","Twin Hole"],["ESU005",2,"Remaining","Stratigrafi"],["ESU006",2,"Remaining","Twin Hole"],["ESU007",2,"Remaining","Twin Hole"],["ESU008",2,"Remaining","Stratigrafi"],["ESU009",2,"Remaining","Twin Hole"],["ESU010",2,"Remaining","Twin Hole"],["ESU011",2,"Remaining","Twin Hole"],["ESU012",2,"Remaining","Twin Hole"],["ESU013",2,"Remaining","Twin Hole"],["ESU014",2,"Remaining","Twin Hole"],["ESU015",2,"Remaining","Twin Hole"],["ESU016",2,"Remaining","Stratigrafi"],["ESU017",2,"Remaining","Twin Hole"],["ESU018",2,"Remaining","Twin Hole"],["ESU019",2,"Remaining","Twin Hole"],["ESU020",2,"Remaining","Twin Hole"],["ESU021",2,"Remaining","Twin Hole"],["ESU022",2,"Remaining","Twin Hole"],["ESU023",2,"Remaining","Twin Hole"],["ESU024",2,"Remaining","Twin Hole"],["ESU025",2,"Remaining","Twin Hole"],["ESU026",2,"Remaining","Twin Hole"],["ESU027",2,"Remaining","Twin Hole"],["EU0036",2,"Remaining","Twin Hole"],["EU0037",2,"Remaining","Twin Hole"],["EU0051",2,"Remaining","Twin Hole"],["EU0052",2,"Remaining","Twin Hole"],["EU0056",2,"Remaining","Twin Hole"],["EU0066",2,"Remaining","Twin Hole"],["EU0076",2,"Remaining","Twin Hole"],["EU0080",2,"Remaining","Twin Hole"],["EU0081",2,"Remaining","Twin Hole"],["EU0091",2,"Remaining","Twin Hole"],["EU0092",2,"Remaining","Twin Hole"],["EU0095",2,"Remaining","Stratigrafi"],["EU0096",2,"Remaining","Stratigrafi"],["EU0097",2,"Remaining","Twin Hole"],["EU0107",2,"Remaining","Twin Hole"],["EU0108",2,"Remaining","Twin Hole"],["EU0109",2,"Remaining","Twin Hole"],["EU0113",2,"Remaining","Twin Hole"],["EU0114",2,"Remaining","Twin Hole"],["EU0115",2,"Remaining","Twin Hole"],["EU0121",2,"Remaining","Twin Hole"],["EU0122",2,"Remaining","Twin Hole"],["EU0123",2,"Remaining","Twin Hole"],["EU0124",2,"Remaining","Twin Hole"],["EU0127",2,"Remaining","Twin Hole"],["EU0128",2,"Remaining","Twin Hole"],["EU0138",2,"Remaining","Twin Hole"],["EU0139",2,"Remaining","Twin Hole"],["EU0140",2,"Remaining","Twin Hole"],["EU0141",2,"Remaining","Twin Hole"],["EU0142",2,"Remaining","Twin Hole"],["EU0143",2,"Remaining","Twin Hole"],["EU0144",2,"Remaining","Twin Hole"],["EU0146",2,"Remaining","Twin Hole"],["EU0147",2,"Remaining","Twin Hole"],["EU0156",2,"Remaining","Twin Hole"],["EU0157",2,"Remaining","Twin Hole"],["EU0158",2,"Remaining","Twin Hole"],["EU0159",2,"Remaining","Twin Hole"],["EU0160",2,"Remaining","Twin Hole"],["EU0171",2,"Remaining","Twin Hole"],["EU0172",2,"Remaining","Twin Hole"],["EU0173",2,"Remaining","Twin Hole"],["EU0174",2,"Remaining","Twin Hole"],["EU0175",2,"Remaining","Twin Hole"],["EU0199",2,"Remaining","Twin Hole"],["EU0201",2,"Remaining","Twin Hole"],["WSU001",1,"Cancel","GT"],["WSU002",0,"Remaining","Stratigrafi"],["WSU003",1,"Completed","Twin Hole"],["WSU004",0,"Remaining","Twin Hole"],["WSU005",0,"Remaining","Twin Hole"],["WSU006",0,"Stock","Twin Hole"],["WSU007",0,"Remaining","Twin Hole"],["WSU008",1,"Cancel","GT"],["WSU009",0,"Progress","Stratigrafi"],["WSU010",0,"Stock","Twin Hole"],["WSU011",0,"Stock","Twin Hole"],["WSU012",0,"Stock","Twin Hole"],["WSU013",0,"Stock","Twin Hole"],["WSU014",0,"Stock","Twin Hole"],["WSU015",0,"Stock","Twin Hole"],["WSU016",1,"Completed","Twin Hole"],["WSU017",0,"Stock","Twin Hole"],["WSU018",0,"Progress","Twin Hole"],["WSU019",0,"Progress","Twin Hole"],["WSU020",1,"Cancel","GT"],["WSU021",1,"Cancel","Twin Hole"],["WSU022",0,"Completed","Stratigrafi"],["WSU023",0,"Completed","Twin Hole"],["WSU024",0,"Completed","Twin Hole"],["WSU025",0,"Remaining","Stratigrafi"],["WSU026",1,"Cancel","Twin Hole"],["WSU027",0,"Completed","Twin Hole"],["WSU027BS",0,"Stock","Twin Hole"],["WSU028",0,"Stock","Twin Hole"],["WSU029",0,"Completed","Twin Hole"],["WSU030",0,"Completed","GT"],["WSU031",0,"Completed","Twin Hole"],["WSU032",1,"Cancel","Twin Hole"],["WSU033",1,"Cancel","Twin Hole"],["WSU034",1,"Completed","Twin Hole"],["WSU035",1,"Completed","Twin Hole"],["WSU036",0,"Completed","Stratigrafi"],["WSU037",1,"Completed","Twin Hole"],["WSU038",1,"Completed","Twin Hole"],["WSU039",1,"Completed","Twin Hole"],["WSU040",1,"Cancel","Twin Hole"],["WSU041",1,"Completed","Twin Hole"],["WSU042",1,"Completed","Twin Hole"],["WSU043",1,"Completed","Twin Hole"],["WSU043BS",1,"Remaining","Twin Hole"],["WSU044",1,"Completed","Twin Hole"],["WSU045",1,"Completed","Twin Hole"],["WSU047",1,"Completed","Twin Hole"],["WSU048",1,"Completed","Twin Hole"],["WSU048BS",1,"Remaining","Twin Hole"],["WSU051",1,"Completed","Twin Hole"],["WSU052",1,"Completed","Twin Hole"],["WSU053",1,"Completed","Twin Hole"],["WSU068",0,"Completed","Twin Hole"],["WSU069",1,"Cancel","Twin Hole"],["WSU070",1,"Completed","Twin Hole"],["WSU071",1,"Completed","Twin Hole"],["WSU072",1,"Completed","Twin Hole"],["WSU073",1,"Completed","Twin Hole"],["WSU074",0,"Remaining","Twin Hole"],["WSU075",0,"Remaining","Stratigrafi"],["WSU076",0,"Remaining","Stratigrafi"],["WSU077",0,"Remaining","Stratigrafi"],["WU0146",0,"Cancel","Twin Hole"],["WU0171",1,"Completed","Twin Hole"],["WU0195",1,"Completed","Twin Hole"],["WU0217",0,"Completed","Twin Hole"],["WU0218",0,"Completed","Twin Hole"],["WU0238",0,"Stock","Twin Hole"],["WU0261",0,"Cancel","GT"],["WU0280",0,"Cancel","Twin Hole"],["WU0320",0,"Stock","Twin Hole"],["WU0324",0,"Stock","Twin Hole"],["WU0325",0,"Cancel","GT"],["WU0349",0,"Cancel","Twin Hole"],["WU0370",0,"Cancel","GT"]]};
 // ---------- master data (POB Control DBM 23-Okt-2026 & ICE, Okt-2026; resign dikeluarkan) ----------
 var PEOPLE={
  spvd:[
@@ -343,15 +350,15 @@ var PEOPLE={
 var WIN_REF='WIN-MAC-GFO-09-002 Mixing Mud Rev 0.0';
 var STD={
  'Solid':               {PQ:{bent:[10,10],trol:[1,1.5],hivis:[.5,.5],soda:[.5,1]}, HQ:{bent:[8,8],  trol:[1,1.5],hivis:[.5,.5],soda:[.5,1]}},
- 'Broken/Brittle':      {PQ:{bent:[20,25],trol:[2,3],  hivis:[.5,1], soda:[.5,1]}, HQ:{bent:[15,20],trol:[2,3],  hivis:[.5,1], soda:[.5,1]}},
+ 'Broken/Brittle/Sandy': {PQ:{bent:[20,25],trol:[2,3],  hivis:[.5,1], soda:[.5,1]}, HQ:{bent:[15,20],trol:[2,3],  hivis:[.5,1], soda:[.5,1]}},
  'Clay / Seam Batubara':{PQ:{bent:[0,3],  trol:[1.5,2],hivis:[1,1.5], soda:[.5,1]}, HQ:{bent:[0,3],  trol:[1.5,2],hivis:[1,1.5], soda:[.5,1]}}
 };
 var VIS={   // target viskositas (detik/quart)
  'Solid':               {PQ:[38,42],HQ:[35,40]},
- 'Broken/Brittle':      {PQ:[45,55],HQ:[42,50]},
+ 'Broken/Brittle/Sandy': {PQ:[45,55],HQ:[42,50]},
  'Clay / Seam Batubara':{PQ:[40,45],HQ:[38,42]}
 };
-var PLUG={'Broken/Brittle':{PQ:500,HQ:200}};   // gram per pill, hanya saat loss circulation
+var PLUG={'Broken/Brittle/Sandy':{PQ:500,HQ:200}};   // gram per pill, hanya saat loss circulation
 var PH_MIN=8.5,PH_MAX=9.5,PH_LIMIT=10;
 var MAT=[['bent','Bentonite/Gel'],['trol','Trol (PAC)'],['hivis','Hi-Vis (PHPA)'],['soda','Soda Ash']];
 var TOL=0.2;
@@ -385,11 +392,11 @@ var PH={
 var MAX_AGE_MIN=180;
 
 var LAIN={spv:'__lain',spvd:'__lain',driller:'__lain',asst:'__lain',geologist:'__lain',bitTipe:'Custom',bitSeri:'Lainnya',ibc:'others'};
-var FIELDS=['rig','tgl','depth','block','drillsite','jenis','ukuran','driller','drillerLain','asst','asstLain','geologist','geologistLain',
+var FIELDS=['rig','tgl','depth','block','drillsite','jenis','ukuran','fase','driller','drillerLain','asst','asstLain','geologist','geologistLain',
   'bitTipe','bitTipeLain','bitSeri','bitSeriLain','bitKond',
   'ibc','ibcLain','formasi','phAir','bent','trol','hivis','soda','plug','others','vis','catatan','spv','spvLain','spvd','spvdLain'];
 EQ.forEach(function(e){FIELDS.push('eq_'+e.id,'eq_'+e.id+'Rem');});
-var KEEP=['rig','block','drillsite','jenis','ukuran','bitTipe','bitTipeLain','bitSeri','bitSeriLain','ibc','ibcLain','formasi'];
+var KEEP=['rig','block','drillsite','jenis','ukuran','fase','bitTipe','bitTipeLain','bitSeri','bitSeriLain','ibc','ibcLain','formasi'];
 var TGT=['tVisMin','tVisMax'];
 var seg={},photos={},demo=false,appr=null;
 
@@ -578,6 +585,10 @@ function paint(now){
   else if(dc.bad){di.textContent=dc.bad;di.className='hint bad';}
   else if(dc.warn){di.textContent=DS.blocks[dc.x[1]]+' · status '+dc.x[2]+' — pastikan drillsite benar';di.className='hint warnc';}
   else{di.textContent=DS.blocks[dc.x[1]]+' · status '+(dc.x[2]||'-');di.className='hint ok';}
+  var hi=$('holeInfo'),j=v('jenis');
+  hi.textContent=!j?'Jenis & ukuran lubang terisi otomatis setelah drillsite dipilih.'
+    :j==='Twin Hole'&&!v('fase')?'Twin Hole — pilih fase: PO (pilot/open hole, HQ3) atau PC (partial core, PQ3).'
+    :'Drillhole ID: '+holeId()+' · '+jenisTxt()+' · '+v('ukuran')+(j==='SPT'?' · SPT tools + Shelby tube (UDS)':'');
   var wl=seg.kondisi==='Waterloss',plugEmpty=!(num('plug')>0);
   $('plugNote').classList.toggle('show',wl&&plugEmpty);
   $('plug').classList.toggle('wrnin',wl&&plugEmpty);
@@ -607,7 +618,9 @@ function build(){
   var blok=req(v('block'),'Block');
   var shift=req(seg.shift,'Shift'),site=req(v('drillsite'),'Drillsite'),depth=req(v('depth').replace(',','.'),'Depth awal shift');
   var dc=dsCheck();if(dc&&dc.bad)fail(dc.bad);else if(dc&&dc.warn)warn(dc.warn);
-  var jenis=req(v('jenis'),'Jenis lubang'),uk=req(v('ukuran'),'Ukuran lubang');
+  var jenis=req(v('jenis'),'Jenis lubang'),uk;
+  if(v('jenis')==='Twin Hole'&&!v('fase'))miss('Fase lubang (PO/PC)');
+  uk=v('ukuran')||'__';jenis=jenisTxt();var hid=v('drillsite')?holeId():'__';
   var sd=req(pick('spvd'),'SPV Drilling'),dr=req(pick('driller'),'Driller'),as=req(pick('asst'),'Assistant driller'),geo=req(pick('geologist'),'Geologist');
 
   var L=[];
@@ -615,7 +628,7 @@ function build(){
   L.push('*PRE-SHIFT CHECK – '+rig+'*');
   L.push('Tgl: '+tgl+' | Shift: '+shift+' | Jam kirim: '+fmtT(now));
   L.push('Block: '+blok);
-  L.push('Drillsite: '+site+' | Depth awal shift: '+depth+' m');
+  L.push('Drillsite: '+site+' | Drillhole ID: '+hid+' | Depth awal shift: '+depth+' m');
   L.push('Jenis lubang: '+jenis+' | Ukuran: '+uk);
   L.push('SPV Drilling: '+sd);
   L.push('Driller: '+dr);
@@ -629,6 +642,8 @@ function build(){
   var k=seg.kondisi;
   if(!k)miss('Kondisi lubang');else if(k==='Collapse')fail('Kondisi lubang: Collapse');else if(k!=='Normal')warn('Kondisi lubang: '+k);
   L.push('• Kondisi lubang: '+(k||'__'));
+  var fm=req(v('formasi'),'Formasi');
+  L.push('• Formasi: '+fm);
   L.push('');
 
   // B
@@ -656,7 +671,6 @@ function build(){
   cur=3;
   L.push('*C. MUD* 📷4');
   var vol=ibcVol();if(isNaN(vol))miss('Vol. IBC tank');
-  var fm=req(v('formasi'),'Formasi');
   L.push('• IBC tank: '+fn(vol)+' L | Formasi: '+fm);
   var pa=num('phAir');
   if(isNaN(pa))miss('pH mud');
@@ -741,7 +755,7 @@ function build(){
   else if(appr){var at2=new Date(appr.time);C.push('✅ *DRILLING BOLEH DIMULAI*');C.push('Disetujui '+appr.name+' · '+fmtT(at2));}
   else{C.push('⏳ *MENUNGGU APPROVAL RIG GEOLOGIST*');C.push('Checklist siap · belum TTD');}
   C.push('');
-  C.push('*'+rig+' · '+site+'*'+(blok!=='__'?' · '+blok:''));
+  C.push('*'+rig+' · '+hid+'*'+(blok!=='__'?' · '+blok:''));
   C.push(tgl+' · '+shift+' · '+jenis+' '+uk+' · '+fm+' · '+depth+' m');
   // masalah wajib: field kosong digabung jadi 1 baris
   var empt=[],hardT=[];
@@ -759,6 +773,7 @@ function build(){
 }
 
 function render(){
+  applyHole();
   $('out').classList.toggle('demoOut',demo);
   if(appr&&appr.snap!==snap()){appr=null;saveAppr();clearSig();toast('Data berubah setelah TTD — approval dibatalkan');}
   var r=build();
@@ -832,8 +847,22 @@ $('drillsite').addEventListener('blur',function(){
   var x=siteOf($('drillsite').value);if(x&&$('drillsite').value!==x[0]){$('drillsite').value=x[0];save();render();}
 });
 $('block').addEventListener('change',function(){
-  var x=siteOf(v('drillsite'));if(x&&DS.blocks[x[1]]!==v('block')){$('drillsite').value='';toast('Drillsite dikosongkan — tidak ada di block '+v('block'));}
+  var x=siteOf(v('drillsite'));if(x&&v('block')&&DS.blocks[x[1]]!==v('block')){$('drillsite').value='';toast('Drillsite dikosongkan — tidak ada di block '+v('block'));}
 });
+// Jenis lubang & ukuran mengikuti Drilling Type di daftar drillsite:
+// GT -> HQ3 · SPT -> SPT tools + Shelby + HQ3 · Stratigrafi -> HQ3 full coring
+// Twin Hole -> PO (pilot/open hole) HQ3 · PC (partial core) PQ3 ; Drillhole ID = drillsite + PO/PC
+function applyHole(){
+  var x=siteOf(v('drillsite')),j=x?x[3]:'';
+  if($('jenis').value!==j)$('jenis').value=j;
+  var twin=j==='Twin Hole';$('faseRow').classList.toggle('show',twin);
+  if(!twin&&$('fase').value)$('fase').value='';
+  var u=j==='Twin Hole'?($('fase').value==='PC'?'PQ3':$('fase').value==='PO'?'HQ3':''):j?'HQ3':'';
+  if($('ukuran').value!==u){$('ukuran').value=u;applyTargets();}
+}
+function holeId(){var x=siteOf(v('drillsite'));if(!x)return v('drillsite');return x[0]+(x[3]==='Twin Hole'&&v('fase')?v('fase'):'');}
+function jenisTxt(){var j=v('jenis'),f=v('fase');
+  return j==='Twin Hole'?'Twin Hole '+(f==='PC'?'partial core':f==='PO'?'pilot/open hole':'__'):j==='Stratigrafi'?'Stratigrafi full coring':j==='SPT'?'SPT + Shelby':j||'__';}
 function dsCheck(){ // {ok, txt, st}
   var name=v('drillsite'),b=v('block');if(!name)return null;
   var x=siteOf(name);
@@ -902,6 +931,7 @@ function load(){
   if(!v('tgl'))$('tgl').value=today();
   if(!seg.shift){var h=new Date().getHours();seg.shift=(h>=6&&h<18)?'Day':'Night';}
   if(v('formasi')==='Clay')$('formasi').value='Clay / Seam Batubara';
+  if(v('formasi')==='Broken/Brittle')$('formasi').value='Broken/Brittle/Sandy';
   applyTargets();
   appr=LS.get('psc4_appr',null);
 }
@@ -1031,7 +1061,7 @@ function demoSign(){
 // ---------- demo ----------
 // Data contoh sengaja dibuat TIDAK NORMAL (banyak catatan) & semua output diberi tanda CONTOH,
 // supaya tidak bisa dipakai sebagai laporan nyata. Hanya Bagikan Foto + Teks yang aktif untuk uji coba.
-var DEMO={rig:'RC 01',depth:'12.20',block:'West Usai (Central Kal)',drillsite:'WSU019',jenis:'Quality',ukuran:'HQ3',formasi:'Broken/Brittle',
+var DEMO={rig:'RC 01',depth:'12.20',block:'West Usai (Central Kal)',drillsite:'WSU019',fase:'PC',formasi:'Broken/Brittle/Sandy',
   spvd:'Taufik Hidayat',driller:'Ahmad Khasil',asst:'Dani Indrawan',geologist:'Eko Kristianta',
   eq_barrel:'Perlu Penggantian Segera',
   eq_bit:'Perlu Penggantian Segera',bitTipe:'Impregnated',bitSeri:'3',bitKond:'30',
