@@ -131,6 +131,13 @@ details .bd{padding-top:0}
 /* tanda tangan */
 canvas.sig{width:100%;height:170px;border:1px dashed var(--line);border-radius:4px;background:var(--surface);touch-action:none;display:block;background-image:linear-gradient(var(--line),var(--line));background-size:calc(100% - 40px) 1px;background-position:20px 75%;background-repeat:no-repeat}
 #sigImg{display:none;width:100%;height:170px;object-fit:contain;border:1px solid var(--ok);border-radius:4px;background:var(--surface)}
+.ovbox{display:none;margin:0 0 12px;padding:10px 12px;border-left:3px solid #c2410c;background:#fff1e6;border-radius:4px;font-size:13px;color:#7c2d12}
+.ovbox.show{display:block}
+.ovbox ul{margin:4px 0 6px;padding-left:18px}
+.ovbox textarea{display:none}
+.ovbox.on textarea{display:block}
+.seg[data-k=ov] button.on{background:#c2410c;color:#fff}
+.pill.orange{--c:#c2410c;background:#fff1e6}
 .appr{font-size:13px;margin-top:10px;padding:10px 12px;border-radius:4px;font-weight:600;border-left:3px solid}
 .appr.ok{background:var(--okbg);color:var(--ok);border-color:var(--ok)}.appr.wait{background:var(--bg);color:var(--muted);border-color:var(--line)}
 
@@ -291,7 +298,14 @@ canvas.sig{width:100%;height:170px;border:1px dashed var(--line);border-radius:4
 <section id="apprSec">
   <h2>Approval Start Drilling</h2><p class="lead">Tanda tangan Rig Geologist setelah semua langkah siap.</p>
   <div class="bd">
-    <div class="row one"><div><label>Rig Geologist</label><select id="spv" data-people="geo"></select><input class="lain" id="spvLain" placeholder="Nama rig geologist"></div></div>
+    <div class="row one"><div><label>Rig Geologist (otomatis dari Identitas)</label><select id="spv" data-people="geo" class="lock" tabindex="-1"></select><input class="lain ro" id="spvLain" readonly tabindex="-1"><p class="hint" id="spvHint" style="margin-top:5px"></p></div></div>
+    <div id="ovBox" class="ovbox">
+      <b>Ada item ❌ yang menahan drilling</b>
+      <ul id="ovList"></ul>
+      <p class="hint">Jika Rig Geologist tetap menyetujui (mis. part pengganti sedang dipasang), aktifkan pengecualian &amp; tulis alasannya. Pengecualian tercatat di laporan.</p>
+      <div class="seg" data-k="ov" style="margin-top:8px"></div>
+      <textarea id="ovReason" rows="2" placeholder="Alasan pengecualian (wajib), mis. core lifter cadangan dipasang sebelum run pertama" style="margin-top:8px"></textarea>
+    </div>
     <label>Tanda tangan Rig Geologist</label>
     <canvas id="sig" class="sig"></canvas><img id="sigImg" alt="Tanda tangan">
     <div class="btns">
@@ -399,7 +413,7 @@ var FAIL={'Rusak':1,'Not Available':1};
 var WARN={'Perlu Penggantian Segera':1,'Perlu Perbaikan':1,'Perlu Diganti':1};
 var REM={'Rusak':1,'Not Available':1};
 
-var SEGS={shift:['Day','Night'],kondisi:['Normal','Waterloss','Caving','Collapse'],p2h:['Ya','Tidak']};
+var SEGS={ov:['Setujui dengan pengecualian'],shift:['Day','Night'],kondisi:['Normal','Waterloss','Caving','Collapse'],p2h:['Ya','Tidak']};
 var NEG={'Collapse':1,'Tidak':1},WRN={'Waterloss':1,'Caving':1};
 // Foto bukti: hanya 2 — viskositas mud & overview rig (bukti inspeksi dilakukan di lokasi)
 var PH={
@@ -411,7 +425,7 @@ var MAX_AGE_MIN=180;
 var LAIN={spv:'__lain',spvd:'__lain',driller:'__lain',asst:'__lain',geologist:'__lain',bitTipe:'Custom',bitSeri:'Lainnya',ibc:'others'};
 var FIELDS=['rig','tgl','depth','block','drillsite','jenis','ukuran','fase','driller','drillerLain','asst','asstLain','geologist','geologistLain',
   'bitTipe','bitTipeLain','bitSeri','bitSeriLain','bitKond',
-  'ibc','ibcLain','formasi','phAir','bent','trol','hivis','soda','plug','others','vis','catatan','spv','spvLain','spvd','spvdLain'];
+  'ibc','ibcLain','formasi','phAir','bent','trol','hivis','soda','plug','others','vis','catatan','spv','spvLain','spvd','spvdLain','ovReason'];
 EQ.forEach(function(e){FIELDS.push('eq_'+e.id,'eq_'+e.id+'Rem');});
 var KEEP=['rig','block','drillsite','jenis','ukuran','fase','bitTipe','bitTipeLain','bitSeri','bitSeriLain','ibc','ibcLain','formasi'];
 var TGT=['tVisMin','tVisMax'];
@@ -775,6 +789,10 @@ function build(){
   L.push('');
 
   var hard=iss.filter(function(i){return i.c!=='warn';}),warns=iss.filter(function(i){return i.c==='warn';}),status;
+  // pengecualian hanya untuk item ❌ (bukan field kosong / foto belum ada)
+  var canOv=hard.length>0&&hard.every(function(i){return i.c==='fail';});
+  var ovReady=canOv&&seg.ov&&v('ovReason').length>=5;
+  var ovAppr=!!(appr&&appr.ov);
   if(hard.length){
     status='bad';
     L.push('*Status: ❌ TIDAK SIAP CORING*');
@@ -792,6 +810,7 @@ function build(){
   if(appr){var at=new Date(appr.time);
     L.push('✍️ Rig Geologist: '+appr.name);
     L.push('Waktu TTD: '+fmtD(at)+' '+fmtT(at));
+    if(appr.ov){L.push('🟠 Disetujui DENGAN PENGECUALIAN untuk:');appr.ov.items.forEach(function(t){L.push('- '+t);});L.push('Alasan: '+appr.ov.reason);}
     if(appr.sig)L.push('📎 Kartu approval + TTD terlampir (gambar pertama)');
     L.push(demo?'*CONTOH – BUKAN APPROVAL NYATA*':'*▶️ START DRILLING DISETUJUI*');}
   else L.push('⬜ Menunggu TTD Rig Geologist — belum boleh start drilling');
@@ -800,9 +819,12 @@ function build(){
   function shortName(n){if(!n||n==='__')return '__';var w=n.split(' ');return w.length>2?w[0]+' '+w[1]:n;}
   function list(items){var o=items.slice(0,MAXL).map(function(t){return '• '+t;});if(items.length>MAXL)o.push('• +'+(items.length-MAXL)+' lainnya');return o;}
   if(demo)C.push('🧪 *CONTOH – BUKAN LAPORAN NYATA*');
-  if(hard.length){C.push('⛔ *DRILLING BELUM BOLEH DIMULAI*');C.push(hard.length+' item wajib diperbaiki'+(appr?'':' · belum TTD'));}
-  else if(appr){var at2=new Date(appr.time);C.push('✅ *DRILLING BOLEH DIMULAI*');C.push('Disetujui '+appr.name+' · '+fmtT(at2));}
-  else{C.push('⏳ *MENUNGGU APPROVAL RIG GEOLOGIST*');C.push('Checklist siap · belum TTD');}
+  var at2=appr?new Date(appr.time):null;
+  if(hard.length&&ovAppr){C.push('🟠 *DRILLING DISETUJUI DENGAN PENGECUALIAN*');C.push('Disetujui '+appr.name+' · '+fmtT(at2));C.push('Alasan: '+appr.ov.reason);}
+  else if(hard.length){C.push('⛔ *DRILLING BELUM BOLEH DIMULAI*');C.push(hard.length+' item wajib diperbaiki · belum TTD');}
+  else if(appr&&warns.length){C.push('🟡 *DRILLING BOLEH DIMULAI DENGAN CATATAN*');C.push('Disetujui '+appr.name+' · '+fmtT(at2)+' · '+warns.length+' catatan');}
+  else if(appr){C.push('✅ *DRILLING BOLEH DIMULAI*');C.push('Disetujui '+appr.name+' · '+fmtT(at2));}
+  else{C.push('⏳ *MENUNGGU APPROVAL RIG GEOLOGIST*');C.push('Checklist siap'+(warns.length?' dengan '+warns.length+' catatan':'')+' · belum TTD');}
   C.push('');
   C.push('*'+rig+' · '+hid+'*'+(blok!=='__'?' · '+blok:''));
   C.push(tgl+' · '+shift+' · '+jenis+' '+uk+' · '+fm+' · '+depth+' m');
@@ -810,7 +832,7 @@ function build(){
   var empt=[],hardT=[];
   hard.forEach(function(i){if(i.c==='miss'&&/ belum diisi$/.test(i.t))empt.push(i.t.replace(/ belum diisi$/,''));else hardT.push(i.t);});
   if(empt.length)hardT.push('Belum diisi: '+empt.slice(0,8).join(', ')+(empt.length>8?' +'+(empt.length-8):''));
-  if(hardT.length){C.push('');C.push('❌ *Wajib diperbaiki*');C=C.concat(list(hardT));}
+  if(hardT.length){C.push('');C.push(ovAppr?'🟠 *Dikecualikan Rig Geologist*':'❌ *Wajib diperbaiki*');C=C.concat(list(hardT));}
   if(warns.length){C.push('');C.push('⚠️ *Perlu perhatian*');C=C.concat(list(warns.map(function(i){return i.t;})));}
   var eqA=activeEq().filter(function(e){return v('eq_'+e.id)!=='N/A';}),eqN=eqA.filter(function(e){return v('eq_'+e.id)==='Normal';}).length;
   C.push('');
@@ -818,10 +840,18 @@ function build(){
   C.push('👷 SPV '+shortName(sd)+' · Drl '+shortName(dr)+' · Asst '+shortName(as)+' · Geo '+shortName(geo));
   if(gOk.length)C.push('📍 maps.google.com/?q='+g0.lat.toFixed(5)+','+g0.lon.toFixed(5));
   if(v('catatan'))C.push('📝 '+v('catatan'));
-  return {text:C.join('\n'),detail:L.join('\n'),iss:iss,status:status,hard:hard.length,now:now};
+  return {text:C.join('\n'),detail:L.join('\n'),iss:iss,status:status,hard:hard.length,now:now,canOv:canOv,ovReady:ovReady,
+    fails:hard.filter(function(i){return i.c==='fail';}).map(function(i){return i.t;}),warns:warns.length};
 }
 
+function syncGeo(){  // Rig Geologist di Approval = Geologist di Identitas
+  if($('spv').value!==$('geologist').value)$('spv').value=$('geologist').value;
+  if($('spvLain').value!==$('geologistLain').value)$('spvLain').value=$('geologistLain').value;
+  $('spvHint').textContent=pick('geologist')?'':'Pilih Geologist di halaman Identitas terlebih dulu.';
+  $('spvHint').className=pick('geologist')?'hint':'hint warnc';
+}
 function render(){
+  syncGeo();
   applyHole();
   $('out').classList.toggle('demoOut',demo);
   if(appr&&appr.snap!==snap()){appr=null;saveAppr();clearSig();toast('Data berubah setelah TTD — approval dibatalkan');}
@@ -831,8 +861,10 @@ function render(){
   var ul=$('iss');ul.innerHTML='';
   r.iss.forEach(function(i){var li=document.createElement('li');li.className=i.c;li.textContent=i.t;ul.appendChild(li);});
   var pill=$('pill');
-  if(r.status==='bad'){pill.className='pill bad';pill.textContent='Tidak siap · '+r.hard;}
-  else if(demo){pill.className='pill warnc';pill.textContent='Contoh';}
+  if(demo){pill.className='pill warnc';pill.textContent='Contoh';}
+  else if(r.status==='bad'&&appr&&appr.ov){pill.className='pill orange';pill.textContent='Disetujui · pengecualian';}
+  else if(r.status==='bad'){pill.className='pill bad';pill.textContent='Tidak siap · '+r.hard;}
+  else if(appr&&r.warns){pill.className='pill warnc';pill.textContent='Approved · catatan';}
   else if(appr){pill.className='pill ok';pill.textContent='Approved';}
   else{pill.className='pill '+(r.status==='warn'?'warnc':'ok');pill.textContent='Siap · menunggu TTD';}
   paintAppr(r);
@@ -1021,18 +1053,27 @@ function paintAppr(r){
   }else{
     sig.style.display='block';img.style.display='none';
     info.className='appr wait';
-    info.textContent=r.status==='bad'?'Checklist belum SIAP — lengkapi dulu sebelum TTD.':'Menunggu tanda tangan Rig Geologist.';
-    $('bApprove').disabled=r.status==='bad';
+    info.textContent=r.status!=='bad'?'Menunggu tanda tangan Rig Geologist.'
+      :!r.canOv?'Masih ada isian/foto yang kosong — lengkapi dulu sebelum TTD.'
+      :r.ovReady?'Siap disetujui DENGAN PENGECUALIAN.':'Ada item ❌. Perbaiki dulu, atau aktifkan pengecualian & tulis alasannya.';
+    $('bApprove').disabled=r.status==='bad'&&!r.ovReady;
+    $('bApprove').textContent=r.status==='bad'&&r.ovReady?'Setujui dengan Pengecualian':'Setujui Start Drilling';
   }
+  var ob=$('ovBox'),showOv=!appr&&r.canOv&&!demo;
+  ob.classList.toggle('show',showOv||!!(appr&&appr.ov));ob.classList.toggle('on',!!seg.ov);
+  $('ovList').innerHTML=(appr&&appr.ov?appr.ov.items:r.fails).map(function(t){return '<li>'+t.replace(/[&<>]/g,function(m){return {'&':'&amp;','<':'&lt;','>':'&gt;'}[m];})+'</li>';}).join('');
 }
 $('bSigClr').addEventListener('click',function(){clearSig();if(appr){appr=null;saveAppr();}render();});
 function approve(){
   var r=build();
-  if(r.status==='bad'){toast('Status TIDAK SIAP — belum bisa disetujui');return false;}
-  if(!pick('spv')){toast('Pilih nama Rig Geologist');return false;}
+  if(r.status==='bad'&&!r.canOv){toast('Masih ada isian/foto kosong — belum bisa disetujui');return false;}
+  if(r.status==='bad'&&!seg.ov){toast('Ada item ❌ — perbaiki, atau aktifkan pengecualian');return false;}
+  if(r.status==='bad'&&!r.ovReady){toast('Tulis alasan pengecualian dulu');return false;}
+  if(!pick('spv')){toast('Pilih Geologist di halaman Identitas dulu');return false;}
   if(sx&&!ink){toast('Tanda tangan dulu');return false;}
-  appr={name:pick('spv'),time:Date.now(),sig:sx?sig.toDataURL('image/png'):'',snap:snap()};
-  saveAppr();render();toast('Disetujui — start drilling');return true;
+  appr={name:pick('spv'),time:Date.now(),sig:sx?sig.toDataURL('image/png'):'',snap:snap(),
+    ov:r.status==='bad'?{reason:v('ovReason'),items:r.fails}:null};
+  saveAppr();render();toast(appr.ov?'Disetujui dengan pengecualian':'Disetujui — start drilling');return true;
 }
 $('bApprove').addEventListener('click',function(){if(demoBlock())return;approve();});
 // Kartu status selalu dibuat (gambar pertama di WhatsApp): Approved / Menunggu TTD / Tidak siap / Contoh.
@@ -1046,12 +1087,14 @@ function sigCard(r){
     // header
     x.fillStyle=navy;x.fillRect(0,0,W,150);
     x.fillStyle='#fff';x.font='bold 46px Arial';x.fillText('PRE-SHIFT CHECK',P,72);
-    x.font='30px Arial';x.fillText((v('rig')||'-')+'  |  '+(v('drillsite')||'-')+'  |  Shift '+(seg.shift||'-'),P,122);
+    x.font='30px Arial';x.fillText((v('rig')||'-')+'  |  '+(v('drillsite')?holeId():'-')+'  |  Shift '+(seg.shift||'-'),P,122);
     var tg=v('tgl');if(tg){var q=tg.split('-');x.textAlign='right';x.fillText(fmtD(new Date(+q[0],+q[1]-1,+q[2])),W-P,72);x.textAlign='left';}
     // status banner
     var warns=r.iss.filter(function(i){return i.c==='warn';});
     var ban=demo?['#fbeceb','#c4372c','CONTOH – BUKAN APPROVAL NYATA']
-      :signed?[warns.length?'#fff4e0':'#e9f6ee',ok,'✓ START DRILLING DISETUJUI']
+      :signed&&appr.ov?['#fff1e6','#c2410c','DISETUJUI DGN PENGECUALIAN']
+      :signed&&warns.length?['#fff4e0','#a86a00','BOLEH DIMULAI DGN CATATAN']
+      :signed?['#e9f6ee',ok,'✓ START DRILLING DISETUJUI']
       :r.status==='bad'?['#fbeceb','#c4372c','✗ TIDAK SIAP CORING ('+r.hard+' item)']
       :['#f1f3f5','#5b6573','MENUNGGU TTD RIG GEOLOGIST'];
     x.fillStyle=ban[0];x.fillRect(P,186,W-2*P,110);
@@ -1077,6 +1120,10 @@ function sigCard(r){
       x.strokeStyle='#e3e8ef';x.lineWidth=2;x.beginPath();x.moveTo(P,y+20);x.lineTo(W-P,y+20);x.stroke();
       y+=56;
     });
+    if(signed&&appr.ov){
+      x.fillStyle='#c2410c';x.font='bold 28px Arial';
+      var ot='Pengecualian: '+appr.ov.reason;x.fillText(ot.length>64?ot.slice(0,63)+'…':ot,P,y+6);y+=50;
+    }
     if(warns.length){
       x.fillStyle=wr;x.font='bold 28px Arial';
       x.fillText('⚠ Catatan: '+warns.map(function(i){return i.t;}).join('; ').slice(0,62)+(warns.length>1||warns[0].t.length>62?'…':''),P,y+6);
@@ -1118,7 +1165,7 @@ var DEMO={rig:'RC 01',depth:'12.20',block:'West Usai (Central Kal)',drillsite:'W
   eq_lifter:'Perlu Penggantian Segera',eq_panel:'Normal',eq_pump:'Normal',eq_gearbox:'Normal',eq_winch:'Perlu Penggantian Segera',eq_footclamp:'Normal',eq_mixer:'N/A',
   eq_ccase:'Perlu Penggantian Segera',
   eq_split:'Perlu Perbaikan',
-  ibc:'1000',phAir:'7.5',bent:'5',trol:'1',hivis:'0.25',soda:'0',vis:'34',spv:'Dedi Akhmadi Irawan',
+  ibc:'1000',phAir:'7.5',bent:'5',trol:'1',hivis:'0.25',soda:'0',vis:'34',
   catatan:'CONTOH – bit, latch & core case diganti sebelum run ke-2'};
 var DEMO_MSG='Mode contoh hanya bisa uji coba Bagikan Foto + Teks. Tekan Shift Baru untuk mulai mengisi.';
 function demoBlock(){if(!demo)return false;toast(DEMO_MSG);return true;}
