@@ -86,6 +86,12 @@ input.wrnin{border-color:var(--warn);background:var(--warnbg)}
 .std{font-size:12px;color:var(--muted);background:var(--bg);border-left:3px solid var(--accent);padding:8px 10px;margin:0 0 12px}
 .hint{font-size:12px;color:var(--muted);margin:0}
 .combo{position:relative}
+.cbox{position:relative}
+.cbox input{padding-right:46px}
+#dsBtn{position:absolute;right:1px;top:1px;bottom:1px;width:44px;border:0;border-left:1px solid var(--line);border-radius:0 4px 4px 0;background:var(--bg);color:var(--muted);font:600 16px var(--fb)}
+#dsBtn::before{content:"▾"}
+#dsBtn.open::before{content:"▴"}
+.sugg .grp{position:sticky;top:0;padding:6px 12px;font:600 11px var(--fb);letter-spacing:.06em;text-transform:uppercase;color:var(--muted);background:var(--sunk);border-top:1px solid var(--line)}
 .sugg{display:none;position:absolute;left:0;right:0;top:100%;z-index:12;margin-top:2px;max-height:264px;overflow-y:auto;background:var(--surface);border:1px solid var(--fg);border-radius:4px;box-shadow:0 6px 18px rgba(27,34,30,.18)}
 .sugg.show{display:block}
 .sugg button{display:flex;width:100%;align-items:center;justify-content:space-between;gap:8px;min-height:44px;padding:8px 12px;border:0;border-top:1px solid var(--line);background:none;font:600 15px var(--fm);color:var(--fg);text-align:left}
@@ -183,7 +189,7 @@ canvas.sig{width:100%;height:170px;border:1px dashed var(--line);border-radius:4
       <div><label>Block</label><select id="block"><option value="">— pilih block —</option></select></div>
     </div>
     <div class="row one">
-      <div class="combo"><label>Drillsite</label><input id="drillsite" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="Ketik 2 huruf, mis. WS / ES / BH">
+      <div class="combo"><label>Drillsite</label><div class="cbox"><input id="drillsite" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="Pilih atau ketik, mis. WS / ES / BH"><button type="button" id="dsBtn" aria-label="Tampilkan daftar drillsite"></button></div>
         <div class="sugg" id="dsList" role="listbox"></div><div class="hint" id="dsInfo"></div></div>
     </div>
     <div class="row">
@@ -567,7 +573,7 @@ function paint(now){
       (g&&g.err&&!demo?'<br><span class="hint">'+gpsHelp(g)+'</span><br><button class="btn sm gpsRetry" type="button" data-n="'+n+'">Coba lagi lokasi</button>':'');
   });
   var dc=dsCheck(),di=$('dsInfo');
-  if(!dc){di.textContent=v('block')?'Ketik minimal 2 huruf untuk mencari drillsite di '+v('block')+'.':'Pilih block dulu, atau langsung ketik 2 huruf.';di.className='hint';}
+  if(!dc){di.textContent=v('block')?'Ketuk ▾ untuk daftar drillsite '+v('block')+', atau ketik 2 huruf untuk mencari.':'Pilih block dulu, atau ketuk ▾ / ketik 2 huruf untuk mencari di semua block.';di.className='hint';}
   else if(dc.bad&&document.activeElement===$('drillsite')){di.textContent='Pilih drillsite dari daftar di bawah.';di.className='hint';}
   else if(dc.bad){di.textContent=dc.bad;di.className='hint bad';}
   else if(dc.warn){di.textContent=DS.blocks[dc.x[1]]+' · status '+dc.x[2]+' — pastikan drillsite benar';di.className='hint warnc';}
@@ -777,41 +783,52 @@ function render(){
 function norm(x){return String(x||'').toUpperCase().replace(/[\s_\-]/g,'');}
 function siteOf(name){var n=norm(name);for(var i=0;i<DS.sites.length;i++)if(norm(DS.sites[i][0])===n)return DS.sites[i];return null;}
 function siteMatches(q){
-  var b=DS.blocks.indexOf(v('block')),n=norm(q);if(n.length<2)return [];
+  var b=DS.blocks.indexOf(v('block')),n=norm(q);
+  if(n.length<2){  // daftar penuh (seperti dropdown): urut block lalu alfabet
+    return DS.sites.filter(function(x){return b<0||x[1]===b;}).slice().sort(function(a,c){return a[1]-c[1]||(a[0]<c[0]?-1:a[0]>c[0]?1:0);});
+  }
   var pre=[],inc=[];
   DS.sites.forEach(function(x){if(b>=0&&x[1]!==b)return;var k=norm(x[0]);if(k.indexOf(n)===0)pre.push(x);else if(k.indexOf(n)>0)inc.push(x);});
   var by=function(a,c){return a[0]<c[0]?-1:a[0]>c[0]?1:0;};
   return pre.sort(by).concat(inc.sort(by));
 }
 var dsHl=-1;
-function dsShow(){
-  var box=$('dsList'),q=$('drillsite').value,m=siteMatches(q);dsHl=-1;
-  if(norm(q).length<2){box.classList.remove('show');box.innerHTML='';return;}
-  box.innerHTML=m.length?m.slice(0,40).map(function(x){return '<button type="button" role="option" data-s="'+x[0]+'">'+x[0]+
-      '<small class="'+x[2]+'">'+(v('block')?'':DS.blocks[x[1]]+' · ')+(x[2]||'-')+'</small></button>';}).join('')+
-      (m.length>40?'<div class="none">+'+(m.length-40)+' lainnya — ketik lebih lengkap</div>':'')
-    :'<div class="none">Tidak ada drillsite "'+q.toUpperCase()+'"'+(v('block')?' di block '+v('block'):'')+'</div>';
-  box.classList.add('show');
+function dsShow(force){
+  var box=$('dsList'),q=$('drillsite').value,full=norm(q).length<2||siteOf(q),m=siteMatches(full?'':q);dsHl=-1;
+  if(full&&!force&&!box.classList.contains('show')&&document.activeElement!==$('drillsite')){return;}
+  var html='',lastB=-1,LIM=full?400:60;
+  m.slice(0,LIM).forEach(function(x){
+    if(!v('block')&&x[1]!==lastB){html+='<div class="grp">'+DS.blocks[x[1]]+'</div>';lastB=x[1];}
+    html+='<button type="button" role="option" data-s="'+x[0]+'"'+(x[0]===v('drillsite')?' class="hl"':'')+'>'+x[0]+'<small class="'+x[2]+'">'+(x[2]||'-')+'</small></button>';
+  });
+  if(m.length>LIM)html+='<div class="none">+'+(m.length-LIM)+' lainnya — ketik lebih lengkap</div>';
+  if(!m.length)html='<div class="none">Tidak ada drillsite "'+q.toUpperCase()+'"'+(v('block')?' di block '+v('block'):'')+'</div>';
+  box.innerHTML=html;box.classList.add('show');$('dsBtn').classList.add('open');
+  var cur=box.querySelector('button.hl');if(cur)try{cur.scrollIntoView({block:'center'});}catch(e){}
 }
+function dsHide(){$('dsList').classList.remove('show');$('dsBtn').classList.remove('open');}
 function dsPick(name){
   var x=siteOf(name);if(!x)return;
   $('drillsite').value=x[0];
   if(!v('block'))$('block').value=DS.blocks[x[1]];
-  $('dsList').classList.remove('show');save();render();
+  dsHide();save();render();
 }
-$('drillsite').addEventListener('input',dsShow);
-$('drillsite').addEventListener('focus',dsShow);
+$('drillsite').addEventListener('input',function(){dsShow(true);});
+$('drillsite').addEventListener('focus',function(){dsShow(true);});
+$('dsBtn').addEventListener('mousedown',function(e){e.preventDefault();});   // buka daftar tanpa memunculkan keyboard
+$('dsBtn').addEventListener('click',function(){if($('dsList').classList.contains('show'))dsHide();else dsShow(true);});
+document.addEventListener('click',function(e){if(!e.target.closest||!e.target.closest('.combo'))dsHide();});
 $('drillsite').addEventListener('keydown',function(e){
   var bs=$('dsList').querySelectorAll('button');if(!bs.length)return;
   if(e.key==='ArrowDown'||e.key==='ArrowUp'){e.preventDefault();dsHl=(dsHl+(e.key==='ArrowDown'?1:-1)+bs.length)%bs.length;
     Array.prototype.forEach.call(bs,function(b,i){b.classList.toggle('hl',i===dsHl);});bs[dsHl].scrollIntoView({block:'nearest'});}
   else if(e.key==='Enter'){e.preventDefault();dsPick((bs[dsHl>=0?dsHl:0]).getAttribute('data-s'));}
-  else if(e.key==='Escape')$('dsList').classList.remove('show');
+  else if(e.key==='Escape')dsHide();
 });
 $('dsList').addEventListener('mousedown',function(e){e.preventDefault();});  // jangan blur sebelum klik
 $('dsList').addEventListener('click',function(e){var b=e.target.closest&&e.target.closest('button[data-s]');if(b)dsPick(b.getAttribute('data-s'));});
 $('drillsite').addEventListener('blur',function(){
-  setTimeout(function(){$('dsList').classList.remove('show');},150);
+  setTimeout(dsHide,150);
   var x=siteOf($('drillsite').value);if(x&&$('drillsite').value!==x[0]){$('drillsite').value=x[0];save();render();}
 });
 $('block').addEventListener('change',function(){
