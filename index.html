@@ -352,6 +352,8 @@ function p2(n){return String(n).padStart(2,'0');}
 function fmtD(d){return p2(d.getDate())+'-'+BLN[d.getMonth()]+'-'+d.getFullYear();}
 function fmtT(d){return p2(d.getHours())+':'+p2(d.getMinutes());}
 function today(){var n=new Date();return n.getFullYear()+'-'+p2(n.getMonth()+1)+'-'+p2(n.getDate());}
+// selisih hari tanggal form vs hari ini (0 = hari ini, 1 = kemarin, negatif = masa depan)
+function dayAgo(ymd){var q=String(ymd||'').split('-');if(q.length<3)return 0;var d=new Date(+q[0],+q[1]-1,+q[2]),n=new Date();n=new Date(n.getFullYear(),n.getMonth(),n.getDate());return Math.round((n-d)/864e5);}
 var LS={get:function(k,d){try{var v=localStorage.getItem(k);return v==null?d:JSON.parse(v);}catch(e){return d;}},
         set:function(k,v){try{localStorage.setItem(k,JSON.stringify(v));}catch(e){}}};
 
@@ -675,7 +677,9 @@ function build(){
 
   var rig=req(v('rig'),'Rig');
   var tglS=v('tgl'),tgl='__';
-  if(tglS){var pp=tglS.split('-');tgl=fmtD(new Date(+pp[0],+pp[1]-1,+pp[2]));}else miss('Date');
+  if(tglS){var pp=tglS.split('-');tgl=fmtD(new Date(+pp[0],+pp[1]-1,+pp[2]));
+    var ago=dayAgo(tglS);if(ago>1||ago<0)fail('Date '+tgl+' is not today ('+fmtD(now)+') — correct the Date field');}
+  else miss('Date');
   var shift=req(seg.shift,'Shift');
   cur=1;   // field drillhole ada di halaman Drillhole
   var blok=req(v('block'),'Block'),site=req(v('drillsite'),'Drillsite'),depth=req(v('depth').replace(',','.'),'Shift start depth');
@@ -1018,6 +1022,9 @@ function load(){
     var sg=d.seg||{};Object.keys(sg).forEach(function(q){if(MIG[sg[q]])sg[q]=MIG[sg[q]];});d.seg=sg;}
   if(d){FIELDS.forEach(function(f){if(d[f]!=null&&$(f))$(f).value=d[f];});seg=d.seg||{};}
   if(!v('tgl'))$('tgl').value=today();
+  else{var ago=dayAgo(v('tgl'));   // draft lama: tanggal ikut tersimpan -> reset ke hari ini
+    if(ago>1||ago<0){var q0=v('tgl').split('-'),od=fmtD(new Date(+q0[0],+q0[1]-1,+q0[2]));$('tgl').value=today();
+      setTimeout(function(){toast('Date reset to today (saved form was dated '+od+')');},300);}}
   if(!seg.shift){var h=new Date().getHours();seg.shift=(h>=6&&h<18)?'Day':'Night';}
   if(v('formasi')==='Clay')$('formasi').value='Clay / Coal Seam';
   if(v('formasi')==='Broken/Brittle')$('formasi').value='Broken/Brittle/Sandy';
