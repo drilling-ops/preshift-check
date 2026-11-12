@@ -1416,7 +1416,12 @@ setInterval(render,60000);
 <script>
 (function(){
   if(!('serviceWorker' in navigator)||!(location.protocol==='https:'||location.hostname==='localhost'))return;
-  window.addEventListener('load',function(){navigator.serviceWorker.register('sw.js').catch(function(){});});
+  // versi baru aktif -> muat ulang sekali supaya HP langsung pakai kode terbaru
+  var had=!!navigator.serviceWorker.controller,done=false;
+  navigator.serviceWorker.addEventListener('controllerchange',function(){if(had&&!done){done=true;location.reload();}});
+  window.addEventListener('load',function(){navigator.serviceWorker.register('sw.js',{updateViaCache:'none'}).then(function(r){
+    document.addEventListener('visibilitychange',function(){if(document.visibilityState==='visible')r.update().catch(function(){});});
+  }).catch(function(){});});
 })();
 </script>
 </body>
