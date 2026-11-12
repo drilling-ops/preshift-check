@@ -193,17 +193,34 @@ canvas.sig{width:100%;height:170px;border:1px dashed var(--line);border-radius:4
 <div class="demo" id="demoNote">Mode contoh — data sengaja dibuat tidak normal &amp; semua foto/kartu bertanda CONTOH. Hanya Bagikan Foto + Teks yang aktif untuk uji coba. Tekan <b>Shift Baru</b> untuk mengosongkan sebelum dipakai.</div>
 
 <section>
-  <h2>Identitas Shift</h2><p class="lead">Rig, lubang &amp; personel shift ini.</p>
+  <h2>Shift ID</h2><p class="lead">Rig, tanggal, shift &amp; personel.</p>
   <div class="bd">
     <div class="row">
       <div><label>Rig</label><select id="rig"><option value="">— pilih —</option>
         <option>RC 01</option><option>RC 02</option><option>RC 03</option><option>RC 04</option><option>RC 05</option><option>DR 01</option></select></div>
       <div><label>Tanggal</label><input id="tgl" type="date"></div>
     </div>
-    <div class="row">
+    <div class="row one">
       <div><label>Shift</label><div class="seg" data-k="shift"></div></div>
-      <div><label>Depth awal shift (m)</label><input id="depth" inputmode="decimal"></div>
     </div>
+    <div class="row one">
+      <div><label>SPV Drilling</label><select id="spvd" data-people="spvd"></select><input class="lain" id="spvdLain" placeholder="Nama SPV drilling"></div>
+    </div>
+    <div class="row one">
+      <div><label>Driller</label><select id="driller" data-people="driller"></select><input class="lain" id="drillerLain" placeholder="Nama driller"></div>
+    </div>
+    <div class="row one">
+      <div><label>Assistant Driller</label><select id="asst" data-people="asst"></select><input class="lain" id="asstLain" placeholder="Nama assistant driller"></div>
+    </div>
+    <div class="row one">
+      <div><label>Geologist</label><select id="geologist" data-people="geo"></select><input class="lain" id="geologistLain" placeholder="Nama geologist"></div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2>Drillhole &amp; Kondisi Lubang</h2><p class="lead">Lokasi lubang, kedalaman awal &amp; kondisi saat serah terima.</p>
+  <div class="bd">
     <div class="row one">
       <div><label>Block</label><select id="block"><option value="">— pilih block —</option></select></div>
     </div>
@@ -223,23 +240,9 @@ canvas.sig{width:100%;height:170px;border:1px dashed var(--line);border-radius:4
     </div>
     <p class="hint" id="holeInfo" style="margin:-4px 0 12px"></p>
     <div class="row one">
-      <div><label>SPV Drilling</label><select id="spvd" data-people="spvd"></select><input class="lain" id="spvdLain" placeholder="Nama SPV drilling"></div>
+      <div><label>Depth awal shift (m)</label><input id="depth" inputmode="decimal"></div>
     </div>
-    <div class="row one">
-      <div><label>Driller</label><select id="driller" data-people="driller"></select><input class="lain" id="drillerLain" placeholder="Nama driller"></div>
-    </div>
-    <div class="row one">
-      <div><label>Assistant Driller</label><select id="asst" data-people="asst"></select><input class="lain" id="asstLain" placeholder="Nama assistant driller"></div>
-    </div>
-    <div class="row one">
-      <div><label>Geologist</label><select id="geologist" data-people="geo"></select><input class="lain" id="geologistLain" placeholder="Nama geologist"></div>
-    </div>
-  </div>
-</section>
-
-<section>
-  <h2>Kondisi Lubang</h2><p class="lead">Kondisi lubang &amp; formasi saat serah terima shift.</p>
-  <div class="bd">
+    <div class="sub">Kondisi saat serah terima</div>
     <div class="row one"><div><label>Kondisi lubang</label><div class="seg" data-k="kondisi"></div></div></div>
     <div class="row one">
       <div><label>Formasi</label><select id="formasi"><option value="">— pilih —</option><option>Solid</option><option>Broken/Brittle/Sandy</option><option>Clay / Seam Batubara</option></select></div>
@@ -291,14 +294,14 @@ canvas.sig{width:100%;height:170px;border:1px dashed var(--line);border-radius:4
 </section>
 
 <section>
-  <h2>Foto Bukti</h2><p class="lead">Ambil langsung dari kamera. Waktu &amp; lokasi terekam otomatis.</p>
+  <h2>Evidence</h2><p class="lead">Ambil langsung dari kamera. Waktu &amp; lokasi terekam otomatis.</p>
   <div class="bd" id="phList"></div>
 </section>
 
 <section id="apprSec">
   <h2>Approval Start Drilling</h2><p class="lead">Tanda tangan Rig Geologist setelah semua langkah siap.</p>
   <div class="bd">
-    <div class="row one"><div><label>Rig Geologist (otomatis dari Identitas)</label><select id="spv" data-people="geo" class="lock" tabindex="-1"></select><input class="lain ro" id="spvLain" readonly tabindex="-1"><p class="hint" id="spvHint" style="margin-top:5px"></p></div></div>
+    <div class="row one"><div><label>Rig Geologist (otomatis dari Shift ID)</label><select id="spv" data-people="geo" class="lock" tabindex="-1"></select><input class="lain ro" id="spvLain" readonly tabindex="-1"><p class="hint" id="spvHint" style="margin-top:5px"></p></div></div>
     <div id="ovBox" class="ovbox">
       <b>Ada item ❌ yang menahan drilling</b>
       <ul id="ovList"></ul>
@@ -317,7 +320,7 @@ canvas.sig{width:100%;height:170px;border:1px dashed var(--line);border-radius:4
 </section>
 
 <section id="prev">
-  <h2>Kirim Laporan</h2><p class="lead">Pratinjau pesan WhatsApp &amp; simpan arsip.</p>
+  <h2>Send Report</h2><p class="lead">Pratinjau pesan WhatsApp &amp; simpan arsip.</p>
   <div class="bd">
     <ul class="iss" id="iss"></ul>
     <div class="row one"><div><label>Tindakan / catatan (wajib jika TIDAK SIAP)</label><textarea id="catatan" rows="2"></textarea></div></div>
@@ -673,12 +676,14 @@ function build(){
   var rig=req(v('rig'),'Rig');
   var tglS=v('tgl'),tgl='__';
   if(tglS){var pp=tglS.split('-');tgl=fmtD(new Date(+pp[0],+pp[1]-1,+pp[2]));}else miss('Tanggal');
-  var blok=req(v('block'),'Block');
-  var shift=req(seg.shift,'Shift'),site=req(v('drillsite'),'Drillsite'),depth=req(v('depth').replace(',','.'),'Depth awal shift');
+  var shift=req(seg.shift,'Shift');
+  cur=1;   // field drillhole ada di halaman Drillhole
+  var blok=req(v('block'),'Block'),site=req(v('drillsite'),'Drillsite'),depth=req(v('depth').replace(',','.'),'Depth awal shift');
   var dc=dsCheck();if(dc&&dc.bad)fail(dc.bad);else if(dc&&dc.warn)warn(dc.warn);
   var jenis=req(v('jenis'),'Jenis lubang'),uk;
   if(v('jenis')==='Twin Hole'&&!v('fase'))miss('Fase lubang (PO/PC)');
   uk=v('ukuran')||'__';jenis=jenisTxt();var hid=v('drillsite')?holeId():'__';
+  cur=0;
   var sd=req(pick('spvd'),'SPV Drilling'),dr=req(pick('driller'),'Driller'),as=req(pick('asst'),'Assistant driller'),geo=req(pick('geologist'),'Geologist');
 
   var L=[];
@@ -847,7 +852,7 @@ function build(){
 function syncGeo(){  // Rig Geologist di Approval = Geologist di Identitas
   if($('spv').value!==$('geologist').value)$('spv').value=$('geologist').value;
   if($('spvLain').value!==$('geologistLain').value)$('spvLain').value=$('geologistLain').value;
-  $('spvHint').textContent=pick('geologist')?'':'Pilih Geologist di halaman Identitas terlebih dulu.';
+  $('spvHint').textContent=pick('geologist')?'':'Pilih Geologist di halaman Shift ID terlebih dulu.';
   $('spvHint').className=pick('geologist')?'hint':'hint warnc';
 }
 function render(){
@@ -954,7 +959,7 @@ function dsCheck(){ // {ok, txt, st}
 }
 
 // ---------- langkah (stepper) ----------
-var STEPS=['Identitas','Lubang','Equipment','Mud','Foto','Approval','Kirim'],step=0,visited={0:1},lastR=null;
+var STEPS=['Shift ID','Drillhole','Equipment','Mud','Evidence','Approval','Send'],step=0,visited={0:1},lastR=null;
 var SECS=Array.prototype.slice.call(document.querySelectorAll('main>section'));
 SECS.forEach(function(sec,k){if(k<5){var d=document.createElement('div');d.className='stepIss';d.id='si'+k;sec.appendChild(d);}});
 (function(){
@@ -1069,7 +1074,7 @@ function approve(){
   if(r.status==='bad'&&!r.canOv){toast('Masih ada isian/foto kosong — belum bisa disetujui');return false;}
   if(r.status==='bad'&&!seg.ov){toast('Ada item ❌ — perbaiki, atau aktifkan pengecualian');return false;}
   if(r.status==='bad'&&!r.ovReady){toast('Tulis alasan pengecualian dulu');return false;}
-  if(!pick('spv')){toast('Pilih Geologist di halaman Identitas dulu');return false;}
+  if(!pick('spv')){toast('Pilih Geologist di halaman Shift ID dulu');return false;}
   if(sx&&!ink){toast('Tanda tangan dulu');return false;}
   appr={name:pick('spv'),time:Date.now(),sig:sx?sig.toDataURL('image/png'):'',snap:snap(),
     ov:r.status==='bad'?{reason:v('ovReason'),items:r.fails}:null};
