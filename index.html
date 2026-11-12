@@ -674,10 +674,10 @@ function wxFetch(force){
   if(!force&&WX&&Date.now()-WX.at<3*3600e3)return;
   var pos=LS.get('psc_pos',null),lat=pos?pos.lat:WX_DEF.lat,lon=pos?pos.lon:WX_DEF.lon;
   var u='https://api.open-meteo.com/v1/forecast?latitude='+lat.toFixed(3)+'&longitude='+lon.toFixed(3)+
-    '&hourly=temperature_2m,precipitation_probability,precipitation,weather_code,wind_speed_10m&timezone=auto&past_days=1&forecast_days=2';
+    '&hourly=temperature_2m,precipitation_probability,precipitation,weather_code,wind_speed_10m&timeformat=unixtime&past_days=1&forecast_days=2';
   try{fetch(u).then(function(r){return r.json();}).then(function(j){
     if(!j||!j.hourly||!j.hourly.time)return;var h=j.hourly;
-    WX={at:Date.now(),lat:lat,lon:lon,src:pos?'gps':'area',h:{time:h.time,t:h.temperature_2m,p:h.precipitation_probability,pr:h.precipitation,c:h.weather_code,w:h.wind_speed_10m}};
+    WX={at:Date.now(),lat:lat,lon:lon,src:pos?'gps':'area',h:{time:h.time.map(function(x){return x*1000;}),t:h.temperature_2m,p:h.precipitation_probability,pr:h.precipitation,c:h.weather_code,w:h.wind_speed_10m}};
     LS.set('psc_wx',WX);render();}).catch(function(){});}catch(e){}
 }
 function gotPos(g){
@@ -687,7 +687,7 @@ function gotPos(g){
 function wxShift(){   // ringkasan prakiraan untuk jam shift ini (Day 06–18, Night 18–06)
   if(!WX||!WX.h)return null;
   var d=v('tgl')||today(),night=seg.shift==='Night',q=d.split('-'),st=new Date(+q[0],+q[1]-1,+q[2],night?18:6),en=st.getTime()+12*3600e3,h=WX.h,idx=[];
-  for(var i=0;i<h.time.length;i++){var t=new Date(h.time[i]).getTime();if(t>=st.getTime()&&t<en)idx.push(i);}
+  for(var i=0;i<h.time.length;i++){var t=typeof h.time[i]==='number'?h.time[i]:new Date(h.time[i]).getTime();if(t>=st.getTime()&&t<en)idx.push(i);}
   if(!idx.length)return null;
   function sev(c){return c>=95?5:((c>=51&&c<=67)||(c>=80&&c<=82))?4:(c===45||c===48)?3:c>=2?2:1;}
   var worst=1,pmax=0,psum=0,wmax=0;
